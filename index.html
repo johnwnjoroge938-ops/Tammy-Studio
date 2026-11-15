@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReelForge Studio Pro — AI Video Ad & Reel Generator</title>
+  <meta name="theme-color" content="#09090b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter & Montserrat for crisp TikTok/Reels typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:ital,wght@0,800;0,900;1,900&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body {
+      background-color: #09090b;
+      color: #f4f4f5;
+      overflow-x: hidden;
+    }
+
+    /* Custom subtle scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #18181b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #3f3f46;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #52525b;
+    }
+
+    /* Stage glow */
+    .phone-stage-shadow {
+      box-shadow: 0 25px 70px -15px rgba(124, 58, 237, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    /* Hide native file input appearance cleanly */
+    input[type="file"]::file-selector-button {
+      background: #27272a;
+      color: #e4e4e7;
+      border: 1px solid #3f3f46;
+      padding: 0.35rem 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-right: 0.65rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    input[type="file"]::file-selector-button:hover {
+      background: #3f3f46;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-violet-500 selection:text-white">
+
+  <!-- Embedded PWA Manifest Setup Script -->
+  <script>
+    (function setupInlinePWA() {
+      const iconSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%237c3aed'/%3E%3Cstop offset='100%25' stop-color='%2310b981'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='116' fill='url(%23g)'/%3E%3Cpolygon points='195,145 365,256 195,367' fill='white'/%3E%3C/svg%3E";
+      const manifest = {
+        name: "ReelForge Studio Pro",
+        short_name: "ReelForge Pro",
+        start_url: ".",
+        display: "standalone",
+        background_color: "#09090b",
+        theme_color: "#09090b",
+        description: "Free AI Video Ad, TikTok & Reel Studio",
+        icons: [
+          { src: iconSvg, sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" },
+          { src: iconSvg, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
+        ]
+      };
+      const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+      const manifestURL = URL.createObjectURL(blob);
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = manifestURL;
+      document.head.appendChild(link);
+
+      const appleIcon = document.createElement('link');
+      appleIcon.rel = 'apple-touch-icon';
+      appleIcon.href = iconSvg;
+      document.head.appendChild(appleIcon);
+    })();
+  </script>
+
+  <!-- Top Navigation Bar -->
+  <header class="border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <!-- Brand -->
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-violet-600/25 shrink-0">
+          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-base sm:text-lg tracking-tight text-white">ReelForge Studio Pro</h1>
+            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">PRO FREE</span>
+          </div>
+          <p class="text-xs text-zinc-400 hidden sm:block">AI Video Ads, E-Commerce Promos & Social Reels</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button id="pwaInfoBtn" type="button" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 transition">
+          <svg class="w-4 h-4 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          <span class="hidden md:inline">Install App</span>
+        </button>
+
+        <button id="apiKeysBtn" type="button" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700/80 transition">
+          <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+          </svg>
+          <span>API Keys</span>
+          <span id="apiStatusDot" class="w-2 h-2 rounded-full bg-zinc-600"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Toast Notification Banner -->
+  <div id="toastBanner" class="fixed bottom-5 right-5 z-50 max-w-sm transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-zinc-900 border border-zinc-700 text-zinc-100 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+      <div id="toastIcon" class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0"></div>
+      <p id="toastMessage" class="text-xs sm:text-sm font-medium"></p>
+    </div>
+  </div>
+
+  <!-- Main Workspace Layout -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- LEFT PANEL: Studio Controls (7 columns on desktop) -->
+    <section class="lg:col-span-7 space-y-5">
+
+      <!-- 1. Format & Visual Engine Mode -->
+      <div class="bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400">1. Format & Visual Engine</span>
+          <span id="modeBadge" class="text-xs font-medium text-violet-400">Template & Stock B-Roll</span>
+        </div>
+
+        <!-- Aspect Ratio Switcher -->
+        <div>
+          <label class="block text-xs font-medium text-zinc-300 mb-2">Video Aspect Ratio</label>
+          <div class="grid grid-cols-3 gap-2 p-1 bg-zinc-950 rounded-xl border border-zinc-800/80">
+            <button type="button" data-ratio="9:16" class="ratio-btn py-2 px-2 rounded-lg text-xs font-semibold bg-violet-600 text-white shadow transition flex flex-col items-center">
+              <span>9:16 Vertical</span>
+              <span class="text-[10px] opacity-80 font-normal">TikTok / Reels</span>
+            </button>
+            <button type="button" data-ratio="1:1" class="ratio-btn py-2 px-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition flex flex-col items-center">
+              <span>1:1 Square</span>
+              <span class="text-[10px] opacity-70 font-normal">IG / LinkedIn</span>
+            </button>
+            <button type="button" data-ratio="16:9" class="ratio-btn py-2 px-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition flex flex-col items-center">
+              <span>16:9 Wide</span>
+              <span class="text-[10px] opacity-70 font-normal">YouTube</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Generation Mode Toggle -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-1.5 bg-zinc-950 rounded-xl border border-zinc-800/80">
+          <button id="modeTemplateBtn" type="button" class="flex items-center gap-3 p-3 rounded-lg text-left transition bg-violet-600/20 border border-violet-500/40 text-white">
+            <div class="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+              </svg>
+            </div>
+            <div>
+              <div class="text-xs sm:text-sm font-semibold">Template & Stock B-Roll</div>
+              <div class="text-[11px] text-zinc-400">60fps motion graphics + HD stock</div>
+            </div>
+          </button>
+
+          <button id="modeAiGenBtn" type="button" class="flex items-center gap-3 p-3 rounded-lg text-left transition hover:bg-zinc-900 border border-transparent text-zinc-400">
+            <div class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div>
+              <div class="text-xs sm:text-sm font-semibold">Generative AI Visuals</div>
+              <div class="text-[11px] text-zinc-400">Neural shaders & AI scene art</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. AI Script & Ad Copy Generator -->
+      <div class="bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 space-y-4">
+        <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400 block">2. AI Script & Hook Studio</span>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label for="topicInput" class="block text-xs font-medium text-zinc-300 mb-1.5">Product, Brand, or Video Topic</label>
+            <input id="topicInput" type="text" value="Handcrafted Leather Cardholder" placeholder="e.g., Organic Matcha Tea, Wireless Earbuds, Fitness App..."
+              class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition" />
+          </div>
+
+          <div>
+            <label for="durationSelect" class="block text-xs font-medium text-zinc-300 mb-1.5">Target Length</label>
+            <select id="durationSelect" class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-sm text-white focus:outline-none focus:border-violet-500 transition">
+              <option value="15">15s Fast Hook</option>
+              <option value="25" selected>25s Standard Ad</option>
+              <option value="40">40s Story Reel</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quick Topic Chips -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-[11px] text-zinc-500 mr-1">Presets:</span>
+          <button type="button" data-topic="Handcrafted Leather Cardholder" class="preset-chip px-2.5 py-1 rounded-lg text-[11px] bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 transition">Leather Wallet</button>
+          <button type="button" data-topic="Morning Energy Mushroom Coffee" class="preset-chip px-2.5 py-1 rounded-lg text-[11px] bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 transition">Energy Coffee</button>
+          <button type="button" data-topic="Smart Home Posture Corrector" class="preset-chip px-2.5 py-1 rounded-lg text-[11px] bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 transition">Fitness & Posture</button>
+          <button type="button" data-topic="Noise Cancelling Studio Earbuds" class="preset-chip px-2.5 py-1 rounded-lg text-[11px] bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 transition">Tech Earbuds</button>
+        </div>
+
+        <!-- Generate Button -->
+        <button id="generateAdBtn" type="button" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-violet-600/25 flex items-center justify-center gap-2 transition active:scale-[0.99]">
+          <svg id="generateSpinner" class="hidden animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <svg id="generateIcon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <span id="generateBtnText">Generate AI Script & Assets</span>
+        </button>
+
+        <!-- Editable Hook & Script -->
+        <div class="pt-2 border-t border-zinc-800/80 space-y-3">
+          <div>
+            <label for="hookInput" class="block text-xs font-medium text-zinc-400 mb-1">Top Hook Banner Text</label>
+            <input id="hookInput" type="text" value="STOP CARRYING BULKY WALLETS"
+              class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm font-semibold text-amber-300 focus:outline-none focus:border-violet-500" />
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label for="scriptTextarea" class="block text-xs font-medium text-zinc-400">Voiceover & Synced Caption Script</label>
+              <span id="wordCountLabel" class="text-[11px] text-zinc-500">0 words</span>
+            </div>
+            <textarea id="scriptTextarea" rows="3"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm text-zinc-200 leading-relaxed focus:outline-none focus:border-violet-500">Stop ruining your pockets with bulky old wallets. Meet our slim handcrafted leather cardholder. Holds eight cards plus cash in a sleek ultra-thin profile. Upgrade your everyday carry today.</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Visual Templates & E-Commerce Branding -->
+      <div class="bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 space-y-4">
+        <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400 block">3. Templates, Captions & Brand Watermark</span>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="templateStyleSelect" class="block text-xs font-medium text-zinc-300 mb-1.5">Video Template Layout</label>
+            <select id="templateStyleSelect" class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm text-white focus:outline-none focus:border-violet-500">
+              <option value="ecommerce" selected>E-Commerce Product Promo</option>
+              <option value="viral">Standard Viral Hook</option>
+              <option value="quote">Minimalist Quote / Story</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="captionStyleSelect" class="block text-xs font-medium text-zinc-300 mb-1.5">Caption Animation Style</label>
+            <select id="captionStyleSelect" class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm text-white focus:outline-none focus:border-violet-500">
+              <option value="tiktok-pop" selected>TikTok Bold Pop (Active Pill)</option>
+              <option value="minimal-box">Minimalist Subtitle Box</option>
+              <option value="neon-cyber">Neon Cyber Glow</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- E-Commerce Promo Fields (Visible when E-Commerce Template is selected) -->
+        <div id="ecommerceFieldsBox" class="p-3.5 rounded-xl bg-zinc-950/90 border border-violet-500/25 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold uppercase tracking-wider text-violet-400">E-Commerce Promo Overlays</span>
+            <span class="text-[10px] text-zinc-500">Floating Badges & CTA</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <div>
+              <label for="priceInput" class="block text-[11px] text-zinc-400 mb-1">Price Tag</label>
+              <input id="priceInput" type="text" value="$29.99" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs font-bold text-emerald-400 focus:outline-none focus:border-violet-500" />
+            </div>
+            <div>
+              <label for="discountInput" class="block text-[11px] text-zinc-400 mb-1">Discount Sticker</label>
+              <input id="discountInput" type="text" value="50% OFF" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs font-bold text-rose-400 focus:outline-none focus:border-violet-500" />
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <label for="ctaInput" class="block text-[11px] text-zinc-400 mb-1">CTA Pill Text</label>
+              <input id="ctaInput" type="text" value="Shop Now →" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs font-semibold text-white focus:outline-none focus:border-violet-500" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Brand Logo Watermark Upload -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end pt-1">
+          <div class="sm:col-span-2">
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="logoUploadInput" class="block text-xs font-medium text-zinc-300">Brand Logo Watermark (Optional)</label>
+              <button id="clearLogoBtn" type="button" class="hidden text-[11px] text-rose-400 hover:underline">Remove</button>
+            </div>
+            <input id="logoUploadInput" type="file" accept="image/*" class="w-full text-xs text-zinc-400 bg-zinc-950 border border-zinc-800 rounded-xl p-1.5" />
+          </div>
+
+          <div>
+            <label for="logoCornerSelect" class="block text-xs font-medium text-zinc-300 mb-1.5">Logo Corner</label>
+            <select id="logoCornerSelect" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
+              <option value="top-left" selected>Top-Left</option>
+              <option value="top-right">Top-Right</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Media & Audio Studio -->
+      <div class="bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 space-y-4">
+        <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400 block">4. Media Backdrop, Music Synth & Voiceover</span>
+
+        <!-- Background Source & Gallery Upload -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="bgThemeSelect" class="block text-xs font-medium text-zinc-300 mb-1.5">Built-In / Stock Backdrop</label>
+            <select id="bgThemeSelect" class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm text-white focus:outline-none focus:border-violet-500">
+              <option value="aurora" selected>Animated Aurora Motion Mesh</option>
+              <option value="sunset">Warm Luxury Amber & Gold</option>
+              <option value="cyber">Studio Obsidian & Neon Grid</option>
+              <option value="pexels">HD Stock Footage (Pexels API)</option>
+            </select>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="customMediaInput" class="block text-xs font-medium text-zinc-300">Upload Photo / Video Clip</label>
+              <button id="clearMediaBtn" type="button" class="hidden text-[11px] text-rose-400 hover:underline">Clear</button>
+            </div>
+            <input id="customMediaInput" type="file" accept="image/*,video/*" class="w-full text-xs text-zinc-400 bg-zinc-950 border border-zinc-800 rounded-xl p-1.5" />
+          </div>
+        </div>
+
+        <!-- Built-In Web Audio Music Synthesizer -->
+        <div class="p-3.5 rounded-xl bg-zinc-950/90 border border-zinc-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+              </svg>
+              Built-In Royalty-Free Music Synth
+            </span>
+            <span class="text-[10px] text-zinc-500">Included in Video Export</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+            <div>
+              <label for="musicPresetSelect" class="block text-[11px] text-zinc-400 mb-1">Background Beat Preset</label>
+              <select id="musicPresetSelect" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white focus:outline-none focus:border-emerald-500">
+                <option value="upbeat" selected>Upbeat Promo Beat</option>
+                <option value="lofi">Chill Lo-Fi Groove</option>
+                <option value="cinematic">Cinematic Pulse</option>
+                <option value="none">None (Voice Only)</option>
+              </select>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-[11px] text-zinc-400 mb-1">
+                <span>Music Volume</span>
+                <span id="musicVolumeLabel" class="font-mono text-zinc-300">35%</span>
+              </div>
+              <input id="musicVolumeRange" type="range" min="0" max="100" step="5" value="35" class="w-full accent-emerald-500 cursor-pointer" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Voiceover Selector & Speed Controls -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="voiceSelect" class="text-xs font-medium text-zinc-300">AI Voiceover</label>
+              <button id="voiceToggleBtn" type="button" class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                Voice: ON
+              </button>
+            </div>
+            <select id="voiceSelect" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
+              <option value="">Default Neural Voice</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col justify-end">
+            <div class="flex justify-between text-xs text-zinc-300 mb-1.5">
+              <span>Speaking Speed</span>
+              <span id="voiceSpeedLabel" class="font-mono text-violet-300">1.05x</span>
+            </div>
+            <input id="voiceSpeedRange" type="range" min="0.8" max="1.4" step="0.05" value="1.05" class="w-full accent-violet-500 cursor-pointer my-2" />
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT PANEL: Live Responsive Preview & Export Studio (5 columns) -->
+    <section class="lg:col-span-5 flex flex-col items-center lg:sticky lg:top-20">
+      <div id="stageCard" class="w-full max-w-[380px] bg-zinc-900/85 border border-zinc-800 rounded-3xl p-4 phone-stage-shadow transition-all duration-300">
+
+        <!-- Stage Top Status -->
+        <div class="flex items-center justify-between mb-3 px-1">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+            <span id="stageRatioTitle" class="text-xs font-semibold text-zinc-300">9:16 Vertical Preview</span>
+          </div>
+          <span id="stageResolutionLabel" class="text-[11px] font-mono text-zinc-400">540×960 • 60FPS</span>
+        </div>
+
+        <!-- Dynamic Aspect Ratio Canvas Container -->
+        <div id="canvasWrapper" class="relative w-full aspect-[9/16] rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800 mx-auto transition-all duration-300">
+          <canvas id="reelCanvas" width="540" height="960" class="w-full h-full object-contain block"></canvas>
+
+          <!-- Recording Overlay Badge -->
+          <div id="recordingBadge" class="hidden absolute top-3 right-3 bg-rose-600/95 text-white text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg">
+            <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+            RECORDING...
+          </div>
+        </div>
+
+        <!-- Hidden video elements for Pexels or Custom Gallery Video -->
+        <video id="stockVideoEl" crossorigin="anonymous" muted loop playsinline class="hidden"></video>
+        <video id="customVideoEl" muted loop playsinline class="hidden"></video>
+
+        <!-- Timeline Progress Bar -->
+        <div class="mt-3.5 space-y-1.5">
+          <div class="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden cursor-pointer" id="timelineTrack">
+            <div id="timelineFill" class="h-full bg-gradient-to-r from-violet-500 to-emerald-400 w-0 transition-all duration-75"></div>
+          </div>
+          <div class="flex justify-between text-[11px] font-mono text-zinc-400">
+            <span id="currentTimeLabel">00:00</span>
+            <span id="totalTimeLabel">00:15</span>
+          </div>
+        </div>
+
+        <!-- Playback & Download Controls -->
+        <div class="mt-3 grid grid-cols-2 gap-2.5">
+          <button id="playPauseBtn" type="button" class="py-2.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition">
+            <svg id="playIcon" class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <svg id="pauseIcon" class="hidden w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+            </svg>
+            <span id="playPauseLabel">Play Preview</span>
+          </button>
+
+          <button id="exportVideoBtn" type="button" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/20 transition">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span id="exportBtnLabel">Export Video</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL 1: API Keys Settings -->
+  <div id="apiKeysModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-bold text-white">Optional Free API Keys</h2>
+        <button id="closeApiModalBtn" type="button" class="text-zinc-400 hover:text-white p-1">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <p class="text-xs text-zinc-400 leading-relaxed">
+        ReelForge Studio Pro works <strong>100% out of the box</strong> with built-in AI templates, music synth, and procedural visuals. Add free keys below to unlock unlimited custom Gemini scripts and Pexels HD stock footage:
+      </p>
+
+      <div class="space-y-3">
+        <div>
+          <div class="flex justify-between text-xs mb-1">
+            <label for="geminiKeyInput" class="font-medium text-zinc-200">Google Gemini API Key (Free Tier)</label>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="text-violet-400 hover:underline">Get free key ↗</a>
+          </div>
+          <input id="geminiKeyInput" type="password" placeholder="AIzaSy..." class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500" />
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs mb-1">
+            <label for="pexelsKeyInput" class="font-medium text-zinc-200">Pexels HD Video API Key (Free)</label>
+            <a href="https://www.pexels.com/api/" target="_blank" rel="noopener" class="text-violet-400 hover:underline">Get free key ↗</a>
+          </div>
+          <input id="pexelsKeyInput" type="password" placeholder="563492ad6f91700001..." class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500" />
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button id="saveApiKeysBtn" type="button" class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold transition">
+          Save Keys Locally
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Install as Phone App (PWA Guide) -->
+  <div id="pwaModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-bold text-white">Install ReelForge Pro on Phone</h2>
+        <button id="closePwaModalBtn" type="button" class="text-zinc-400 hover:text-white p-1">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <ol class="text-xs text-zinc-300 space-y-2.5 list-decimal list-inside leading-relaxed">
+        <li>Rename this file to <code class="px-1.5 py-0.5 bg-zinc-800 rounded text-violet-300">index.html</code> and compress it into <code class="px-1.5 py-0.5 bg-zinc-800 rounded text-violet-300">index.zip</code>.</li>
+        <li>Upload <code class="px-1.5 py-0.5 bg-zinc-800 rounded text-violet-300">index.zip</code> in your Cloudflare Dashboard under <strong>Deployments</strong> to update your live link.</li>
+        <li>Open your live link in <strong>Chrome (Android)</strong> or <strong>Safari (iPhone)</strong>.</li>
+        <li>Tap the browser menu (⋮) and select <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong> to launch full-screen anytime!</li>
+      </ol>
+
+      <div class="pt-2 flex justify-end">
+        <button id="gotItPwaBtn" type="button" class="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-semibold">Got It</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Application Engine -->
+  <script>
+    (function () {
+      // --- Aspect Ratio Configurations ---
+      const RATIOS = {
+        '9:16': { width: 540, height: 960, label: '9:16 Vertical Preview', cssAspect: 'aspect-[9/16]', maxCardW: 'max-w-[380px]', pexelsOrientation: 'portrait' },
+        '1:1':  { width: 720, height: 720, label: '1:1 Square Feed Preview', cssAspect: 'aspect-square', maxCardW: 'max-w-[420px]', pexelsOrientation: 'square' },
+        '16:9': { width: 960, height: 540, label: '16:9 Landscape Preview', cssAspect: 'aspect-video', maxCardW: 'max-w-[500px]', pexelsOrientation: 'landscape' },
+      };
+
+      // --- State Management ---
+      const state = {
+        ratio: '9:16',
+        mode: 'template', // 'template' | 'aigen'
+        isPlaying: false,
+        isRecording: false,
+        voiceEnabled: true,
+        voiceSpeed: 1.05,
+        durationSec: 15,
+        elapsedSec: 0,
+        lastTimestamp: 0,
+        words: [],
+        // Custom Uploads
+        logoImg: null,
+        customMediaType: null, // 'image' | 'video' | null
+        customMediaImg: null,
+        customVideoReady: false,
+        // External Stock
+        pexelsVideoReady: false,
+        // Procedural Particles for Generative AI Mode
+        particles: Array.from({ length: 45 }, () => ({
+          x: Math.random(),
+          y: Math.random(),
+          r: 1.5 + Math.random() * 3.5,
+          vx: (Math.random() - 0.5) * 0.08,
+          vy: -0.02 - Math.random() * 0.06,
+          hue: Math.random() > 0.5 ? 265 : 160,
+        })),
+        // API Keys
+        geminiKey: localStorage.getItem('rf_gemini_key') || '',
+        pexelsKey: localStorage.getItem('rf_pexels_key') || '',
+      };
+
+      // --- Built-In Smart Topic Scripts (Zero-API-Key Experience) ---
+      const BUILTIN_SCRIPTS = [
+        {
+          keywords: ['leather', 'wallet', 'cardholder', 'bag'],
+          hook: 'STOP CARRYING BULKY WALLETS',
+          script: 'Stop ruining your pockets with bulky old wallets. Meet our slim handcrafted leather cardholder. Holds eight cards plus cash in a sleek ultra-thin profile. Upgrade your everyday carry today.',
+          price: '$29.99',
+          discount: '50% OFF',
+          cta: 'Shop Now →',
+        },
+        {
+          keywords: ['coffee', 'energy', 'matcha', 'tea', 'drink'],
+          hook: 'TIRED OF AFTERNOON CRASHES?',
+          script: 'Skip the jittery sugar drinks and upgrade your morning ritual. Our organic mushroom energy coffee delivers smooth all-day focus with zero crash. Taste the difference on your very first cup.',
+          price: '$24.00',
+          discount: 'FREE MUG',
+          cta: 'Claim Offer →',
+        },
+        {
+          keywords: ['fitness', 'posture', 'workout', 'gym', 'health'],
+          hook: 'FIX YOUR POSTURE IN 10 MINUTES',
+          script: 'Sitting at a desk all day destroys your back and energy. Our smart posture trainer gently aligns your shoulders in just ten minutes a day. Feel taller, stronger, and pain-free starting this week.',
+          price: '$34.95',
+          discount: '40% OFF',
+          cta: 'Order Today →',
+        },
+        {
+          keywords: ['earbuds', 'tech', 'audio', 'headphones', 'phone'],
+          hook: 'STUDIO SOUND WITHOUT THE PRICE',
+          script: 'Why pay three hundred dollars for wireless audio? Experience deep bass, crystal-clear calls, and forty hours of battery life with our noise-cancelling studio earbuds. Hear every detail anywhere you go.',
+          price: '$49.99',
+          discount: 'SAVE $100',
+          cta: 'Get Yours →',
+        },
+      ];
+
+      // --- Web Audio Royalty-Free Music Synthesizer ---
+      const MusicEngine = {
+        ctx: null,
+        masterGain: null,
+        mediaDest: null,
+        intervalId: null,
+        step: 0,
+
+        init() {
+          if (!this.ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            this.ctx = new AudioCtx();
+            this.masterGain = this.ctx.createGain();
+            this.mediaDest = this.ctx.createMediaStreamDestination();
+            this.masterGain.connect(this.ctx.destination);
+            this.masterGain.connect(this.mediaDest);
+          }
+          if (this.ctx.state === 'suspended') {
+            this.ctx.resume();
+          }
+          this.updateVolume();
+        },
+
+        updateVolume() {
+          if (!this.masterGain) return;
+          const vol = parseInt(document.getElementById('musicVolumeRange').value, 10) / 100;
+          this.masterGain.gain.setTargetAtTime(vol * 0.35, this.ctx.currentTime, 0.05);
+        },
+
+        playTone(freq, type, duration, gainVal, timeOffset = 0) {
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime + timeOffset;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.exponentialRampToValueAtTime(gainVal, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+          osc.connect(gain);
+          gain.connect(this.masterGain);
+          osc.start(now);
+          osc.stop(now + duration + 0.03);
+        },
+
+        playKick(timeOffset = 0) {
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime + timeOffset;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(135, now);
+          osc.frequency.exponentialRampToValueAtTime(38, now + 0.14);
+
+          gain.gain.setValueAtTime(0.55, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+          osc.connect(gain);
+          gain.connect(this.masterGain);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        },
+
+        start(preset) {
+          this.stop();
+          if (preset === 'none') return;
+          this.init();
+          this.step = 0;
+
+          const tempos = { upbeat: 230, lofi: 340, cinematic: 300 };
+          const intervalMs = tempos[preset] || 250;
+
+          const tick = () => {
+            if (!state.isPlaying) return;
+            const s = this.step % 16;
+
+            if (preset === 'upbeat') {
+              if (s % 4 === 0) this.playKick();
+              if (s % 2 === 1) this.playTone(6200, 'triangle', 0.04, 0.08);
+              const notes = [261.63, 329.63, 392.0, 523.25, 392.0, 329.63, 293.66, 392.0];
+              if (s % 2 === 0) {
+                this.playTone(notes[(s / 2) % notes.length], 'triangle', 0.22, 0.22);
+              }
+            } else if (preset === 'lofi') {
+              if (s === 0 || s === 6 || s === 10) this.playKick();
+              const chords = [
+                [220.0, 261.63, 329.63],
+                [174.61, 220.0, 261.63],
+                [196.0, 246.94, 293.66],
+                [164.81, 196.0, 246.94],
+              ];
+              if (s % 4 === 0) {
+                const chord = chords[(s / 4) % chords.length];
+                chord.forEach((f) => this.playTone(f, 'sine', 0.85, 0.14));
+              }
+            } else if (preset === 'cinematic') {
+              if (s % 4 === 0) this.playKick();
+              const bass = [65.41, 65.41, 51.91, 58.27];
+              if (s % 4 === 0) {
+                this.playTone(bass[(s / 4) % bass.length], 'sawtooth', 0.7, 0.15);
+              }
+              if (s % 2 === 0) {
+                this.playTone(261.63, 'sine', 0.25, 0.12);
+              }
+            }
+
+            this.step++;
+          };
+
+          tick();
+          this.intervalId = setInterval(tick, intervalMs);
+        },
+
+        stop() {
+          if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+          }
+        },
+      };
+
+      // --- DOM Elements ---
+      const canvas = document.getElementById('reelCanvas');
+      const ctx = canvas.getContext('2d');
+      const stageCard = document.getElementById('stageCard');
+      const canvasWrapper = document.getElementById('canvasWrapper');
+      const stageRatioTitle = document.getElementById('stageRatioTitle');
+      const stageResolutionLabel = document.getElementById('stageResolutionLabel');
+
+      const stockVideoEl = document.getElementById('stockVideoEl');
+      const customVideoEl = document.getElementById('customVideoEl');
+
+      const modeTemplateBtn = document.getElementById('modeTemplateBtn');
+      const modeAiGenBtn = document.getElementById('modeAiGenBtn');
+      const modeBadge = document.getElementById('modeBadge');
+
+      const topicInput = document.getElementById('topicInput');
+      const durationSelect = document.getElementById('durationSelect');
+      const generateAdBtn = document.getElementById('generateAdBtn');
+      const generateBtnText = document.getElementById('generateBtnText');
+      const generateSpinner = document.getElementById('generateSpinner');
+      const generateIcon = document.getElementById('generateIcon');
+
+      const hookInput = document.getElementById('hookInput');
+      const scriptTextarea = document.getElementById('scriptTextarea');
+      const wordCountLabel = document.getElementById('wordCountLabel');
+
+      const templateStyleSelect = document.getElementById('templateStyleSelect');
+      const captionStyleSelect = document.getElementById('captionStyleSelect');
+      const ecommerceFieldsBox = document.getElementById('ecommerceFieldsBox');
+      const priceInput = document.getElementById('priceInput');
+      const discountInput = document.getElementById('discountInput');
+      const ctaInput = document.getElementById('ctaInput');
+
+      const logoUploadInput = document.getElementById('logoUploadInput');
+      const clearLogoBtn = document.getElementById('clearLogoBtn');
+      const logoCornerSelect = document.getElementById('logoCornerSelect');
+
+      const bgThemeSelect = document.getElementById('bgThemeSelect');
+      const customMediaInput = document.getElementById('customMediaInput');
+      const clearMediaBtn = document.getElementById('clearMediaBtn');
+
+      const musicPresetSelect = document.getElementById('musicPresetSelect');
+      const musicVolumeRange = document.getElementById('musicVolumeRange');
+      const musicVolumeLabel = document.getElementById('musicVolumeLabel');
+
+      const voiceToggleBtn = document.getElementById('voiceToggleBtn');
+      const voiceSelect = document.getElementById('voiceSelect');
+      const voiceSpeedRange = document.getElementById('voiceSpeedRange');
+      const voiceSpeedLabel = document.getElementById('voiceSpeedLabel');
+
+      const playPauseBtn = document.getElementById('playPauseBtn');
+      const playPauseLabel = document.getElementById('playPauseLabel');
+      const playIcon = document.getElementById('playIcon');
+      const pauseIcon = document.getElementById('pauseIcon');
+      const exportVideoBtn = document.getElementById('exportVideoBtn');
+      const exportBtnLabel = document.getElementById('exportBtnLabel');
+      const recordingBadge = document.getElementById('recordingBadge');
+
+      const timelineTrack = document.getElementById('timelineTrack');
+      const timelineFill = document.getElementById('timelineFill');
+      const currentTimeLabel = document.getElementById('currentTimeLabel');
+      const totalTimeLabel = document.getElementById('totalTimeLabel');
+
+      const apiKeysModal = document.getElementById('apiKeysModal');
+      const geminiKeyInput = document.getElementById('geminiKeyInput');
+      const pexelsKeyInput = document.getElementById('pexelsKeyInput');
+      const apiStatusDot = document.getElementById('apiStatusDot');
+      const pwaModal = document.getElementById('pwaModal');
+
+      // --- Non-blocking Toast Helper ---
+      let toastTimeout = null;
+      function showToast(msg, type = 'success') {
+        const banner = document.getElementById('toastBanner');
+        const message = document.getElementById('toastMessage');
+        const icon = document.getElementById('toastIcon');
+        message.textContent = msg;
+        icon.className = `w-2.5 h-2.5 rounded-full shrink-0 ${
+          type === 'error' ? 'bg-rose-400' : type === 'info' ? 'bg-amber-400' : 'bg-emerald-400'
+        }`;
+        banner.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          banner.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+        }, 3500);
+      }
+
+      // --- Populate Browser Voices ---
+      function populateVoices() {
+        if (!('speechSynthesis' in window)) return;
+        const voices = window.speechSynthesis.getVoices();
+        if (!voices.length) return;
+        const currentVal = voiceSelect.value;
+        voiceSelect.innerHTML = '<option value="">Auto Best English Voice</option>';
+        voices
+          .filter((v) => v.lang.startsWith('en'))
+          .forEach((v) => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = `${v.name.replace(/Microsoft |Google /g, '')} (${v.lang})`;
+            voiceSelect.appendChild(opt);
+          });
+        if (currentVal) voiceSelect.value = currentVal;
+      }
+      if ('speechSynthesis' in window) {
+        populateVoices();
+        window.speechSynthesis.onvoiceschanged = populateVoices;
+      }
+
+      // --- Update API Key Status ---
+      function refreshApiStatus() {
+        geminiKeyInput.value = state.geminiKey;
+        pexelsKeyInput.value = state.pexelsKey;
+        apiStatusDot.className =
+          state.geminiKey || state.pexelsKey
+            ? 'w-2 h-2 rounded-full bg-emerald-400'
+            : 'w-2 h-2 rounded-full bg-zinc-600';
+      }
+
+      // --- Switch Aspect Ratio ---
+      function setAspectRatio(ratioKey) {
+        const cfg = RATIOS[ratioKey];
+        if (!cfg) return;
+        state.ratio = ratioKey;
+        canvas.width = cfg.width;
+        canvas.height = cfg.height;
+        stageRatioTitle.textContent = cfg.label;
+        stageResolutionLabel.textContent = `${cfg.width}×${cfg.height} • 60FPS`;
+
+        canvasWrapper.className = `relative w-full ${cfg.cssAspect} rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800 mx-auto transition-all duration-300`;
+        stageCard.className = `w-full ${cfg.maxCardW} bg-zinc-900/85 border border-zinc-800 rounded-3xl p-4 phone-stage-shadow transition-all duration-300`;
+
+        document.querySelectorAll('.ratio-btn').forEach((btn) => {
+          const active = btn.getAttribute('data-ratio') === ratioKey;
+          btn.className = active
+            ? 'ratio-btn py-2 px-2 rounded-lg text-xs font-semibold bg-violet-600 text-white shadow transition flex flex-col items-center'
+            : 'ratio-btn py-2 px-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition flex flex-col items-center';
+        });
+
+        if (bgThemeSelect.value === 'pexels' && state.pexelsKey) {
+          loadPexelsVideo(topicInput.value || 'business');
+        }
+      }
+
+      // --- Synchronize Word Count & Duration ---
+      function syncScriptMetrics() {
+        const raw = scriptTextarea.value.trim();
+        state.words = raw ? raw.split(/\s+/) : [];
+        wordCountLabel.textContent = `${state.words.length} words`;
+
+        const wordsPerSec = 2.45 * state.voiceSpeed;
+        const estimated = Math.max(6, Math.ceil(state.words.length / wordsPerSec));
+        state.durationSec = estimated;
+        totalTimeLabel.textContent = formatTime(state.durationSec);
+      }
+
+      function formatTime(sec) {
+        const s = Math.max(0, Math.floor(sec));
+        const mins = String(Math.floor(s / 60)).padStart(2, '0');
+        const secs = String(s % 60).padStart(2, '0');
+        return `${mins}:${secs}`;
+      }
+
+      // --- Fetch Stock Video from Pexels API (If Key Provided) ---
+      async function loadPexelsVideo(topic) {
+        if (!state.pexelsKey) {
+          showToast('Add a free Pexels API key in "API Keys" for HD stock clips, or use built-in backdrops.', 'info');
+          return false;
+        }
+        try {
+          const orientation = RATIOS[state.ratio].pexelsOrientation;
+          const res = await fetch(
+            `https://api.pexels.com/videos/search?query=${encodeURIComponent(topic)}&orientation=${orientation}&per_page=3`,
+            { headers: { Authorization: state.pexelsKey } }
+          );
+          if (!res.ok) throw new Error('Pexels request failed');
+          const data = await res.json();
+          if (data.videos && data.videos.length > 0) {
+            const files = data.videos[0].video_files;
+            const hdFile = files.find((f) => f.quality === 'hd') || files[0];
+            stockVideoEl.src = hdFile.link;
+            await stockVideoEl.play();
+            state.pexelsVideoReady = true;
+            return true;
+          }
+        } catch (err) {
+          console.warn('Pexels fallback triggered:', err);
+        }
+        state.pexelsVideoReady = false;
+        return false;
+      }
+
+      // --- Generate Ad Script (Gemini API if provided, or Smart Built-In Engine) ---
+      async function generateAdContent() {
+        stopPlayback();
+        const topic = topicInput.value.trim() || 'Modern Smart Product';
+        const targetSec = parseInt(durationSelect.value, 10) || 25;
+        const targetWords = Math.round(targetSec * 2.3);
+
+        generateSpinner.classList.remove('hidden');
+        generateIcon.classList.add('hidden');
+        generateBtnText.textContent = 'Generating AI Ad...';
+        generateAdBtn.disabled = true;
+
+        try {
+          let generated = false;
+
+          if (state.geminiKey) {
+            try {
+              const prompt = `Write a high-converting social media video ad script for: "${topic}".
+Target length: ~${targetWords} words.
+Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spoken voiceover sentences, no emojis or stage directions), "price" (e.g. "$29.99"), "discount" (e.g. "50% OFF"), and "cta" (e.g. "Shop Now →").`;
+
+              const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${state.geminiKey}`,
+                {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { responseMimeType: 'application/json' },
+                  }),
+                }
+              );
+
+              if (response.ok) {
+                const data = await response.json();
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (text) {
+                  const parsed = JSON.parse(text);
+                  if (parsed.hook && parsed.script) {
+                    hookInput.value = parsed.hook.toUpperCase();
+                    scriptTextarea.value = parsed.script;
+                    if (parsed.price) priceInput.value = parsed.price;
+                    if (parsed.discount) discountInput.value = parsed.discount.toUpperCase();
+                    if (parsed.cta) ctaInput.value = parsed.cta;
+                    generated = true;
+                    showToast('Custom AI ad generated with Gemini!');
+                  }
+                }
+              }
+            } catch (apiErr) {
+              console.warn('Gemini fallback used:', apiErr);
+            }
+          }
+
+          if (!generated) {
+            const lowerTopic = topic.toLowerCase();
+            const matched = BUILTIN_SCRIPTS.find((item) =>
+              item.keywords.some((kw) => lowerTopic.includes(kw))
+            );
+
+            if (matched) {
+              hookInput.value = matched.hook;
+              scriptTextarea.value = matched.script;
+              priceInput.value = matched.price;
+              discountInput.value = matched.discount;
+              ctaInput.value = matched.cta;
+            } else {
+              hookInput.value = `DISCOVER ${topic.toUpperCase()}`;
+              scriptTextarea.value =
+                targetSec <= 15
+                  ? `Stop scrolling if you love ${topic}. Designed for effortless performance and unmatched style, this is the upgrade you have been waiting for. Grab yours today before stock runs out.`
+                  : `Tired of settling for average results? Meet the new ${topic}, engineered to save you time and elevate your daily routine. Thousands have already made the switch and never looked back. Tap below to get yours today.`;
+              priceInput.value = '$39.99';
+              discountInput.value = '40% OFF';
+              ctaInput.value = 'Shop Now →';
+            }
+            showToast('AI script & promo overlays ready!');
+          }
+
+          if (bgThemeSelect.value === 'pexels' && !state.customMediaType) {
+            await loadPexelsVideo(topic);
+          }
+
+          syncScriptMetrics();
+          state.elapsedSec = 0;
+          startPlayback();
+        } finally {
+          generateSpinner.classList.add('hidden');
+          generateIcon.classList.remove('hidden');
+          generateBtnText.textContent = 'Generate AI Script & Assets';
+          generateAdBtn.disabled = false;
+        }
+      }
+
+      // --- Voiceover Speech Synthesis ---
+      function triggerVoiceover() {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        if (!state.voiceEnabled) return;
+
+        const utterance = new SpeechSynthesisUtterance(scriptTextarea.value);
+        utterance.rate = state.voiceSpeed;
+        utterance.pitch = 1.02;
+
+        const voices = window.speechSynthesis.getVoices();
+        const chosenName = voiceSelect.value;
+        const preferred =
+          (chosenName && voices.find((v) => v.name === chosenName)) ||
+          voices.find((v) => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google'))) ||
+          voices.find((v) => v.lang.startsWith('en'));
+        if (preferred) utterance.voice = preferred;
+
+        window.speechSynthesis.speak(utterance);
+      }
+
+      // --- Playback Controls ---
+      function startPlayback() {
+        if (state.elapsedSec >= state.durationSec) {
+          state.elapsedSec = 0;
+        }
+        state.isPlaying = true;
+        state.lastTimestamp = performance.now();
+        playPauseLabel.textContent = 'Pause Preview';
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+
+        if (state.customMediaType === 'video' && customVideoEl.paused) {
+          customVideoEl.play().catch(() => {});
+        } else if (state.pexelsVideoReady && stockVideoEl.paused) {
+          stockVideoEl.play().catch(() => {});
+        }
+
+        MusicEngine.start(musicPresetSelect.value);
+
+        if (state.elapsedSec < 0.2) {
+          triggerVoiceover();
+        }
+      }
+
+      function stopPlayback() {
+        state.isPlaying = false;
+        playPauseLabel.textContent = 'Play Preview';
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+        MusicEngine.stop();
+
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+        if (!stockVideoEl.paused) stockVideoEl.pause();
+        if (!customVideoEl.paused) customVideoEl.pause();
+      }
+
+      // --- Canvas Drawing Utilities ---
+      function drawRoundedRect(ctx, x, y, width, height, radius) {
+        const r = Math.min(radius, width / 2, height / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + width - r, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+        ctx.lineTo(x + width, y + height - r);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+        ctx.lineTo(x + r, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+
+      function drawCoverMedia(ctx, media, mediaW, mediaH, canvasW, canvasH, zoomScale = 1, panX = 0, panY = 0) {
+        const mRatio = mediaW / mediaH;
+        const cRatio = canvasW / canvasH;
+        let dw = canvasW * zoomScale;
+        let dh = canvasH * zoomScale;
+        if (mRatio > cRatio) {
+          dw = dh * mRatio;
+        } else {
+          dh = dw / mRatio;
+        }
+        const dx = (canvasW - dw) / 2 + panX;
+        const dy = (canvasH - dh) / 2 + panY;
+        ctx.drawImage(media, dx, dy, dw, dh);
+      }
+
+      // --- 60FPS Real-Time Canvas Render Loop ---
+      function renderCanvasFrame(now) {
+        if (state.isPlaying) {
+          const dt = (now - state.lastTimestamp) / 1000;
+          state.elapsedSec += dt;
+          if (state.elapsedSec >= state.durationSec) {
+            state.elapsedSec = state.durationSec;
+            stopPlayback();
+          }
+        }
+        state.lastTimestamp = now;
+
+        const progress = Math.min(1, state.elapsedSec / Math.max(0.1, state.durationSec));
+        timelineFill.style.width = `${progress * 100}%`;
+        currentTimeLabel.textContent = formatTime(state.elapsedSec);
+
+        const W = canvas.width;
+        const H = canvas.height;
+        const t = now * 0.001;
+        const isLandscape = W > H;
+
+        ctx.clearRect(0, 0, W, H);
+
+        // 1. BACKGROUND LAYER (Custom Media -> Pexels Stock -> Procedural Shader/Theme)
+        if (state.customMediaType === 'image' && state.customMediaImg) {
+          const zoom = 1.04 + Math.sin(t * 0.45) * 0.04;
+          const panX = Math.cos(t * 0.35) * 14;
+          const panY = Math.sin(t * 0.3) * 14;
+          drawCoverMedia(ctx, state.customMediaImg, state.customMediaImg.width, state.customMediaImg.height, W, H, zoom, panX, panY);
+        } else if (state.customMediaType === 'video' && state.customVideoReady && customVideoEl.readyState >= 2) {
+          drawCoverMedia(ctx, customVideoEl, customVideoEl.videoWidth, customVideoEl.videoHeight, W, H);
+        } else if (bgThemeSelect.value === 'pexels' && state.pexelsVideoReady && stockVideoEl.readyState >= 2) {
+          drawCoverMedia(ctx, stockVideoEl, stockVideoEl.videoWidth, stockVideoEl.videoHeight, W, H);
+        } else {
+          // Procedural 60FPS Motion Gradient Backdrop
+          const theme = bgThemeSelect.value;
+          const grad = ctx.createLinearGradient(0, 0, W, H);
+          if (state.mode === 'aigen') {
+            grad.addColorStop(0, '#09090b');
+            grad.addColorStop(0.5, '#1e1b4b');
+            grad.addColorStop(1, '#042f2e');
+          } else if (theme === 'sunset') {
+            grad.addColorStop(0, '#1c0a00');
+            grad.addColorStop(0.5, '#451a03');
+            grad.addColorStop(1, '#09090b');
+          } else if (theme === 'cyber') {
+            grad.addColorStop(0, '#020617');
+            grad.addColorStop(0.5, '#0f172a');
+            grad.addColorStop(1, '#042f2e');
+          } else {
+            grad.addColorStop(0, '#09090b');
+            grad.addColorStop(0.5, '#1e1b4b');
+            grad.addColorStop(1, '#09090b');
+          }
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, W, H);
+
+          // Animated Glowing Orbs
+          const orb1X = W * 0.5 + Math.cos(t * 0.8) * (W * 0.25);
+          const orb1Y = H * 0.35 + Math.sin(t * 0.6) * (H * 0.16);
+          const rad1 = ctx.createRadialGradient(orb1X, orb1Y, 10, orb1X, orb1Y, Math.max(W, H) * 0.36);
+          rad1.addColorStop(0, theme === 'sunset' ? 'rgba(245, 158, 11, 0.38)' : theme === 'cyber' ? 'rgba(16, 185, 129, 0.32)' : 'rgba(124, 58, 237, 0.42)');
+          rad1.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = rad1;
+          ctx.fillRect(0, 0, W, H);
+
+          const orb2X = W * 0.5 + Math.sin(t * 0.7) * (W * 0.25);
+          const orb2Y = H * 0.7 + Math.cos(t * 0.9) * (H * 0.14);
+          const rad2 = ctx.createRadialGradient(orb2X, orb2Y, 10, orb2X, orb2Y, Math.max(W, H) * 0.32);
+          rad2.addColorStop(0, theme === 'sunset' ? 'rgba(225, 29, 72, 0.28)' : 'rgba(16, 185, 129, 0.28)');
+          rad2.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = rad2;
+          ctx.fillRect(0, 0, W, H);
+
+          // Motion Grid
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+          ctx.lineWidth = 1;
+          const gridOffset = (t * 25) % 45;
+          for (let y = gridOffset; y < H; y += 45) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(W, y);
+            ctx.stroke();
+          }
+        }
+
+        // Generative AI Mode Neural Particle Overlay
+        if (state.mode === 'aigen') {
+          ctx.save();
+          state.particles.forEach((p) => {
+            const px = ((p.x + t * p.vx + 10) % 1) * W;
+            const py = ((p.y + t * p.vy + 10) % 1) * H;
+            ctx.beginPath();
+            ctx.arc(px, py, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${p.hue}, 90%, 68%, 0.55)`;
+            ctx.fill();
+          });
+          ctx.restore();
+        }
+
+        // 2. CINEMATIC VIGNETTE OVERLAY
+        const vignette = ctx.createLinearGradient(0, 0, 0, H);
+        vignette.addColorStop(0, 'rgba(0, 0, 0, 0.62)');
+        vignette.addColorStop(0.25, 'rgba(0, 0, 0, 0.22)');
+        vignette.addColorStop(0.75, 'rgba(0, 0, 0, 0.26)');
+        vignette.addColorStop(1, 'rgba(0, 0, 0, 0.78)');
+        ctx.fillStyle = vignette;
+        ctx.fillRect(0, 0, W, H);
+
+        const templateStyle = templateStyleSelect.value;
+
+        // Minimalist Quote / Story Editorial Frame
+        if (templateStyle === 'quote') {
+          ctx.save();
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+          ctx.lineWidth = 2;
+          const pad = isLandscape ? 26 : 24;
+          drawRoundedRect(ctx, pad, pad, W - pad * 2, H - pad * 2, 20);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // 3. CUSTOM BRAND LOGO WATERMARK
+        if (state.logoImg) {
+          ctx.save();
+          const maxLogoH = isLandscape ? 46 : 52;
+          const scale = maxLogoH / state.logoImg.height;
+          const lw = Math.min(140, state.logoImg.width * scale);
+          const lh = state.logoImg.height * (lw / state.logoImg.width);
+          const margin = 24;
+          const lx = logoCornerSelect.value === 'top-right' ? W - lw - margin : margin;
+          const ly = margin;
+          ctx.globalAlpha = 0.92;
+          ctx.drawImage(state.logoImg, lx, ly, lw, lh);
+          ctx.restore();
+        }
+
+        // 4. TOP HOOK BANNER (Shown on E-Commerce & Viral templates)
+        if (templateStyle !== 'quote') {
+          const hookText = (hookInput.value || 'WATCH THIS').toUpperCase();
+          ctx.save();
+          ctx.font = `900 ${isLandscape ? 20 : 21}px Montserrat, sans-serif`;
+          const hookMetrics = ctx.measureText(hookText);
+          const bannerW = Math.min(W - 48, hookMetrics.width + 44);
+          const bannerH = 44;
+          const bannerX = (W - bannerW) / 2;
+          const bannerY = state.logoImg ? (isLandscape ? 32 : 86) : (isLandscape ? 28 : 54);
+
+          ctx.fillStyle = 'rgba(24, 24, 27, 0.88)';
+          drawRoundedRect(ctx, bannerX, bannerY, bannerW, bannerH, 14);
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(167, 139, 250, 0.5)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          ctx.fillStyle = '#fde047';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(hookText, W / 2, bannerY + bannerH / 2 + 1, bannerW - 24);
+          ctx.restore();
+        }
+
+        // 5. E-COMMERCE FLOATING PRICE BADGE & DISCOUNT STICKER
+        if (templateStyle === 'ecommerce') {
+          const floatY = Math.sin(t * 3.2) * 5;
+          const badgeY = isLandscape ? 92 + floatY : 154 + floatY;
+
+          // Discount Sticker (Left)
+          const discountText = (discountInput.value || '50% OFF').toUpperCase();
+          if (discountText) {
+            ctx.save();
+            ctx.translate(isLandscape ? 110 : 96, badgeY);
+            ctx.rotate(-0.08);
+            ctx.fillStyle = '#e11d48';
+            drawRoundedRect(ctx, -64, -20, 128, 40, 12);
+            ctx.fill();
+            ctx.strokeStyle = '#fda4af';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.font = '900 17px Montserrat, sans-serif';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(discountText, 0, 1, 114);
+            ctx.restore();
+          }
+
+          // Price Badge (Right)
+          const priceText = (priceInput.value || '$29.99').toUpperCase();
+          if (priceText) {
+            ctx.save();
+            ctx.translate(isLandscape ? W - 110 : W - 96, badgeY);
+            ctx.rotate(0.06);
+            ctx.fillStyle = '#059669';
+            drawRoundedRect(ctx, -64, -22, 128, 44, 14);
+            ctx.fill();
+            ctx.strokeStyle = '#6ee7b7';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.font = '900 20px Montserrat, sans-serif';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(priceText, 0, 1, 114);
+            ctx.restore();
+          }
+        }
+
+        // 6. DYNAMIC WORD-BY-WORD SYNCED CAPTIONS
+        if (state.words.length > 0) {
+          const activeWordIndex = Math.min(
+            state.words.length - 1,
+            Math.floor(progress * state.words.length)
+          );
+          const chunkSize = isLandscape ? 5 : 3;
+          const chunkStart = Math.floor(activeWordIndex / chunkSize) * chunkSize;
+          const visibleWords = state.words.slice(chunkStart, chunkStart + chunkSize);
+          const capStyle = captionStyleSelect.value;
+
+          ctx.save();
+          if (capStyle === 'minimal-box') {
+            // Minimalist Subtitle Box at lower-middle
+            const lineText = visibleWords.join(' ');
+            ctx.font = `700 ${isLandscape ? 28 : 30}px Inter, sans-serif`;
+            const m = ctx.measureText(lineText);
+            const boxW = Math.min(W - 48, m.width + 44);
+            const boxH = 56;
+            const boxY = isLandscape ? H * 0.62 : H * 0.54;
+
+            ctx.fillStyle = 'rgba(9, 9, 11, 0.82)';
+            drawRoundedRect(ctx, (W - boxW) / 2, boxY - boxH / 2, boxW, boxH, 14);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(lineText, W / 2, boxY + 1, boxW - 24);
+          } else {
+            // TikTok Bold Pop or Neon Cyber Glow
+            const fontSize = isLandscape ? 38 : 44;
+            const lineHeight = isLandscape ? 48 : 58;
+            ctx.font = `900 ${fontSize}px Montserrat, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const centerY = isLandscape ? H * 0.52 : H * 0.50;
+            const lineYStart = centerY - ((visibleWords.length - 1) * lineHeight) / 2;
+
+            visibleWords.forEach((word, idx) => {
+              const globalIdx = chunkStart + idx;
+              const isHighlighted = globalIdx === activeWordIndex;
+              const cleanWord = word.toUpperCase();
+              const yPos = lineYStart + idx * lineHeight;
+
+              ctx.save();
+              ctx.translate(W / 2, yPos);
+              ctx.scale(isHighlighted ? 1.08 : 1.0, isHighlighted ? 1.08 : 1.0);
+
+              if (capStyle === 'tiktok-pop' && isHighlighted) {
+                const wm = ctx.measureText(cleanWord);
+                const pw = wm.width + 32;
+                const ph = fontSize + 14;
+                ctx.fillStyle = '#7c3aed';
+                drawRoundedRect(ctx, -pw / 2, -ph / 2, pw, ph, 14);
+                ctx.fill();
+              }
+
+              ctx.lineJoin = 'round';
+              ctx.lineWidth = 9;
+              ctx.strokeStyle = '#09090b';
+              ctx.strokeText(cleanWord, 0, 0);
+
+              if (capStyle === 'neon-cyber') {
+                ctx.shadowColor = isHighlighted ? '#22d3ee' : '#e879f9';
+                ctx.shadowBlur = isHighlighted ? 22 : 8;
+                ctx.fillStyle = isHighlighted ? '#67e8f9' : '#f5d0fe';
+              } else {
+                ctx.fillStyle = isHighlighted ? '#facc15' : '#ffffff';
+              }
+
+              ctx.fillText(cleanWord, 0, 0);
+              ctx.restore();
+            });
+          }
+          ctx.restore();
+        }
+
+        // 7. PULSING BOTTOM CALL-TO-ACTION (CTA) PILL
+        if (templateStyle !== 'quote') {
+          const ctaText = ctaInput.value || 'Shop Now →';
+          const pulse = 1 + Math.sin(t * 5) * 0.03;
+          const ctaY = isLandscape ? H - 56 : H - 96;
+
+          ctx.save();
+          ctx.translate(W / 2, ctaY);
+          ctx.scale(pulse, pulse);
+
+          ctx.font = '800 20px Inter, sans-serif';
+          const ctaMetrics = ctx.measureText(ctaText);
+          const ctaW = Math.min(W - 60, Math.max(230, ctaMetrics.width + 54));
+          const ctaH = 50;
+
+          const ctaGrad = ctx.createLinearGradient(-ctaW / 2, 0, ctaW / 2, 0);
+          ctaGrad.addColorStop(0, '#7c3aed');
+          ctaGrad.addColorStop(1, '#10b981');
+
+          ctx.fillStyle = ctaGrad;
+          drawRoundedRect(ctx, -ctaW / 2, -ctaH / 2, ctaW, ctaH, 25);
+          ctx.fill();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(ctaText, 0, 1, ctaW - 28);
+          ctx.restore();
+        }
+
+        // 8. SUBTLE BOTTOM PROGRESS BAR
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
+        ctx.fillRect(0, H - 5, W, 5);
+        ctx.fillStyle = '#a78bfa';
+        ctx.fillRect(0, H - 5, W * progress, 5);
+
+        requestAnimationFrame(renderCanvasFrame);
+      }
+
+      // --- Export & Download Video (.webm) with Mixed Audio ---
+      function exportVideoFile() {
+        if (state.isRecording) return;
+        if (typeof MediaRecorder === 'undefined') {
+          showToast('Video recording is not supported in this browser. Try Chrome or Edge.', 'error');
+          return;
+        }
+
+        stopPlayback();
+        state.elapsedSec = 0;
+        state.isRecording = true;
+        recordingBadge.classList.remove('hidden');
+        exportBtnLabel.textContent = 'Recording...';
+        exportVideoBtn.disabled = true;
+
+        // Capture 30fps video stream from canvas
+        const combinedStream = canvas.captureStream(30);
+
+        // Attach Web Audio music track if active
+        if (musicPresetSelect.value !== 'none') {
+          MusicEngine.init();
+          if (MusicEngine.mediaDest) {
+            MusicEngine.mediaDest.stream.getAudioTracks().forEach((track) => {
+              combinedStream.addTrack(track);
+            });
+          }
+        }
+
+        const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+          ? 'video/webm;codecs=vp9'
+          : 'video/webm';
+
+        const recorder = new MediaRecorder(combinedStream, { mimeType, videoBitsPerSecond: 4500000 });
+        const chunks = [];
+
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+
+        recorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'video/webm' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          const cleanName = (topicInput.value || 'reelforge-pro')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-');
+          a.href = url;
+          a.download = `${cleanName}-${state.ratio.replace(':', 'x')}.webm`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+
+          state.isRecording = false;
+          recordingBadge.classList.add('hidden');
+          exportBtnLabel.textContent = 'Export Video';
+          exportVideoBtn.disabled = false;
+          showToast('Video exported! Saved to your device Downloads.');
+        };
+
+        recorder.start();
+        startPlayback();
+
+        const checkDone = setInterval(() => {
+          if (!state.isPlaying || state.elapsedSec >= state.durationSec) {
+            clearInterval(checkDone);
+            if (recorder.state === 'recording') {
+              recorder.stop();
+            }
+          }
+        }, 200);
+      }
+
+      // --- Event Listeners ---
+      document.querySelectorAll('.ratio-btn').forEach((btn) => {
+        btn.addEventListener('click', () => setAspectRatio(btn.getAttribute('data-ratio')));
+      });
+
+      modeTemplateBtn.addEventListener('click', () => {
+        state.mode = 'template';
+        modeTemplateBtn.className = 'flex items-center gap-3 p-3 rounded-lg text-left transition bg-violet-600/20 border border-violet-500/40 text-white';
+        modeAiGenBtn.className = 'flex items-center gap-3 p-3 rounded-lg text-left transition hover:bg-zinc-900 border border-transparent text-zinc-400';
+        modeBadge.textContent = 'Template & Stock B-Roll';
+      });
+
+      modeAiGenBtn.addEventListener('click', () => {
+        state.mode = 'aigen';
+        modeAiGenBtn.className = 'flex items-center gap-3 p-3 rounded-lg text-left transition bg-emerald-600/20 border border-emerald-500/40 text-white';
+        modeTemplateBtn.className = 'flex items-center gap-3 p-3 rounded-lg text-left transition hover:bg-zinc-900 border border-transparent text-zinc-400';
+        modeBadge.textContent = 'Generative AI Visuals Active';
+        showToast('Switched to Generative AI Visuals mode!');
+      });
+
+      document.querySelectorAll('.preset-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          topicInput.value = chip.getAttribute('data-topic');
+          generateAdContent();
+        });
+      });
+
+      generateAdBtn.addEventListener('click', generateAdContent);
+      scriptTextarea.addEventListener('input', syncScriptMetrics);
+
+      templateStyleSelect.addEventListener('change', () => {
+        ecommerceFieldsBox.classList.toggle('hidden', templateStyleSelect.value !== 'ecommerce');
+      });
+
+      // Brand Logo Upload
+      logoUploadInput.addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            state.logoImg = img;
+            clearLogoBtn.classList.remove('hidden');
+            showToast('Brand logo watermark added!');
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      clearLogoBtn.addEventListener('click', () => {
+        state.logoImg = null;
+        logoUploadInput.value = '';
+        clearLogoBtn.classList.add('hidden');
+        showToast('Brand logo removed.', 'info');
+      });
+
+      // Custom Gallery Photo / Video Upload
+      customMediaInput.addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+
+        if (file.type.startsWith('video/')) {
+          state.customMediaType = 'video';
+          state.customVideoReady = false;
+          customVideoEl.src = url;
+          customVideoEl.onloadeddata = () => {
+            state.customVideoReady = true;
+            if (state.isPlaying) customVideoEl.play().catch(() => {});
+          };
+          clearMediaBtn.classList.remove('hidden');
+          showToast('Custom video clip loaded as background!');
+        } else if (file.type.startsWith('image/')) {
+          const img = new Image();
+          img.onload = () => {
+            state.customMediaType = 'image';
+            state.customMediaImg = img;
+            clearMediaBtn.classList.remove('hidden');
+            showToast('Product photo loaded with Ken Burns motion!');
+          };
+          img.src = url;
+        }
+      });
+
+      clearMediaBtn.addEventListener('click', () => {
+        state.customMediaType = null;
+        state.customMediaImg = null;
+        state.customVideoReady = false;
+        customVideoEl.pause();
+        customVideoEl.src = '';
+        customMediaInput.value = '';
+        clearMediaBtn.classList.add('hidden');
+        showToast('Reverted to built-in backdrop.', 'info');
+      });
+
+      bgThemeSelect.addEventListener('change', async () => {
+        if (bgThemeSelect.value === 'pexels') {
+          await loadPexelsVideo(topicInput.value || 'business');
+        }
+      });
+
+      // Music Controls
+      musicPresetSelect.addEventListener('change', () => {
+        if (state.isPlaying) {
+          MusicEngine.start(musicPresetSelect.value);
+        }
+      });
+
+      musicVolumeRange.addEventListener('input', () => {
+        musicVolumeLabel.textContent = `${musicVolumeRange.value}%`;
+        MusicEngine.updateVolume();
+      });
+
+      // Voice Controls
+      voiceToggleBtn.addEventListener('click', () => {
+        state.voiceEnabled = !state.voiceEnabled;
+        voiceToggleBtn.textContent = state.voiceEnabled ? 'Voice: ON' : 'Voice: OFF';
+        voiceToggleBtn.className = state.voiceEnabled
+          ? 'px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+          : 'px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-zinc-800 text-zinc-400 border border-zinc-700';
+        if (!state.voiceEnabled && 'speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+      });
+
+      voiceSpeedRange.addEventListener('input', () => {
+        state.voiceSpeed = parseFloat(voiceSpeedRange.value);
+        voiceSpeedLabel.textContent = `${state.voiceSpeed.toFixed(2)}x`;
+        syncScriptMetrics();
+      });
+
+      playPauseBtn.addEventListener('click', () => {
+        if (state.isPlaying) {
+          stopPlayback();
+        } else {
+          startPlayback();
+        }
+      });
+
+      timelineTrack.addEventListener('click', (e) => {
+        const rect = timelineTrack.getBoundingClientRect();
+        const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        state.elapsedSec = ratio * state.durationSec;
+      });
+
+      exportVideoBtn.addEventListener('click', exportVideoFile);
+
+      // Modal Controls
+      document.getElementById('apiKeysBtn').addEventListener('click', () => apiKeysModal.classList.remove('hidden'));
+      document.getElementById('closeApiModalBtn').addEventListener('click', () => apiKeysModal.classList.add('hidden'));
+      document.getElementById('saveApiKeysBtn').addEventListener('click', () => {
+        state.geminiKey = geminiKeyInput.value.trim();
+        state.pexelsKey = pexelsKeyInput.value.trim();
+        localStorage.setItem('rf_gemini_key', state.geminiKey);
+        localStorage.setItem('rf_pexels_key', state.pexelsKey);
+        refreshApiStatus();
+        apiKeysModal.classList.add('hidden');
+        showToast('API keys saved securely in your browser!');
+      });
+
+      document.getElementById('pwaInfoBtn').addEventListener('click', () => pwaModal.classList.remove('hidden'));
+      document.getElementById('closePwaModalBtn').addEventListener('click', () => pwaModal.classList.add('hidden'));
+      document.getElementById('gotItPwaBtn').addEventListener('click', () => pwaModal.classList.add('hidden'));
+
+      // --- Initialize Studio ---
+      refreshApiStatus();
+      syncScriptMetrics();
+      requestAnimationFrame((now) => {
+        state.lastTimestamp = now;
+        renderCanvasFrame(now);
+      });
+    })();
+  </script>
+</body>
+</html>
