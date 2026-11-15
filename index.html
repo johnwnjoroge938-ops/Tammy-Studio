@@ -74,6 +74,15 @@
     input[type="file"]::file-selector-button:hover {
       background: #3f3f46;
     }
+
+    /* Hide scrollbar for horizontal mode tabs on mobile */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-violet-500 selection:text-white">
@@ -146,6 +155,28 @@
         </button>
       </div>
     </div>
+
+    <!-- Universal Studio Mode Switcher Bar -->
+    <div class="border-t border-zinc-800/70 bg-zinc-900/60">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <button type="button" data-studio-mode="ad" class="studio-mode-tab shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold bg-violet-600 text-white shadow-md shadow-violet-600/20 transition flex items-center gap-1.5">
+          <span>🛍️</span>
+          <span>Ad & Promo Maker</span>
+        </button>
+        <button type="button" data-studio-mode="explainer" class="studio-mode-tab shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 transition flex items-center gap-1.5">
+          <span>🎬</span>
+          <span>Universal Explainer</span>
+        </button>
+        <button type="button" data-studio-mode="comedy" class="studio-mode-tab shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 transition flex items-center gap-1.5">
+          <span>🎭</span>
+          <span>Comedy Skit Studio</span>
+        </button>
+        <button type="button" data-studio-mode="refiner" class="studio-mode-tab shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 transition flex items-center gap-1.5">
+          <span>🎨</span>
+          <span>Image Refiner & Motion</span>
+        </button>
+      </div>
+    </div>
   </header>
 
   <!-- Toast Notification Banner -->
@@ -162,256 +193,458 @@
     <!-- LEFT PANEL: Studio Controls (7 columns on desktop) -->
     <section class="lg:col-span-7 space-y-5">
 
-      <!-- 1. Format & Visual Engine Mode -->
+      <!-- 1. Universal Aspect Ratio & Multi-Scene Timeline -->
       <div class="bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400">1. Format & Visual Engine</span>
-          <span id="modeBadge" class="text-xs font-medium text-violet-400">Template & Stock B-Roll</span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400">1. Aspect Ratio & Multi-Scene Timeline</span>
+          <span id="totalDurationBadge" class="text-xs font-mono font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">Total: 12s (3 Scenes)</span>
         </div>
 
         <!-- Aspect Ratio Switcher -->
-        <div>
-          <label class="block text-xs font-medium text-zinc-300 mb-2">Video Aspect Ratio</label>
-          <div class="grid grid-cols-3 gap-2 p-1 bg-zinc-950 rounded-xl border border-zinc-800/80">
-            <button type="button" data-ratio="9:16" class="ratio-btn py-2 px-2 rounded-lg text-xs font-semibold bg-violet-600 text-white shadow transition flex flex-col items-center">
-              <span>9:16 Vertical</span>
-              <span class="text-[10px] opacity-80 font-normal">TikTok / Reels</span>
-            </button>
-            <button type="button" data-ratio="1:1" class="ratio-btn py-2 px-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition flex flex-col items-center">
-              <span>1:1 Square</span>
-              <span class="text-[10px] opacity-70 font-normal">IG / LinkedIn</span>
-            </button>
-            <button type="button" data-ratio="16:9" class="ratio-btn py-2 px-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition flex flex-col items-center">
-              <span>16:9 Wide</span>
-              <span class="text-[10px] opacity-70 font-normal">YouTube</span>
-            </button>
+        <div class="grid grid-cols-3 gap-2 p-1 bg-zinc-950 rounded-xl border border-zinc-800/80">
+          <button type="button" data-ratio="9:16" class="ratio-btn py-2 px-2 rounded-lg text-xs font-semibold bg-violet-600 text-white shadow transition flex flex-col items-center">
+            <span>9:16 Vertical</span>
+            <span class="text-[10px] opacity-80 font-normal">TikTok / Reels</span>
+          </button>
+          <button type="button" data-ratio="1:1" class="ratio-btn py-2 px-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition flex flex-col items-center">
+            <span>1:1 Square</span>
+            <span class="text-[10px] opacity-70 font-normal">IG / LinkedIn</span>
+          </button>
+          <button type="button" data-ratio="16:9" class="ratio-btn py-2 px-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition flex flex-col items-center">
+            <span>16:9 Wide</span>
+            <span class="text-[10px] opacity-70 font-normal">YouTube</span>
+          </button>
+        </div>
+
+        <!-- Multi-Scene Selector Pills -->
+        <div class="space-y-2.5 pt-1">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium text-zinc-300">Video Scenes (Click a scene to edit)</span>
+            <div class="flex items-center gap-1.5">
+              <button id="addSceneBtn" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-violet-600/20 hover:bg-violet-600/30 text-violet-300 border border-violet-500/30 transition">+ Add Scene</button>
+              <button id="removeSceneBtn" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 transition">Remove</button>
+            </div>
+          </div>
+
+          <div id="sceneTabsContainer" class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            <!-- Populated dynamically by JS -->
           </div>
         </div>
 
-        <!-- Generation Mode Toggle -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-1.5 bg-zinc-950 rounded-xl border border-zinc-800/80">
-          <button id="modeTemplateBtn" type="button" class="flex items-center gap-3 p-3 rounded-lg text-left transition bg-violet-600/20 border border-violet-500/40 text-white">
-            <div class="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center shrink-0">
-              <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-              </svg>
-            </div>
-            <div>
-              <div class="text-xs sm:text-sm font-semibold">Template & Stock B-Roll</div>
-              <div class="text-[11px] text-zinc-400">60fps motion graphics + HD stock</div>
-            </div>
-          </button>
-
-          <button id="modeAiGenBtn" type="button" class="flex items-center gap-3 p-3 rounded-lg text-left transition hover:bg-zinc-900 border border-transparent text-zinc-400">
-            <div class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center shrink-0">
-              <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <div>
-              <div class="text-xs sm:text-sm font-semibold">Generative AI Visuals</div>
-              <div class="text-[11px] text-zinc-400">Neural shaders & AI scene art</div>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <!-- 2. AI Script & Ad Copy Generator -->
-      <div class="bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 space-y-4">
-        <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400 block">2. AI Script & Hook Studio</span>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div class="sm:col-span-2">
-            <label for="topicInput" class="block text-xs font-medium text-zinc-300 mb-1.5">Product, Brand, or Video Topic</label>
-            <input id="topicInput" type="text" value="Handcrafted Leather Cardholder" placeholder="e.g., Organic Matcha Tea, Wireless Earbuds, Fitness App..."
-              class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition" />
+        <!-- Active Scene Timing & Transition -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 p-3 rounded-xl bg-zinc-950/90 border border-zinc-800/80">
+          <div>
+            <label for="sceneDurationSelect" class="block text-[11px] text-zinc-400 mb-1">Scene Duration</label>
+            <select id="sceneDurationSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
+              <option value="3">3 Seconds</option>
+              <option value="4" selected>4 Seconds</option>
+              <option value="5">5 Seconds</option>
+              <option value="6">6 Seconds</option>
+              <option value="8">8 Seconds</option>
+              <option value="10">10 Seconds</option>
+            </select>
           </div>
 
           <div>
-            <label for="durationSelect" class="block text-xs font-medium text-zinc-300 mb-1.5">Target Length</label>
-            <select id="durationSelect" class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-sm text-white focus:outline-none focus:border-violet-500 transition">
-              <option value="15">15s Fast Hook</option>
-              <option value="25" selected>25s Standard Ad</option>
-              <option value="40">40s Story Reel</option>
+            <label for="sceneTransitionSelect" class="block text-[11px] text-zinc-400 mb-1">Scene Transition</label>
+            <select id="sceneTransitionSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
+              <option value="fade" selected>Smooth Fade</option>
+              <option value="slide">Slide Left</option>
+              <option value="zoom">Zoom Cut</option>
+              <option value="wipe">Wipe Reveal</option>
+              <option value="none">Hard Cut</option>
+            </select>
+          </div>
+
+          <div class="col-span-2 sm:col-span-1">
+            <label for="sceneMotionSelect" class="block text-[11px] text-zinc-400 mb-1">Camera Motion</label>
+            <select id="sceneMotionSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
+              <option value="zoom-in" selected>Slow Zoom In</option>
+              <option value="zoom-out">Pull Back Zoom Out</option>
+              <option value="pan-right">Pan Left → Right</option>
+              <option value="pan-left">Pan Right → Left</option>
+              <option value="float">Gentle Float / Wave</option>
+              <option value="shake">Dramatic Impact Shake</option>
+              <option value="spotlight">Spotlight Pulse</option>
             </select>
           </div>
         </div>
+      </div>
 
-        <!-- Quick Topic Chips -->
-        <div class="flex flex-wrap items-center gap-1.5">
-          <span class="text-[11px] text-zinc-500 mr-1">Presets:</span>
-          <button type="button" data-topic="Handcrafted Leather Cardholder" class="preset-chip px-2.5 py-1 rounded-lg text-[11px] bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 transition">Leather Wallet</button>
-          <button type="button" data-topic="Morning Energy Mushroom Coffee" class="preset-chip px-2.5 py-1 rounded-lg text-[11px] bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 transition">Energy Coffee</button>
-          <button type="button" data-topic="Smart Home Posture Corrector" class="preset-chip px-2.5 py-1 rounded-lg text-[11px] bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 transition">Fitness & Posture</button>
-          <button type="button" data-topic="Noise Cancelling Studio Earbuds" class="preset-chip px-2.5 py-1 rounded-lg text-[11px] bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 transition">Tech Earbuds</button>
+      <!-- 2. Universal Topic & Multi-Scene Script Generator -->
+      <div class="bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400">2. Universal Story, Explainer & Ad Generator</span>
+          <span id="activeSceneBadge" class="text-[11px] font-semibold text-violet-400">Editing Scene 1</span>
         </div>
 
-        <!-- Generate Button -->
-        <button id="generateAdBtn" type="button" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-violet-600/25 flex items-center justify-center gap-2 transition active:scale-[0.99]">
-          <svg id="generateSpinner" class="hidden animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-          </svg>
-          <svg id="generateIcon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-          <span id="generateBtnText">Generate AI Script & Assets</span>
-        </button>
+        <!-- Global Topic Auto-Builder -->
+        <div class="space-y-2.5 p-3.5 rounded-xl bg-zinc-950/90 border border-zinc-800">
+          <label for="topicInput" class="block text-xs font-medium text-zinc-300">Enter ANY Topic, Story, Skit Idea, or Product</label>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input id="topicInput" type="text" value="How Deep Ocean Submarines Survive Extreme Pressure" placeholder="e.g., How the Pyramids Were Built, Office Coffee Comedy Skit, Smart Fitness Watch..."
+              class="flex-1 px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition" />
+            <button id="generateAdBtn" type="button" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-violet-600/25 flex items-center justify-center gap-2 shrink-0 transition active:scale-[0.99]">
+              <svg id="generateSpinner" class="hidden animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+              <svg id="generateIcon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span id="generateBtnText">Auto-Build All Scenes</span>
+            </button>
+          </div>
 
-        <!-- Editable Hook & Script -->
-        <div class="pt-2 border-t border-zinc-800/80 space-y-3">
-          <div>
-            <label for="hookInput" class="block text-xs font-medium text-zinc-400 mb-1">Top Hook Banner Text</label>
-            <input id="hookInput" type="text" value="STOP CARRYING BULKY WALLETS"
-              class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm font-semibold text-amber-300 focus:outline-none focus:border-violet-500" />
+          <!-- Quick Universal Topic Presets -->
+          <div class="flex flex-wrap items-center gap-1.5 pt-1">
+            <span class="text-[11px] text-zinc-500 mr-1">Try any topic:</span>
+            <button type="button" data-preset-mode="explainer" data-topic="How Deep Ocean Submarines Survive Extreme Pressure" class="preset-chip px-2.5 py-1 rounded-lg text-[11px] bg-zinc-800/90 hover:bg-zinc-700 text-zinc-300 transition">🌊 Science Explainer</button>
+            <button type="button" data-preset-mode="explainer" data-topic="Why Space Rockets Drop Booster Stages Mid-Flight" class="preset-chip px-2.5 py-1 rounded-lg text-[11px] bg-zinc-800/90 hover:bg-zinc-700 text-zinc-300 transition">🚀 Space Animation</button>
+            <button type="button" data-preset-mode="comedy" data-topic="When You Say Just Five More Minutes Before Work" class="preset-chip px-2.5 py-1 rounded-lg text-[11px] bg-zinc-800/90 hover:bg-zinc-700 text-zinc-300 transition">😂 Morning Comedy Skit</button>
+            <button type="button" data-preset-mode="ad" data-topic="Ultra-Slim Handcrafted Leather Cardholder" class="preset-chip px-2.5 py-1 rounded-lg text-[11px] bg-zinc-800/90 hover:bg-zinc-700 text-zinc-300 transition">🛍️ Product Ad</button>
+          </div>
+        </div>
+
+        <!-- Per-Scene Script, Visual Prompt & Callouts -->
+        <div class="space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="hookInput" class="block text-xs font-medium text-zinc-400 mb-1">Scene Top Headline / Banner</label>
+              <input id="hookInput" type="text" value="EXTREME OCEAN PRESSURE"
+                class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm font-semibold text-amber-300 focus:outline-none focus:border-violet-500" />
+            </div>
+
+            <div>
+              <label for="calloutInput" class="block text-xs font-medium text-zinc-400 mb-1">Floating Callout Badge / Arrow Label</label>
+              <input id="calloutInput" type="text" value="📍 4,000m Depth • 400x Pressure" placeholder="e.g., ⚡ Step 1: Hull Seal, 💡 Fun Fact..."
+                class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm text-cyan-300 focus:outline-none focus:border-violet-500" />
+            </div>
           </div>
 
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label for="scriptTextarea" class="block text-xs font-medium text-zinc-400">Voiceover & Synced Caption Script</label>
+              <label for="scriptTextarea" class="block text-xs font-medium text-zinc-400">Active Scene Voiceover & Captions</label>
               <span id="wordCountLabel" class="text-[11px] text-zinc-500">0 words</span>
             </div>
-            <textarea id="scriptTextarea" rows="3"
-              class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm text-zinc-200 leading-relaxed focus:outline-none focus:border-violet-500">Stop ruining your pockets with bulky old wallets. Meet our slim handcrafted leather cardholder. Holds eight cards plus cash in a sleek ultra-thin profile. Upgrade your everyday carry today.</textarea>
+            <textarea id="scriptTextarea" rows="2"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm text-zinc-200 leading-relaxed focus:outline-none focus:border-violet-500">At four thousand meters beneath the ocean surface, water pressure is four hundred times stronger than at sea level.</textarea>
           </div>
         </div>
       </div>
 
-      <!-- 3. Visual Templates & E-Commerce Branding -->
+      <!-- 3. Scene Visual Art Generator & Style Controls -->
       <div class="bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 space-y-4">
-        <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400 block">3. Templates, Captions & Brand Watermark</span>
+        <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400 block">3. Scene Visuals, Free AI Art & Backdrop</span>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label for="templateStyleSelect" class="block text-xs font-medium text-zinc-300 mb-1.5">Video Template Layout</label>
-            <select id="templateStyleSelect" class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm text-white focus:outline-none focus:border-violet-500">
-              <option value="ecommerce" selected>E-Commerce Product Promo</option>
-              <option value="viral">Standard Viral Hook</option>
-              <option value="quote">Minimalist Quote / Story</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="captionStyleSelect" class="block text-xs font-medium text-zinc-300 mb-1.5">Caption Animation Style</label>
-            <select id="captionStyleSelect" class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm text-white focus:outline-none focus:border-violet-500">
-              <option value="tiktok-pop" selected>TikTok Bold Pop (Active Pill)</option>
-              <option value="minimal-box">Minimalist Subtitle Box</option>
-              <option value="neon-cyber">Neon Cyber Glow</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- E-Commerce Promo Fields (Visible when E-Commerce Template is selected) -->
-        <div id="ecommerceFieldsBox" class="p-3.5 rounded-xl bg-zinc-950/90 border border-violet-500/25 space-y-3">
+        <!-- Free AI Scene Image Generator (Works for ANY Topic) -->
+        <div class="p-3.5 rounded-xl bg-zinc-950/90 border border-emerald-500/25 space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-semibold uppercase tracking-wider text-violet-400">E-Commerce Promo Overlays</span>
-            <span class="text-[10px] text-zinc-500">Floating Badges & CTA</span>
+            <span class="text-xs font-semibold text-emerald-400">✨ Free AI Scene Illustrator (Generate Any Visual)</span>
+            <span class="text-[10px] text-zinc-400">Zero API Key Needed</span>
           </div>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div class="sm:col-span-2">
+              <label for="sceneVisualPromptInput" class="block text-[11px] text-zinc-400 mb-1">Describe What Should Appear in This Scene</label>
+              <input id="sceneVisualPromptInput" type="text" value="3D cutaway illustration of a yellow deep sea research submarine descending into glowing blue ocean trenches"
+                class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+
             <div>
-              <label for="priceInput" class="block text-[11px] text-zinc-400 mb-1">Price Tag</label>
-              <input id="priceInput" type="text" value="$29.99" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs font-bold text-emerald-400 focus:outline-none focus:border-violet-500" />
+              <label for="artStyleSelect" class="block text-[11px] text-zinc-400 mb-1">Art / Animation Style</label>
+              <select id="artStyleSelect" class="w-full px-2.5 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white focus:outline-none focus:border-emerald-500">
+                <option value="3d-isometric" selected>3D Isometric Explainer</option>
+                <option value="flat-vector">Clean Flat Vector Diagram</option>
+                <option value="blueprint">Technical Blueprint / Cutaway</option>
+                <option value="comic">Expressive Comic / Cartoon</option>
+                <option value="cinematic">Cinematic Studio Photo</option>
+              </select>
             </div>
-            <div>
-              <label for="discountInput" class="block text-[11px] text-zinc-400 mb-1">Discount Sticker</label>
-              <input id="discountInput" type="text" value="50% OFF" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs font-bold text-rose-400 focus:outline-none focus:border-violet-500" />
-            </div>
-            <div class="col-span-2 sm:col-span-1">
-              <label for="ctaInput" class="block text-[11px] text-zinc-400 mb-1">CTA Pill Text</label>
-              <input id="ctaInput" type="text" value="Shop Now →" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs font-semibold text-white focus:outline-none focus:border-violet-500" />
-            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="generateSceneArtBtn" type="button" class="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition">
+              <svg id="artSpinner" class="hidden animate-spin w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+              <span id="generateArtBtnText">🎨 Generate Free AI Scene Art</span>
+            </button>
+            <button id="generateAllArtBtn" type="button" class="py-2 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs border border-zinc-700 transition">
+              Generate All Scenes
+            </button>
           </div>
         </div>
 
-        <!-- Brand Logo Watermark Upload -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end pt-1">
-          <div class="sm:col-span-2">
-            <div class="flex items-center justify-between mb-1.5">
-              <label for="logoUploadInput" class="block text-xs font-medium text-zinc-300">Brand Logo Watermark (Optional)</label>
-              <button id="clearLogoBtn" type="button" class="hidden text-[11px] text-rose-400 hover:underline">Remove</button>
-            </div>
-            <input id="logoUploadInput" type="file" accept="image/*" class="w-full text-xs text-zinc-400 bg-zinc-950 border border-zinc-800 rounded-xl p-1.5" />
-          </div>
-
-          <div>
-            <label for="logoCornerSelect" class="block text-xs font-medium text-zinc-300 mb-1.5">Logo Corner</label>
-            <select id="logoCornerSelect" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
-              <option value="top-left" selected>Top-Left</option>
-              <option value="top-right">Top-Right</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- 4. Media & Audio Studio -->
-      <div class="bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 space-y-4">
-        <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400 block">4. Media Backdrop, Music Synth & Voiceover</span>
-
-        <!-- Background Source & Gallery Upload -->
+        <!-- Procedural Theme or Custom Photo/Video Upload -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label for="bgThemeSelect" class="block text-xs font-medium text-zinc-300 mb-1.5">Built-In / Stock Backdrop</label>
-            <select id="bgThemeSelect" class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm text-white focus:outline-none focus:border-violet-500">
+            <label for="bgThemeSelect" class="block text-xs font-medium text-zinc-300 mb-1.5">Procedural Canvas Theme (Fallback)</label>
+            <select id="bgThemeSelect" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
               <option value="aurora" selected>Animated Aurora Motion Mesh</option>
+              <option value="blueprint">Engineering Blueprint Grid</option>
               <option value="sunset">Warm Luxury Amber & Gold</option>
-              <option value="cyber">Studio Obsidian & Neon Grid</option>
-              <option value="pexels">HD Stock Footage (Pexels API)</option>
+              <option value="comic-halftone">Vibrant Comedy Halftone</option>
+              <option value="cyber">Studio Obsidian & Neon</option>
             </select>
           </div>
 
           <div>
             <div class="flex items-center justify-between mb-1.5">
-              <label for="customMediaInput" class="block text-xs font-medium text-zinc-300">Upload Photo / Video Clip</label>
+              <label for="customMediaInput" class="block text-xs font-medium text-zinc-300">Or Upload Image / Video Clip</label>
               <button id="clearMediaBtn" type="button" class="hidden text-[11px] text-rose-400 hover:underline">Clear</button>
             </div>
             <input id="customMediaInput" type="file" accept="image/*,video/*" class="w-full text-xs text-zinc-400 bg-zinc-950 border border-zinc-800 rounded-xl p-1.5" />
           </div>
         </div>
+      </div>
 
-        <!-- Built-In Web Audio Music Synthesizer -->
-        <div class="p-3.5 rounded-xl bg-zinc-950/90 border border-zinc-800 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-              </svg>
-              Built-In Royalty-Free Music Synth
-            </span>
-            <span class="text-[10px] text-zinc-500">Included in Video Export</span>
+      <!-- 4A. MODE-SPECIFIC PANEL: Ad & E-Commerce Promo Controls -->
+      <div id="panelAdControls" class="bg-zinc-900/70 border border-violet-500/30 rounded-2xl p-4 sm:p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-violet-400">🛍️ Ad & E-Commerce Promo Overlays</span>
+          <label class="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer">
+            <input id="showAdBadgesToggle" type="checkbox" checked class="accent-violet-500 rounded" />
+            <span>Show Promo Badges</span>
+          </label>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2.5">
+          <div>
+            <label for="priceInput" class="block text-[11px] text-zinc-400 mb-1">Price Tag</label>
+            <input id="priceInput" type="text" value="$29.99" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-bold text-emerald-400 focus:outline-none focus:border-violet-500" />
+          </div>
+          <div>
+            <label for="discountInput" class="block text-[11px] text-zinc-400 mb-1">Discount Sticker</label>
+            <input id="discountInput" type="text" value="50% OFF" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-bold text-rose-400 focus:outline-none focus:border-violet-500" />
+          </div>
+          <div>
+            <label for="ctaInput" class="block text-[11px] text-zinc-400 mb-1">Bottom CTA Pill</label>
+            <input id="ctaInput" type="text" value="Shop Now →" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-semibold text-white focus:outline-none focus:border-violet-500" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 4B. MODE-SPECIFIC PANEL: Universal Explainer Diagram & Callouts -->
+      <div id="panelExplainerControls" class="hidden bg-zinc-900/70 border border-cyan-500/30 rounded-2xl p-4 sm:p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-cyan-400">🎬 Universal Explainer Vector Overlay</span>
+          <span class="text-[11px] text-zinc-400">Works for Science, History, Tech & How-To</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div>
+            <label for="explainerDiagramSelect" class="block text-[11px] text-zinc-400 mb-1">Animated Vector Graphic</label>
+            <select id="explainerDiagramSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-cyan-500">
+              <option value="auto" selected>Auto-Match Scene Topic</option>
+              <option value="ocean-vessel">Ocean / Vessel / Cutaway</option>
+              <option value="space-orbit">Rocket / Orbit / Physics</option>
+              <option value="growth-chart">Data Chart / Timeline</option>
+              <option value="gears-system">System Gears / Process Flow</option>
+              <option value="none">None (Clean Scene Art Only)</option>
+            </select>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
-            <div>
-              <label for="musicPresetSelect" class="block text-[11px] text-zinc-400 mb-1">Background Beat Preset</label>
-              <select id="musicPresetSelect" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white focus:outline-none focus:border-emerald-500">
-                <option value="upbeat" selected>Upbeat Promo Beat</option>
-                <option value="lofi">Chill Lo-Fi Groove</option>
-                <option value="cinematic">Cinematic Pulse</option>
-                <option value="none">None (Voice Only)</option>
-              </select>
-            </div>
+          <div>
+            <label for="stepBadgeInput" class="block text-[11px] text-zinc-400 mb-1">Chapter / Step Tag</label>
+            <input id="stepBadgeInput" type="text" value="PART 01" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-bold text-cyan-300 focus:outline-none focus:border-cyan-500" />
+          </div>
 
-            <div>
-              <div class="flex justify-between text-[11px] text-zinc-400 mb-1">
-                <span>Music Volume</span>
-                <span id="musicVolumeLabel" class="font-mono text-zinc-300">35%</span>
-              </div>
-              <input id="musicVolumeRange" type="range" min="0" max="100" step="5" value="35" class="w-full accent-emerald-500 cursor-pointer" />
+          <div>
+            <label for="pointerTargetSelect" class="block text-[11px] text-zinc-400 mb-1">Callout Pointer Position</label>
+            <select id="pointerTargetSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-cyan-500">
+              <option value="top-left" selected>Upper Left Pointer</option>
+              <option value="top-right">Upper Right Pointer</option>
+              <option value="center">Center Spotlight</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4C. MODE-SPECIFIC PANEL: Comedy Skit Avatar & Soundboard -->
+      <div id="panelComedyControls" class="hidden bg-zinc-900/70 border border-amber-500/30 rounded-2xl p-4 sm:p-5 space-y-3.5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-amber-400">🎭 Comedy Skit Talking Character & SFX</span>
+          <label class="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer">
+            <input id="showAvatarToggle" type="checkbox" checked class="accent-amber-500 rounded" />
+            <span>Show Talking Avatar</span>
+          </label>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div>
+            <label for="charNameInput" class="block text-[11px] text-zinc-400 mb-1">Character Name</label>
+            <input id="charNameInput" type="text" value="Alex" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-semibold text-white focus:outline-none focus:border-amber-500" />
+          </div>
+
+          <div>
+            <label for="charExpressionSelect" class="block text-[11px] text-zinc-400 mb-1">Facial Expression</label>
+            <select id="charExpressionSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-amber-500">
+              <option value="happy" selected>😄 Happy / Chill</option>
+              <option value="shocked">😱 Shocked / Panicked</option>
+              <option value="sarcastic">🙄 Sarcastic / Side-Eye</option>
+              <option value="angry">😡 Angry / Rant</option>
+              <option value="smug">😎 Smug / Genius</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="charHairColorSelect" class="block text-[11px] text-zinc-400 mb-1">Avatar Style</label>
+            <select id="charHairColorSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-amber-500">
+              <option value="#f59e0b" selected>Gold Hoodie</option>
+              <option value="#8b5cf6">Violet Hoodie</option>
+              <option value="#10b981">Emerald Hoodie</option>
+              <option value="#f43f5e">Crimson Hoodie</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="punchlineZoomToggle" class="block text-[11px] text-zinc-400 mb-1">Punchline Effect</label>
+            <select id="punchlineZoomToggle" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-amber-500">
+              <option value="none" selected>Normal Framing</option>
+              <option value="dramatic-zoom">Dramatic Face Zoom</option>
+              <option value="freeze-bw">Freeze Frame B&W</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Comedy SFX Soundboard (Synthesized Web Audio - Zero External URLs) -->
+        <div>
+          <span class="block text-[11px] text-zinc-400 mb-1.5">Instant Comedy Sound Effects (Plays & Records into Video)</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" data-sfx="rimshot" class="sfx-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-zinc-800 hover:bg-amber-600/30 text-amber-300 border border-zinc-700 transition">🥁 Ba-Dum-Tss</button>
+            <button type="button" data-sfx="boing" class="sfx-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-zinc-800 hover:bg-amber-600/30 text-emerald-300 border border-zinc-700 transition">🦘 Cartoon Boing</button>
+            <button type="button" data-sfx="trombone" class="sfx-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-zinc-800 hover:bg-amber-600/30 text-rose-300 border border-zinc-700 transition">🎺 Sad Trombone</button>
+            <button type="button" data-sfx="gasp" class="sfx-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-zinc-800 hover:bg-amber-600/30 text-cyan-300 border border-zinc-700 transition">😱 Dramatic Dun-Dun</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4D. MODE-SPECIFIC PANEL: Image Refiner & Color Grading -->
+      <div id="panelRefinerControls" class="hidden bg-zinc-900/70 border border-emerald-500/30 rounded-2xl p-4 sm:p-5 space-y-3.5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400">🎨 Image Refiner, Color Grade & Framing</span>
+          <button id="resetRefinerBtn" type="button" class="text-[11px] text-zinc-400 hover:text-white underline">Reset Filters</button>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div>
+            <div class="flex justify-between text-[11px] text-zinc-400 mb-1">
+              <span>Brightness</span>
+              <span id="brightnessVal" class="font-mono text-zinc-300">100%</span>
+            </div>
+            <input id="brightnessRange" type="range" min="50" max="160" value="100" class="w-full accent-emerald-500 cursor-pointer" />
+          </div>
+
+          <div>
+            <div class="flex justify-between text-[11px] text-zinc-400 mb-1">
+              <span>Contrast</span>
+              <span id="contrastVal" class="font-mono text-zinc-300">105%</span>
+            </div>
+            <input id="contrastRange" type="range" min="60" max="170" value="105" class="w-full accent-emerald-500 cursor-pointer" />
+          </div>
+
+          <div>
+            <div class="flex justify-between text-[11px] text-zinc-400 mb-1">
+              <span>Saturation</span>
+              <span id="saturationVal" class="font-mono text-zinc-300">110%</span>
+            </div>
+            <input id="saturationRange" type="range" min="0" max="180" value="110" class="w-full accent-emerald-500 cursor-pointer" />
+          </div>
+
+          <div>
+            <div class="flex justify-between text-[11px] text-zinc-400 mb-1">
+              <span>Crop / Zoom</span>
+              <span id="cropZoomVal" class="font-mono text-zinc-300">1.05x</span>
+            </div>
+            <input id="cropZoomRange" type="range" min="1.0" max="1.6" step="0.05" value="1.05" class="w-full accent-emerald-500 cursor-pointer" />
+          </div>
+
+          <div>
+            <div class="flex justify-between text-[11px] text-zinc-400 mb-1">
+              <span>Vignette Depth</span>
+              <span id="vignetteVal" class="font-mono text-zinc-300">45%</span>
+            </div>
+            <input id="vignetteRange" type="range" min="0" max="90" value="45" class="w-full accent-emerald-500 cursor-pointer" />
+          </div>
+
+          <div>
+            <label for="colorTintSelect" class="block text-[11px] text-zinc-400 mb-1">Color Grade Preset</label>
+            <select id="colorTintSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-emerald-500">
+              <option value="none" selected>Natural Studio</option>
+              <option value="warm-gold">Warm Cinema Gold</option>
+              <option value="cool-teal">Cool Arctic Teal</option>
+              <option value="noir">Dramatic Noir B&W</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Captions, Brand Watermark, Music & Voiceover Studio -->
+      <div class="bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 space-y-4">
+        <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400 block">4. Captions, Brand Logo, Music & Voiceover</span>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="captionStyleSelect" class="block text-xs font-medium text-zinc-300 mb-1.5">Caption Animation Style</label>
+            <select id="captionStyleSelect" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
+              <option value="tiktok-pop" selected>TikTok Bold Pop (Active Pill)</option>
+              <option value="comic-bubble">Comedy Speech Bubble</option>
+              <option value="minimal-box">Minimalist Subtitle Box</option>
+              <option value="neon-cyber">Neon Cyber Glow</option>
+            </select>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="logoUploadInput" class="block text-xs font-medium text-zinc-300">Brand Logo Watermark</label>
+              <button id="clearLogoBtn" type="button" class="hidden text-[11px] text-rose-400 hover:underline">Remove</button>
+            </div>
+            <div class="flex gap-2">
+              <input id="logoUploadInput" type="file" accept="image/*" class="flex-1 text-xs text-zinc-400 bg-zinc-950 border border-zinc-800 rounded-xl p-1" />
+              <select id="logoCornerSelect" class="px-2 py-1 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white">
+                <option value="top-left">Left</option>
+                <option value="top-right">Right</option>
+              </select>
             </div>
           </div>
         </div>
 
+        <!-- Built-In Web Audio Music Synthesizer -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-xl bg-zinc-950/90 border border-zinc-800">
+          <div>
+            <label for="musicPresetSelect" class="block text-[11px] text-zinc-400 mb-1">Royalty-Free Background Music</label>
+            <select id="musicPresetSelect" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white focus:outline-none focus:border-emerald-500">
+              <option value="explainer" selected>Curious Explainer Synth</option>
+              <option value="upbeat">Upbeat Promo Beat</option>
+              <option value="comedy">Quirky Comedy Pluck</option>
+              <option value="cinematic">Dramatic Tension Pulse</option>
+              <option value="lofi">Chill Lo-Fi Groove</option>
+              <option value="none">None (Voice Only)</option>
+            </select>
+          </div>
+
+          <div>
+            <div class="flex justify-between text-[11px] text-zinc-400 mb-1">
+              <span>Music Volume</span>
+              <span id="musicVolumeLabel" class="font-mono text-zinc-300">35%</span>
+            </div>
+            <input id="musicVolumeRange" type="range" min="0" max="100" step="5" value="35" class="w-full accent-emerald-500 cursor-pointer my-1.5" />
+          </div>
+        </div>
+
         <!-- Voiceover Selector & Speed Controls -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <div class="flex items-center justify-between mb-1.5">
-              <label for="voiceSelect" class="text-xs font-medium text-zinc-300">AI Voiceover</label>
+              <label for="voiceSelect" class="text-xs font-medium text-zinc-300">AI Voiceover Narrator</label>
               <button id="voiceToggleBtn" type="button" class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                 Voice: ON
               </button>
             </div>
             <select id="voiceSelect" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
-              <option value="">Default Neural Voice</option>
+              <option value="">Auto Best English Voice</option>
             </select>
           </div>
 
@@ -428,7 +661,7 @@
     </section>
 
     <!-- RIGHT PANEL: Live Responsive Preview & Export Studio (5 columns) -->
-    <section class="lg:col-span-5 flex flex-col items-center lg:sticky lg:top-20">
+    <section class="lg:col-span-5 flex flex-col items-center lg:sticky lg:top-28">
       <div id="stageCard" class="w-full max-w-[380px] bg-zinc-900/85 border border-zinc-800 rounded-3xl p-4 phone-stage-shadow transition-all duration-300">
 
         <!-- Stage Top Status -->
@@ -437,7 +670,7 @@
             <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
             <span id="stageRatioTitle" class="text-xs font-semibold text-zinc-300">9:16 Vertical Preview</span>
           </div>
-          <span id="stageResolutionLabel" class="text-[11px] font-mono text-zinc-400">540×960 • 60FPS</span>
+          <span id="stageSceneIndicator" class="text-[11px] font-mono text-violet-300 bg-violet-500/15 px-2 py-0.5 rounded-md">Scene 1/3</span>
         </div>
 
         <!-- Dynamic Aspect Ratio Canvas Container -->
@@ -451,18 +684,17 @@
           </div>
         </div>
 
-        <!-- Hidden video elements for Pexels or Custom Gallery Video -->
-        <video id="stockVideoEl" crossorigin="anonymous" muted loop playsinline class="hidden"></video>
+        <!-- Hidden video element for Custom Gallery Video -->
         <video id="customVideoEl" muted loop playsinline class="hidden"></video>
 
         <!-- Timeline Progress Bar -->
         <div class="mt-3.5 space-y-1.5">
-          <div class="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden cursor-pointer" id="timelineTrack">
+          <div class="w-full h-2 bg-zinc-800 rounded-full overflow-hidden cursor-pointer relative" id="timelineTrack">
             <div id="timelineFill" class="h-full bg-gradient-to-r from-violet-500 to-emerald-400 w-0 transition-all duration-75"></div>
           </div>
           <div class="flex justify-between text-[11px] font-mono text-zinc-400">
             <span id="currentTimeLabel">00:00</span>
-            <span id="totalTimeLabel">00:15</span>
+            <span id="totalTimeLabel">00:12</span>
           </div>
         </div>
 
@@ -475,7 +707,7 @@
             <svg id="pauseIcon" class="hidden w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
               <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
             </svg>
-            <span id="playPauseLabel">Play Preview</span>
+            <span id="playPauseLabel">Play Full Video</span>
           </button>
 
           <button id="exportVideoBtn" type="button" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/20 transition">
@@ -563,82 +795,111 @@
     (function () {
       // --- Aspect Ratio Configurations ---
       const RATIOS = {
-        '9:16': { width: 540, height: 960, label: '9:16 Vertical Preview', cssAspect: 'aspect-[9/16]', maxCardW: 'max-w-[380px]', pexelsOrientation: 'portrait' },
-        '1:1':  { width: 720, height: 720, label: '1:1 Square Feed Preview', cssAspect: 'aspect-square', maxCardW: 'max-w-[420px]', pexelsOrientation: 'square' },
-        '16:9': { width: 960, height: 540, label: '16:9 Landscape Preview', cssAspect: 'aspect-video', maxCardW: 'max-w-[500px]', pexelsOrientation: 'landscape' },
+        '9:16': { width: 540, height: 960, label: '9:16 Vertical Preview', cssAspect: 'aspect-[9/16]', maxCardW: 'max-w-[380px]' },
+        '1:1':  { width: 720, height: 720, label: '1:1 Square Feed Preview', cssAspect: 'aspect-square', maxCardW: 'max-w-[420px]' },
+        '16:9': { width: 960, height: 540, label: '16:9 Landscape Preview', cssAspect: 'aspect-video', maxCardW: 'max-w-[500px]' },
       };
 
-      // --- State Management ---
+      // --- Art Style Prompt Enhancers ---
+      const ART_STYLE_MODIFIERS = {
+        '3d-isometric': '3D isometric render, Pixar and Kurzgesagt clean educational style, crisp studio lighting, vibrant colors, high detail',
+        'flat-vector': 'Clean flat vector infographic illustration, modern minimalist motion graphics design, bold shapes, high contrast',
+        'blueprint': 'Technical engineering blueprint cutaway diagram, glowing cyan and white schematic lines on dark navy background, ultra sharp',
+        'comic': 'Expressive 2D cartoon comic illustration, bold ink outlines, vibrant expressive colors, dynamic framing',
+        'cinematic': 'Cinematic photorealistic studio shot, dramatic rim lighting, shallow depth of field, 8k resolution',
+      };
+
+      // --- Helper to Create a New Scene Object ---
+      function createScene(overrides = {}) {
+        return {
+          duration: 4,
+          transition: 'fade',
+          motion: 'zoom-in',
+          hook: 'SCENE HEADLINE',
+          callout: '',
+          script: 'Add your voiceover narration for this scene.',
+          visualPrompt: 'Modern vibrant abstract studio background with glowing geometric shapes',
+          artStyle: '3d-isometric',
+          bgTheme: 'aurora',
+          diagramType: 'auto',
+          stepBadge: 'PART 01',
+          pointerTarget: 'top-left',
+          charName: 'Alex',
+          charExpression: 'happy',
+          punchlineEffect: 'none',
+          // Runtime media assets per scene
+          aiImage: null,
+          customMediaType: null, // 'image' | 'video' | null
+          customMediaImg: null,
+          customVideoUrl: null,
+          ...overrides,
+        };
+      }
+
+      // --- Master Application State ---
       const state = {
+        studioMode: 'ad', // 'ad' | 'explainer' | 'comedy' | 'refiner'
         ratio: '9:16',
-        mode: 'template', // 'template' | 'aigen'
+        activeSceneIndex: 0,
+        scenes: [
+          createScene({
+            duration: 4,
+            hook: 'STOP CARRYING BULKY WALLETS',
+            callout: '✨ Ultra-Slim 6mm Profile',
+            script: 'Stop ruining your pockets with bulky old wallets. Meet our handcrafted leather cardholder.',
+            visualPrompt: 'Luxury minimalist brown leather cardholder on dark slate stone, dramatic studio lighting',
+            artStyle: 'cinematic',
+            bgTheme: 'sunset',
+            stepBadge: '01 • PROBLEM',
+          }),
+          createScene({
+            duration: 4,
+            hook: 'HOLDS 8 CARDS + CASH',
+            callout: '🛡️ RFID Shield Built-In',
+            script: 'It holds eight cards plus folded cash in an ultra-thin profile with built-in RFID protection.',
+            visualPrompt: '3D exploded cutaway view of a slim leather wallet showing aluminum RFID core and neatly stacked cards',
+            artStyle: '3d-isometric',
+            bgTheme: 'blueprint',
+            stepBadge: '02 • DESIGN',
+          }),
+          createScene({
+            duration: 4,
+            hook: 'UPGRADE YOUR EVERYDAY CARRY',
+            callout: '🔥 Limited 50% Launch Offer',
+            script: 'Upgrade your everyday carry today and save fifty percent while launch stock lasts.',
+            visualPrompt: 'Close-up hand sliding a sleek leather wallet effortlessly into a tailored pocket, warm golden light',
+            artStyle: 'cinematic',
+            bgTheme: 'aurora',
+            stepBadge: '03 • OFFER',
+          }),
+        ],
+        // Playback State
         isPlaying: false,
         isRecording: false,
-        voiceEnabled: true,
-        voiceSpeed: 1.05,
-        durationSec: 15,
         elapsedSec: 0,
         lastTimestamp: 0,
-        words: [],
-        // Custom Uploads
+        lastSpokenSceneIndex: -1,
+        // Audio & Voice
+        voiceEnabled: true,
+        voiceSpeed: 1.05,
+        // Brand Logo
         logoImg: null,
-        customMediaType: null, // 'image' | 'video' | null
-        customMediaImg: null,
-        customVideoReady: false,
-        // External Stock
-        pexelsVideoReady: false,
-        // Procedural Particles for Generative AI Mode
-        particles: Array.from({ length: 45 }, () => ({
-          x: Math.random(),
-          y: Math.random(),
-          r: 1.5 + Math.random() * 3.5,
-          vx: (Math.random() - 0.5) * 0.08,
-          vy: -0.02 - Math.random() * 0.06,
-          hue: Math.random() > 0.5 ? 265 : 160,
-        })),
+        // Image Refiner Filters
+        filters: {
+          brightness: 100,
+          contrast: 105,
+          saturation: 110,
+          cropZoom: 1.05,
+          vignette: 45,
+          tint: 'none',
+        },
         // API Keys
         geminiKey: localStorage.getItem('rf_gemini_key') || '',
         pexelsKey: localStorage.getItem('rf_pexels_key') || '',
       };
 
-      // --- Built-In Smart Topic Scripts (Zero-API-Key Experience) ---
-      const BUILTIN_SCRIPTS = [
-        {
-          keywords: ['leather', 'wallet', 'cardholder', 'bag'],
-          hook: 'STOP CARRYING BULKY WALLETS',
-          script: 'Stop ruining your pockets with bulky old wallets. Meet our slim handcrafted leather cardholder. Holds eight cards plus cash in a sleek ultra-thin profile. Upgrade your everyday carry today.',
-          price: '$29.99',
-          discount: '50% OFF',
-          cta: 'Shop Now →',
-        },
-        {
-          keywords: ['coffee', 'energy', 'matcha', 'tea', 'drink'],
-          hook: 'TIRED OF AFTERNOON CRASHES?',
-          script: 'Skip the jittery sugar drinks and upgrade your morning ritual. Our organic mushroom energy coffee delivers smooth all-day focus with zero crash. Taste the difference on your very first cup.',
-          price: '$24.00',
-          discount: 'FREE MUG',
-          cta: 'Claim Offer →',
-        },
-        {
-          keywords: ['fitness', 'posture', 'workout', 'gym', 'health'],
-          hook: 'FIX YOUR POSTURE IN 10 MINUTES',
-          script: 'Sitting at a desk all day destroys your back and energy. Our smart posture trainer gently aligns your shoulders in just ten minutes a day. Feel taller, stronger, and pain-free starting this week.',
-          price: '$34.95',
-          discount: '40% OFF',
-          cta: 'Order Today →',
-        },
-        {
-          keywords: ['earbuds', 'tech', 'audio', 'headphones', 'phone'],
-          hook: 'STUDIO SOUND WITHOUT THE PRICE',
-          script: 'Why pay three hundred dollars for wireless audio? Experience deep bass, crystal-clear calls, and forty hours of battery life with our noise-cancelling studio earbuds. Hear every detail anywhere you go.',
-          price: '$49.99',
-          discount: 'SAVE $100',
-          cta: 'Get Yours →',
-        },
-      ];
-
-      // --- Web Audio Royalty-Free Music Synthesizer ---
-      const MusicEngine = {
+      // --- Web Audio Royalty-Free Music & Comedy SFX Synthesizer ---
+      const AudioEngine = {
         ctx: null,
         masterGain: null,
         mediaDest: null,
@@ -666,16 +927,19 @@
           this.masterGain.gain.setTargetAtTime(vol * 0.35, this.ctx.currentTime, 0.05);
         },
 
-        playTone(freq, type, duration, gainVal, timeOffset = 0) {
-          if (!this.ctx) return;
+        playTone(freq, type, duration, gainVal, timeOffset = 0, slideToFreq = null) {
+          this.init();
           const now = this.ctx.currentTime + timeOffset;
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           osc.type = type;
           osc.frequency.setValueAtTime(freq, now);
+          if (slideToFreq) {
+            osc.frequency.exponentialRampToValueAtTime(slideToFreq, now + duration);
+          }
 
           gain.gain.setValueAtTime(0.001, now);
-          gain.gain.exponentialRampToValueAtTime(gainVal, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(gainVal, now + 0.015);
           gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
           osc.connect(gain);
@@ -685,31 +949,36 @@
         },
 
         playKick(timeOffset = 0) {
-          if (!this.ctx) return;
-          const now = this.ctx.currentTime + timeOffset;
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(135, now);
-          osc.frequency.exponentialRampToValueAtTime(38, now + 0.14);
-
-          gain.gain.setValueAtTime(0.55, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
-
-          osc.connect(gain);
-          gain.connect(this.masterGain);
-          osc.start(now);
-          osc.stop(now + 0.2);
+          this.playTone(135, 'sine', 0.16, 0.55, timeOffset, 38);
         },
 
-        start(preset) {
-          this.stop();
+        playSFX(type) {
+          this.init();
+          if (type === 'rimshot') {
+            this.playKick(0);
+            this.playTone(240, 'triangle', 0.09, 0.45, 0.16, 120);
+            this.playTone(5500, 'square', 0.35, 0.28, 0.32, 3200);
+          } else if (type === 'boing') {
+            this.playTone(160, 'sine', 0.45, 0.5, 0, 620);
+          } else if (type === 'trombone') {
+            this.playTone(293.66, 'sawtooth', 0.28, 0.32, 0);
+            this.playTone(277.18, 'sawtooth', 0.28, 0.32, 0.3);
+            this.playTone(261.63, 'sawtooth', 0.28, 0.32, 0.6);
+            this.playTone(246.94, 'sawtooth', 0.75, 0.35, 0.9, 215);
+          } else if (type === 'gasp') {
+            this.playTone(110, 'sawtooth', 0.22, 0.45, 0);
+            this.playTone(82.41, 'sawtooth', 0.65, 0.5, 0.24);
+          }
+        },
+
+        startMusic(preset) {
+          this.stopMusic();
           if (preset === 'none') return;
           this.init();
           this.step = 0;
 
-          const tempos = { upbeat: 230, lofi: 340, cinematic: 300 };
-          const intervalMs = tempos[preset] || 250;
+          const tempos = { upbeat: 230, explainer: 280, comedy: 240, cinematic: 310, lofi: 350 };
+          const intervalMs = tempos[preset] || 260;
 
           const tick = () => {
             if (!state.isPlaying) return;
@@ -719,9 +988,20 @@
               if (s % 4 === 0) this.playKick();
               if (s % 2 === 1) this.playTone(6200, 'triangle', 0.04, 0.08);
               const notes = [261.63, 329.63, 392.0, 523.25, 392.0, 329.63, 293.66, 392.0];
-              if (s % 2 === 0) {
-                this.playTone(notes[(s / 2) % notes.length], 'triangle', 0.22, 0.22);
-              }
+              if (s % 2 === 0) this.playTone(notes[(s / 2) % notes.length], 'triangle', 0.22, 0.2);
+            } else if (preset === 'explainer') {
+              const arp = [261.63, 329.63, 392.0, 493.88, 523.25, 493.88, 392.0, 329.63];
+              this.playTone(arp[s % arp.length], 'sine', 0.24, 0.18);
+              if (s % 4 === 0) this.playTone(130.81, 'triangle', 0.45, 0.16);
+            } else if (preset === 'comedy') {
+              const pluck = [392.0, 0, 440.0, 392.0, 523.25, 0, 493.88, 0];
+              const note = pluck[s % pluck.length];
+              if (note > 0) this.playTone(note, 'triangle', 0.14, 0.24);
+              if (s % 4 === 2) this.playTone(196.0, 'sine', 0.12, 0.2);
+            } else if (preset === 'cinematic') {
+              if (s % 4 === 0) this.playKick();
+              const bass = [65.41, 65.41, 51.91, 58.27];
+              if (s % 4 === 0) this.playTone(bass[(s / 4) % bass.length], 'sawtooth', 0.7, 0.14);
             } else if (preset === 'lofi') {
               if (s === 0 || s === 6 || s === 10) this.playKick();
               const chords = [
@@ -731,20 +1011,9 @@
                 [164.81, 196.0, 246.94],
               ];
               if (s % 4 === 0) {
-                const chord = chords[(s / 4) % chords.length];
-                chord.forEach((f) => this.playTone(f, 'sine', 0.85, 0.14));
-              }
-            } else if (preset === 'cinematic') {
-              if (s % 4 === 0) this.playKick();
-              const bass = [65.41, 65.41, 51.91, 58.27];
-              if (s % 4 === 0) {
-                this.playTone(bass[(s / 4) % bass.length], 'sawtooth', 0.7, 0.15);
-              }
-              if (s % 2 === 0) {
-                this.playTone(261.63, 'sine', 0.25, 0.12);
+                chords[(s / 4) % chords.length].forEach((f) => this.playTone(f, 'sine', 0.85, 0.12));
               }
             }
-
             this.step++;
           };
 
@@ -752,7 +1021,7 @@
           this.intervalId = setInterval(tick, intervalMs);
         },
 
-        stop() {
+        stopMusic() {
           if (this.intervalId) {
             clearInterval(this.intervalId);
             this.intervalId = null;
@@ -760,56 +1029,91 @@
         },
       };
 
-      // --- DOM Elements ---
+      // --- DOM References ---
       const canvas = document.getElementById('reelCanvas');
       const ctx = canvas.getContext('2d');
       const stageCard = document.getElementById('stageCard');
       const canvasWrapper = document.getElementById('canvasWrapper');
       const stageRatioTitle = document.getElementById('stageRatioTitle');
-      const stageResolutionLabel = document.getElementById('stageResolutionLabel');
-
-      const stockVideoEl = document.getElementById('stockVideoEl');
+      const stageSceneIndicator = document.getElementById('stageSceneIndicator');
       const customVideoEl = document.getElementById('customVideoEl');
 
-      const modeTemplateBtn = document.getElementById('modeTemplateBtn');
-      const modeAiGenBtn = document.getElementById('modeAiGenBtn');
-      const modeBadge = document.getElementById('modeBadge');
+      const totalDurationBadge = document.getElementById('totalDurationBadge');
+      const sceneTabsContainer = document.getElementById('sceneTabsContainer');
+      const activeSceneBadge = document.getElementById('activeSceneBadge');
+
+      const sceneDurationSelect = document.getElementById('sceneDurationSelect');
+      const sceneTransitionSelect = document.getElementById('sceneTransitionSelect');
+      const sceneMotionSelect = document.getElementById('sceneMotionSelect');
 
       const topicInput = document.getElementById('topicInput');
-      const durationSelect = document.getElementById('durationSelect');
       const generateAdBtn = document.getElementById('generateAdBtn');
       const generateBtnText = document.getElementById('generateBtnText');
       const generateSpinner = document.getElementById('generateSpinner');
       const generateIcon = document.getElementById('generateIcon');
 
       const hookInput = document.getElementById('hookInput');
+      const calloutInput = document.getElementById('calloutInput');
       const scriptTextarea = document.getElementById('scriptTextarea');
       const wordCountLabel = document.getElementById('wordCountLabel');
 
-      const templateStyleSelect = document.getElementById('templateStyleSelect');
-      const captionStyleSelect = document.getElementById('captionStyleSelect');
-      const ecommerceFieldsBox = document.getElementById('ecommerceFieldsBox');
-      const priceInput = document.getElementById('priceInput');
-      const discountInput = document.getElementById('discountInput');
-      const ctaInput = document.getElementById('ctaInput');
-
-      const logoUploadInput = document.getElementById('logoUploadInput');
-      const clearLogoBtn = document.getElementById('clearLogoBtn');
-      const logoCornerSelect = document.getElementById('logoCornerSelect');
+      const sceneVisualPromptInput = document.getElementById('sceneVisualPromptInput');
+      const artStyleSelect = document.getElementById('artStyleSelect');
+      const generateSceneArtBtn = document.getElementById('generateSceneArtBtn');
+      const generateArtBtnText = document.getElementById('generateArtBtnText');
+      const artSpinner = document.getElementById('artSpinner');
+      const generateAllArtBtn = document.getElementById('generateAllArtBtn');
 
       const bgThemeSelect = document.getElementById('bgThemeSelect');
       const customMediaInput = document.getElementById('customMediaInput');
       const clearMediaBtn = document.getElementById('clearMediaBtn');
 
+      // Mode Panels
+      const panelAdControls = document.getElementById('panelAdControls');
+      const panelExplainerControls = document.getElementById('panelExplainerControls');
+      const panelComedyControls = document.getElementById('panelComedyControls');
+      const panelRefinerControls = document.getElementById('panelRefinerControls');
+
+      // Ad Controls
+      const showAdBadgesToggle = document.getElementById('showAdBadgesToggle');
+      const priceInput = document.getElementById('priceInput');
+      const discountInput = document.getElementById('discountInput');
+      const ctaInput = document.getElementById('ctaInput');
+
+      // Explainer Controls
+      const explainerDiagramSelect = document.getElementById('explainerDiagramSelect');
+      const stepBadgeInput = document.getElementById('stepBadgeInput');
+      const pointerTargetSelect = document.getElementById('pointerTargetSelect');
+
+      // Comedy Controls
+      const showAvatarToggle = document.getElementById('showAvatarToggle');
+      const charNameInput = document.getElementById('charNameInput');
+      const charExpressionSelect = document.getElementById('charExpressionSelect');
+      const charHairColorSelect = document.getElementById('charHairColorSelect');
+      const punchlineZoomToggle = document.getElementById('punchlineZoomToggle');
+
+      // Refiner Controls
+      const brightnessRange = document.getElementById('brightnessRange');
+      const contrastRange = document.getElementById('contrastRange');
+      const saturationRange = document.getElementById('saturationRange');
+      const cropZoomRange = document.getElementById('cropZoomRange');
+      const vignetteRange = document.getElementById('vignetteRange');
+      const colorTintSelect = document.getElementById('colorTintSelect');
+
+      // Global Audio / Captions / Logo
+      const captionStyleSelect = document.getElementById('captionStyleSelect');
+      const logoUploadInput = document.getElementById('logoUploadInput');
+      const clearLogoBtn = document.getElementById('clearLogoBtn');
+      const logoCornerSelect = document.getElementById('logoCornerSelect');
       const musicPresetSelect = document.getElementById('musicPresetSelect');
       const musicVolumeRange = document.getElementById('musicVolumeRange');
       const musicVolumeLabel = document.getElementById('musicVolumeLabel');
-
       const voiceToggleBtn = document.getElementById('voiceToggleBtn');
       const voiceSelect = document.getElementById('voiceSelect');
       const voiceSpeedRange = document.getElementById('voiceSpeedRange');
       const voiceSpeedLabel = document.getElementById('voiceSpeedLabel');
 
+      // Stage Controls
       const playPauseBtn = document.getElementById('playPauseBtn');
       const playPauseLabel = document.getElementById('playPauseLabel');
       const playIcon = document.getElementById('playIcon');
@@ -817,19 +1121,19 @@
       const exportVideoBtn = document.getElementById('exportVideoBtn');
       const exportBtnLabel = document.getElementById('exportBtnLabel');
       const recordingBadge = document.getElementById('recordingBadge');
-
       const timelineTrack = document.getElementById('timelineTrack');
       const timelineFill = document.getElementById('timelineFill');
       const currentTimeLabel = document.getElementById('currentTimeLabel');
       const totalTimeLabel = document.getElementById('totalTimeLabel');
 
+      // Modals
       const apiKeysModal = document.getElementById('apiKeysModal');
       const geminiKeyInput = document.getElementById('geminiKeyInput');
       const pexelsKeyInput = document.getElementById('pexelsKeyInput');
       const apiStatusDot = document.getElementById('apiStatusDot');
       const pwaModal = document.getElementById('pwaModal');
 
-      // --- Non-blocking Toast Helper ---
+      // --- Non-blocking Toast ---
       let toastTimeout = null;
       function showToast(msg, type = 'success') {
         const banner = document.getElementById('toastBanner');
@@ -846,133 +1150,238 @@
         }, 3500);
       }
 
-      // --- Populate Browser Voices ---
-      function populateVoices() {
-        if (!('speechSynthesis' in window)) return;
-        const voices = window.speechSynthesis.getVoices();
-        if (!voices.length) return;
-        const currentVal = voiceSelect.value;
-        voiceSelect.innerHTML = '<option value="">Auto Best English Voice</option>';
-        voices
-          .filter((v) => v.lang.startsWith('en'))
-          .forEach((v) => {
-            const opt = document.createElement('option');
-            opt.value = v.name;
-            opt.textContent = `${v.name.replace(/Microsoft |Google /g, '')} (${v.lang})`;
-            voiceSelect.appendChild(opt);
-          });
-        if (currentVal) voiceSelect.value = currentVal;
-      }
-      if ('speechSynthesis' in window) {
-        populateVoices();
-        window.speechSynthesis.onvoiceschanged = populateVoices;
-      }
-
-      // --- Update API Key Status ---
-      function refreshApiStatus() {
-        geminiKeyInput.value = state.geminiKey;
-        pexelsKeyInput.value = state.pexelsKey;
-        apiStatusDot.className =
-          state.geminiKey || state.pexelsKey
-            ? 'w-2 h-2 rounded-full bg-emerald-400'
-            : 'w-2 h-2 rounded-full bg-zinc-600';
-      }
-
-      // --- Switch Aspect Ratio ---
-      function setAspectRatio(ratioKey) {
-        const cfg = RATIOS[ratioKey];
-        if (!cfg) return;
-        state.ratio = ratioKey;
-        canvas.width = cfg.width;
-        canvas.height = cfg.height;
-        stageRatioTitle.textContent = cfg.label;
-        stageResolutionLabel.textContent = `${cfg.width}×${cfg.height} • 60FPS`;
-
-        canvasWrapper.className = `relative w-full ${cfg.cssAspect} rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800 mx-auto transition-all duration-300`;
-        stageCard.className = `w-full ${cfg.maxCardW} bg-zinc-900/85 border border-zinc-800 rounded-3xl p-4 phone-stage-shadow transition-all duration-300`;
-
-        document.querySelectorAll('.ratio-btn').forEach((btn) => {
-          const active = btn.getAttribute('data-ratio') === ratioKey;
-          btn.className = active
-            ? 'ratio-btn py-2 px-2 rounded-lg text-xs font-semibold bg-violet-600 text-white shadow transition flex flex-col items-center'
-            : 'ratio-btn py-2 px-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition flex flex-col items-center';
-        });
-
-        if (bgThemeSelect.value === 'pexels' && state.pexelsKey) {
-          loadPexelsVideo(topicInput.value || 'business');
-        }
-      }
-
-      // --- Synchronize Word Count & Duration ---
-      function syncScriptMetrics() {
-        const raw = scriptTextarea.value.trim();
-        state.words = raw ? raw.split(/\s+/) : [];
-        wordCountLabel.textContent = `${state.words.length} words`;
-
-        const wordsPerSec = 2.45 * state.voiceSpeed;
-        const estimated = Math.max(6, Math.ceil(state.words.length / wordsPerSec));
-        state.durationSec = estimated;
-        totalTimeLabel.textContent = formatTime(state.durationSec);
+      // --- Helpers ---
+      function getTotalDuration() {
+        return state.scenes.reduce((sum, s) => sum + (Number(s.duration) || 4), 0);
       }
 
       function formatTime(sec) {
         const s = Math.max(0, Math.floor(sec));
-        const mins = String(Math.floor(s / 60)).padStart(2, '0');
-        const secs = String(s % 60).padStart(2, '0');
-        return `${mins}:${secs}`;
+        return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
       }
 
-      // --- Fetch Stock Video from Pexels API (If Key Provided) ---
-      async function loadPexelsVideo(topic) {
-        if (!state.pexelsKey) {
-          showToast('Add a free Pexels API key in "API Keys" for HD stock clips, or use built-in backdrops.', 'info');
-          return false;
-        }
-        try {
-          const orientation = RATIOS[state.ratio].pexelsOrientation;
-          const res = await fetch(
-            `https://api.pexels.com/videos/search?query=${encodeURIComponent(topic)}&orientation=${orientation}&per_page=3`,
-            { headers: { Authorization: state.pexelsKey } }
-          );
-          if (!res.ok) throw new Error('Pexels request failed');
-          const data = await res.json();
-          if (data.videos && data.videos.length > 0) {
-            const files = data.videos[0].video_files;
-            const hdFile = files.find((f) => f.quality === 'hd') || files[0];
-            stockVideoEl.src = hdFile.link;
-            await stockVideoEl.play();
-            state.pexelsVideoReady = true;
-            return true;
+      function getSceneAtTime(sec) {
+        let acc = 0;
+        for (let i = 0; i < state.scenes.length; i++) {
+          const dur = Number(state.scenes[i].duration) || 4;
+          if (sec < acc + dur || i === state.scenes.length - 1) {
+            const localSec = Math.max(0, sec - acc);
+            const localProgress = Math.min(1, localSec / dur);
+            return { index: i, scene: state.scenes[i], localSec, localProgress };
           }
-        } catch (err) {
-          console.warn('Pexels fallback triggered:', err);
+          acc += dur;
         }
-        state.pexelsVideoReady = false;
-        return false;
+        return { index: 0, scene: state.scenes[0], localSec: 0, localProgress: 0 };
       }
 
-      // --- Generate Ad Script (Gemini API if provided, or Smart Built-In Engine) ---
-      async function generateAdContent() {
+      // --- Render Scene Selector Pills & Sync Form Inputs ---
+      function renderSceneTabs() {
+        const totalSec = getTotalDuration();
+        totalDurationBadge.textContent = `Total: ${totalSec}s (${state.scenes.length} Scenes)`;
+        totalTimeLabel.textContent = formatTime(totalSec);
+
+        sceneTabsContainer.innerHTML = '';
+        state.scenes.forEach((sc, idx) => {
+          const active = idx === state.activeSceneIndex;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = active
+            ? 'p-2 rounded-xl bg-violet-600 text-white text-left shadow-md transition border border-violet-400/50'
+            : 'p-2 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-zinc-300 text-left transition border border-zinc-800';
+          btn.innerHTML = `
+            <div class="flex items-center justify-between text-[11px] font-bold">
+              <span>Scene ${idx + 1}</span>
+              <span class="opacity-80">${sc.duration}s</span>
+            </div>
+            <div class="text-[10px] truncate opacity-75 mt-0.5">${sc.hook || 'Untitled'}</div>
+          `;
+          btn.addEventListener('click', () => {
+            selectScene(idx);
+          });
+          sceneTabsContainer.appendChild(btn);
+        });
+      }
+
+      function selectScene(index) {
+        state.activeSceneIndex = Math.max(0, Math.min(state.scenes.length - 1, index));
+        const sc = state.scenes[state.activeSceneIndex];
+        activeSceneBadge.textContent = `Editing Scene ${state.activeSceneIndex + 1}`;
+        stageSceneIndicator.textContent = `Scene ${state.activeSceneIndex + 1}/${state.scenes.length}`;
+
+        // Populate form inputs from scene state
+        sceneDurationSelect.value = String(sc.duration);
+        sceneTransitionSelect.value = sc.transition;
+        sceneMotionSelect.value = sc.motion;
+        hookInput.value = sc.hook;
+        calloutInput.value = sc.callout;
+        scriptTextarea.value = sc.script;
+        sceneVisualPromptInput.value = sc.visualPrompt;
+        artStyleSelect.value = sc.artStyle;
+        bgThemeSelect.value = sc.bgTheme;
+        explainerDiagramSelect.value = sc.diagramType;
+        stepBadgeInput.value = sc.stepBadge;
+        pointerTargetSelect.value = sc.pointerTarget;
+        charNameInput.value = sc.charName;
+        charExpressionSelect.value = sc.charExpression;
+        punchlineZoomToggle.value = sc.punchlineEffect;
+
+        clearMediaBtn.classList.toggle('hidden', !sc.customMediaType && !sc.aiImage);
+
+        // Jump preview playhead to start of selected scene if paused
+        if (!state.isPlaying) {
+          let startSec = 0;
+          for (let i = 0; i < state.activeSceneIndex; i++) {
+            startSec += Number(state.scenes[i].duration) || 4;
+          }
+          state.elapsedSec = startSec;
+        }
+
+        updateWordCount();
+        renderSceneTabs();
+      }
+
+      function saveCurrentSceneFields() {
+        const sc = state.scenes[state.activeSceneIndex];
+        if (!sc) return;
+        sc.duration = parseInt(sceneDurationSelect.value, 10) || 4;
+        sc.transition = sceneTransitionSelect.value;
+        sc.motion = sceneMotionSelect.value;
+        sc.hook = hookInput.value;
+        sc.callout = calloutInput.value;
+        sc.script = scriptTextarea.value;
+        sc.visualPrompt = sceneVisualPromptInput.value;
+        sc.artStyle = artStyleSelect.value;
+        sc.bgTheme = bgThemeSelect.value;
+        sc.diagramType = explainerDiagramSelect.value;
+        sc.stepBadge = stepBadgeInput.value;
+        sc.pointerTarget = pointerTargetSelect.value;
+        sc.charName = charNameInput.value;
+        sc.charExpression = charExpressionSelect.value;
+        sc.punchlineEffect = punchlineZoomToggle.value;
+
+        updateWordCount();
+        renderSceneTabs();
+      }
+
+      function updateWordCount() {
+        const words = scriptTextarea.value.trim() ? scriptTextarea.value.trim().split(/\s+/) : [];
+        wordCountLabel.textContent = `${words.length} words`;
+      }
+
+      // --- Switch Top Studio Mode ---
+      function setStudioMode(mode) {
+        state.studioMode = mode;
+        document.querySelectorAll('.studio-mode-tab').forEach((tab) => {
+          const active = tab.getAttribute('data-studio-mode') === mode;
+          tab.className = active
+            ? 'studio-mode-tab shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold bg-violet-600 text-white shadow-md shadow-violet-600/20 transition flex items-center gap-1.5'
+            : 'studio-mode-tab shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 transition flex items-center gap-1.5';
+        });
+
+        panelAdControls.classList.toggle('hidden', mode !== 'ad');
+        panelExplainerControls.classList.toggle('hidden', mode !== 'explainer');
+        panelComedyControls.classList.toggle('hidden', mode !== 'comedy');
+        panelRefinerControls.classList.toggle('hidden', mode !== 'refiner');
+
+        if (mode === 'comedy' && captionStyleSelect.value === 'tiktok-pop') {
+          captionStyleSelect.value = 'comic-bubble';
+        }
+        if (mode === 'explainer' && musicPresetSelect.value === 'upbeat') {
+          musicPresetSelect.value = 'explainer';
+        }
+      }
+
+      // --- Free AI Scene Image Generator (Pollinations Public Endpoint + Clean Fallback) ---
+      async function generateAIArtForScene(sceneIndex, silent = false) {
+        const sc = state.scenes[sceneIndex];
+        if (!sc) return;
+
+        const basePrompt = sc.visualPrompt.trim() || topicInput.value.trim() || 'Modern vibrant studio scene';
+        const modifier = ART_STYLE_MODIFIERS[sc.artStyle] || ART_STYLE_MODIFIERS['3d-isometric'];
+        const fullPrompt = `${basePrompt}, ${modifier}, no text, clean composition`;
+
+        const w = RATIOS[state.ratio].width;
+        const h = RATIOS[state.ratio].height;
+        const seed = Math.floor(Math.random() * 999999);
+        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?width=${w}&height=${h}&nologo=true&seed=${seed}`;
+
+        if (!silent) {
+          artSpinner.classList.remove('hidden');
+          generateArtBtnText.textContent = 'Generating Scene Art...';
+          generateSceneArtBtn.disabled = true;
+        }
+
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          const timeout = setTimeout(() => {
+            img.src = '';
+            if (!silent) {
+              artSpinner.classList.add('hidden');
+              generateArtBtnText.textContent = '🎨 Generate Free AI Scene Art';
+              generateSceneArtBtn.disabled = false;
+              showToast('Using crisp procedural vector backdrop for instant speed.', 'info');
+            }
+            resolve(false);
+          }, 14000);
+
+          img.onload = () => {
+            clearTimeout(timeout);
+            sc.aiImage = img;
+            sc.customMediaType = null;
+            if (sceneIndex === state.activeSceneIndex) {
+              clearMediaBtn.classList.remove('hidden');
+            }
+            if (!silent) {
+              artSpinner.classList.add('hidden');
+              generateArtBtnText.textContent = '🎨 Generate Free AI Scene Art';
+              generateSceneArtBtn.disabled = false;
+              showToast(`Scene ${sceneIndex + 1} AI illustration ready!`);
+            }
+            resolve(true);
+          };
+
+          img.onerror = () => {
+            clearTimeout(timeout);
+            if (!silent) {
+              artSpinner.classList.add('hidden');
+              generateArtBtnText.textContent = '🎨 Generate Free AI Scene Art';
+              generateSceneArtBtn.disabled = false;
+              showToast('AI image server busy — using built-in animated vector canvas.', 'info');
+            }
+            resolve(false);
+          };
+
+          img.src = url;
+        });
+      }
+
+      // --- Universal Multi-Scene Auto-Builder (Works for ANY Topic) ---
+      async function autoBuildAllScenes() {
         stopPlayback();
-        const topic = topicInput.value.trim() || 'Modern Smart Product';
-        const targetSec = parseInt(durationSelect.value, 10) || 25;
-        const targetWords = Math.round(targetSec * 2.3);
+        const topic = topicInput.value.trim() || 'How Modern Innovation Works';
 
         generateSpinner.classList.remove('hidden');
         generateIcon.classList.add('hidden');
-        generateBtnText.textContent = 'Generating AI Ad...';
+        generateBtnText.textContent = 'Building Scenes...';
         generateAdBtn.disabled = true;
 
         try {
-          let generated = false;
+          let builtFromGemini = false;
 
+          // If user saved a free Gemini key, generate custom tailored scenes
           if (state.geminiKey) {
             try {
-              const prompt = `Write a high-converting social media video ad script for: "${topic}".
-Target length: ~${targetWords} words.
-Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spoken voiceover sentences, no emojis or stage directions), "price" (e.g. "$29.99"), "discount" (e.g. "50% OFF"), and "cta" (e.g. "Shop Now →").`;
+              const prompt = `Create a 3-scene short video storyboard about: "${topic}" in "${state.studioMode}" style.
+Return ONLY valid JSON array of 3 objects, each with keys:
+"hook" (max 4 uppercase words),
+"callout" (short badge with 1 emoji, e.g. "⚡ Key Fact"),
+"script" (1 concise spoken sentence, 12-16 words),
+"visualPrompt" (detailed visual description for an illustrator),
+"motion" (one of: "zoom-in", "pan-right", "float", "shake", "spotlight"),
+"charExpression" (one of: "happy", "shocked", "sarcastic", "angry", "smug").`;
 
-              const response = await fetch(
+              const res = await fetch(
                 `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${state.geminiKey}`,
                 {
                   method: 'POST',
@@ -984,76 +1393,186 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
                 }
               );
 
-              if (response.ok) {
-                const data = await response.json();
-                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (text) {
-                  const parsed = JSON.parse(text);
-                  if (parsed.hook && parsed.script) {
-                    hookInput.value = parsed.hook.toUpperCase();
-                    scriptTextarea.value = parsed.script;
-                    if (parsed.price) priceInput.value = parsed.price;
-                    if (parsed.discount) discountInput.value = parsed.discount.toUpperCase();
-                    if (parsed.cta) ctaInput.value = parsed.cta;
-                    generated = true;
-                    showToast('Custom AI ad generated with Gemini!');
-                  }
+              if (res.ok) {
+                const data = await res.json();
+                const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                const scenesArr = JSON.parse(rawText);
+                if (Array.isArray(scenesArr) && scenesArr.length >= 2) {
+                  state.scenes = scenesArr.slice(0, 5).map((item, idx) =>
+                    createScene({
+                      duration: 4,
+                      transition: idx === 0 ? 'fade' : 'slide',
+                      motion: item.motion || 'zoom-in',
+                      hook: (item.hook || `PART ${idx + 1}`).toUpperCase(),
+                      callout: item.callout || '',
+                      script: item.script || '',
+                      visualPrompt: item.visualPrompt || topic,
+                      artStyle: state.studioMode === 'comedy' ? 'comic' : '3d-isometric',
+                      bgTheme: state.studioMode === 'comedy' ? 'comic-halftone' : 'blueprint',
+                      stepBadge: `PART 0${idx + 1}`,
+                      charExpression: item.charExpression || 'happy',
+                    })
+                  );
+                  builtFromGemini = true;
                 }
               }
-            } catch (apiErr) {
-              console.warn('Gemini fallback used:', apiErr);
+            } catch (err) {
+              console.warn('Gemini fallback to universal template builder:', err);
             }
           }
 
-          if (!generated) {
-            const lowerTopic = topic.toLowerCase();
-            const matched = BUILTIN_SCRIPTS.find((item) =>
-              item.keywords.some((kw) => lowerTopic.includes(kw))
-            );
-
-            if (matched) {
-              hookInput.value = matched.hook;
-              scriptTextarea.value = matched.script;
-              priceInput.value = matched.price;
-              discountInput.value = matched.discount;
-              ctaInput.value = matched.cta;
+          // Universal Built-In Storyboard Synthesizer (Zero API Key Needed, Works for ANY Topic)
+          if (!builtFromGemini) {
+            const cleanTopic = topic.replace(/[?!.]+$/, '');
+            if (state.studioMode === 'comedy') {
+              state.scenes = [
+                createScene({
+                  duration: 4,
+                  transition: 'fade',
+                  motion: 'zoom-in',
+                  hook: 'EXPECTATION VS REALITY',
+                  callout: '😅 Step 1: The Plan',
+                  script: `Me confidently thinking I can handle ${cleanTopic} with zero preparation today.`,
+                  visualPrompt: `Funny cartoon character looking overly confident about ${cleanTopic}, bright comic background`,
+                  artStyle: 'comic',
+                  bgTheme: 'comic-halftone',
+                  charExpression: 'smug',
+                  punchlineEffect: 'none',
+                }),
+                createScene({
+                  duration: 4,
+                  transition: 'zoom',
+                  motion: 'shake',
+                  hook: 'FIVE MINUTES LATER...',
+                  callout: '🚨 Total Chaos',
+                  script: `Five minutes into ${cleanTopic} and everything immediately goes completely off the rails!`,
+                  visualPrompt: `Hilarious chaotic cartoon scene illustrating ${cleanTopic} going wrong, dramatic comic action lines`,
+                  artStyle: 'comic',
+                  bgTheme: 'sunset',
+                  charExpression: 'shocked',
+                  punchlineEffect: 'dramatic-zoom',
+                }),
+                createScene({
+                  duration: 4,
+                  transition: 'fade',
+                  motion: 'float',
+                  hook: 'NEVER DOING THAT AGAIN',
+                  callout: '💀 Lesson Learned',
+                  script: `Tag a friend who acts like this every single time ${cleanTopic} comes up!`,
+                  visualPrompt: `Expressive cartoon character giving sarcastic side-eye after ${cleanTopic}, clean comic art`,
+                  artStyle: 'comic',
+                  bgTheme: 'comic-halftone',
+                  charExpression: 'sarcastic',
+                  punchlineEffect: 'none',
+                }),
+              ];
+            } else if (state.studioMode === 'explainer') {
+              state.scenes = [
+                createScene({
+                  duration: 4,
+                  transition: 'fade',
+                  motion: 'zoom-in',
+                  hook: cleanTopic.toUpperCase(),
+                  callout: '🔍 The Big Picture',
+                  script: `Have you ever wondered how ${cleanTopic} actually works behind the scenes?`,
+                  visualPrompt: `3D isometric educational cutaway illustration explaining ${cleanTopic}, glowing highlights, clean background`,
+                  artStyle: '3d-isometric',
+                  bgTheme: 'blueprint',
+                  stepBadge: 'PART 01',
+                  diagramType: 'auto',
+                }),
+                createScene({
+                  duration: 4,
+                  transition: 'slide',
+                  motion: 'pan-right',
+                  hook: 'HOW THE MECHANISM WORKS',
+                  callout: '⚙️ Core Physics & Structure',
+                  script: `It comes down to precision engineering and balance, where every layer handles extreme forces.`,
+                  visualPrompt: `Detailed engineering cross-section diagram of ${cleanTopic} showing internal mechanics and forces`,
+                  artStyle: 'blueprint',
+                  bgTheme: 'cyber',
+                  stepBadge: 'PART 02',
+                  diagramType: 'auto',
+                }),
+                createScene({
+                  duration: 4,
+                  transition: 'fade',
+                  motion: 'spotlight',
+                  hook: 'WHY THIS MATTERS',
+                  callout: '💡 Key Takeaway',
+                  script: `That is how ${cleanTopic} achieves what once seemed impossible. Follow for more visual breakdowns!`,
+                  visualPrompt: `Clean futuristic 3D infographic summary of ${cleanTopic} in action, dramatic studio lighting`,
+                  artStyle: '3d-isometric',
+                  bgTheme: 'aurora',
+                  stepBadge: 'PART 03',
+                  diagramType: 'auto',
+                }),
+              ];
             } else {
-              hookInput.value = `DISCOVER ${topic.toUpperCase()}`;
-              scriptTextarea.value =
-                targetSec <= 15
-                  ? `Stop scrolling if you love ${topic}. Designed for effortless performance and unmatched style, this is the upgrade you have been waiting for. Grab yours today before stock runs out.`
-                  : `Tired of settling for average results? Meet the new ${topic}, engineered to save you time and elevate your daily routine. Thousands have already made the switch and never looked back. Tap below to get yours today.`;
-              priceInput.value = '$39.99';
-              discountInput.value = '40% OFF';
-              ctaInput.value = 'Shop Now →';
+              // Ad & Promo Maker
+              state.scenes = [
+                createScene({
+                  duration: 4,
+                  transition: 'fade',
+                  motion: 'zoom-in',
+                  hook: `MEET ${cleanTopic.toUpperCase()}`,
+                  callout: '✨ New Release',
+                  script: `Tired of settling for less? Discover how ${cleanTopic} transforms your daily routine.`,
+                  visualPrompt: `Sleek commercial product showcase of ${cleanTopic} on dark minimalist pedestal, studio rim light`,
+                  artStyle: 'cinematic',
+                  bgTheme: 'aurora',
+                }),
+                createScene({
+                  duration: 4,
+                  transition: 'slide',
+                  motion: 'pan-right',
+                  hook: 'BUILT FOR PERFORMANCE',
+                  callout: '⚡ Unmatched Quality',
+                  script: `Engineered with premium materials and effortless precision so you get results from day one.`,
+                  visualPrompt: `3D cutaway feature breakdown of ${cleanTopic} highlighting premium build quality`,
+                  artStyle: '3d-isometric',
+                  bgTheme: 'blueprint',
+                }),
+                createScene({
+                  duration: 4,
+                  transition: 'fade',
+                  motion: 'spotlight',
+                  hook: 'LIMITED LAUNCH OFFER',
+                  callout: '🔥 Order Today',
+                  script: `Tap below to claim your exclusive launch discount on ${cleanTopic} before stock runs out!`,
+                  visualPrompt: `Vibrant commercial hero shot of ${cleanTopic} with golden bokeh highlights`,
+                  artStyle: 'cinematic',
+                  bgTheme: 'sunset',
+                }),
+              ];
             }
-            showToast('AI script & promo overlays ready!');
           }
 
-          if (bgThemeSelect.value === 'pexels' && !state.customMediaType) {
-            await loadPexelsVideo(topic);
-          }
-
-          syncScriptMetrics();
+          selectScene(0);
+          showToast('All scenes generated! Generating AI visuals for Scene 1...');
+          await generateAIArtForScene(0, true);
           state.elapsedSec = 0;
           startPlayback();
         } finally {
           generateSpinner.classList.add('hidden');
           generateIcon.classList.remove('hidden');
-          generateBtnText.textContent = 'Generate AI Script & Assets';
+          generateBtnText.textContent = 'Auto-Build All Scenes';
           generateAdBtn.disabled = false;
         }
       }
 
-      // --- Voiceover Speech Synthesis ---
-      function triggerVoiceover() {
+      // --- Sequential Scene Voiceover ---
+      function speakSceneScript(sceneIndex) {
         if (!('speechSynthesis' in window)) return;
         window.speechSynthesis.cancel();
         if (!state.voiceEnabled) return;
 
-        const utterance = new SpeechSynthesisUtterance(scriptTextarea.value);
+        const sc = state.scenes[sceneIndex];
+        if (!sc || !sc.script.trim()) return;
+
+        const utterance = new SpeechSynthesisUtterance(sc.script);
         utterance.rate = state.voiceSpeed;
-        utterance.pitch = 1.02;
+        utterance.pitch = state.studioMode === 'comedy' ? 1.12 : 1.02;
 
         const voices = window.speechSynthesis.getVoices();
         const chosenName = voiceSelect.value;
@@ -1068,43 +1587,36 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
 
       // --- Playback Controls ---
       function startPlayback() {
-        if (state.elapsedSec >= state.durationSec) {
+        const total = getTotalDuration();
+        if (state.elapsedSec >= total) {
           state.elapsedSec = 0;
         }
         state.isPlaying = true;
+        state.lastSpokenSceneIndex = -1;
         state.lastTimestamp = performance.now();
+
         playPauseLabel.textContent = 'Pause Preview';
         playIcon.classList.add('hidden');
         pauseIcon.classList.remove('hidden');
 
-        if (state.customMediaType === 'video' && customVideoEl.paused) {
-          customVideoEl.play().catch(() => {});
-        } else if (state.pexelsVideoReady && stockVideoEl.paused) {
-          stockVideoEl.play().catch(() => {});
-        }
-
-        MusicEngine.start(musicPresetSelect.value);
-
-        if (state.elapsedSec < 0.2) {
-          triggerVoiceover();
-        }
+        AudioEngine.startMusic(musicPresetSelect.value);
       }
 
       function stopPlayback() {
         state.isPlaying = false;
-        playPauseLabel.textContent = 'Play Preview';
+        state.lastSpokenSceneIndex = -1;
+        playPauseLabel.textContent = 'Play Full Video';
         playIcon.classList.remove('hidden');
         pauseIcon.classList.add('hidden');
-        MusicEngine.stop();
+        AudioEngine.stopMusic();
 
         if ('speechSynthesis' in window) {
           window.speechSynthesis.cancel();
         }
-        if (!stockVideoEl.paused) stockVideoEl.pause();
         if (!customVideoEl.paused) customVideoEl.pause();
       }
 
-      // --- Canvas Drawing Utilities ---
+      // --- Canvas Drawing Helpers ---
       function drawRoundedRect(ctx, x, y, width, height, radius) {
         const r = Math.min(radius, width / 2, height / 2);
         ctx.beginPath();
@@ -1135,20 +1647,260 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
         ctx.drawImage(media, dx, dy, dw, dh);
       }
 
-      // --- 60FPS Real-Time Canvas Render Loop ---
+      // --- Universal Procedural Explainer Vector Diagrams ---
+      function drawExplainerVectorGraphic(ctx, W, H, t, sc, topicText) {
+        let mode = sc.diagramType;
+        if (mode === 'auto') {
+          const combined = `${topicText} ${sc.hook} ${sc.script}`.toLowerCase();
+          if (/ocean|sea|water|ship|submarine|titanic|boat|marine|wave/.test(combined)) {
+            mode = 'ocean-vessel';
+          } else if (/space|rocket|orbit|planet|moon|mars|star|gravity|flight/.test(combined)) {
+            mode = 'space-orbit';
+          } else if (/money|growth|chart|market|percent|economy|data|business|profit/.test(combined)) {
+            mode = 'growth-chart';
+          } else {
+            mode = 'gears-system';
+          }
+        }
+        if (mode === 'none') return;
+
+        ctx.save();
+        const cx = W / 2;
+        const cy = H * 0.36;
+
+        if (mode === 'ocean-vessel') {
+          // Animated Ocean Cross-Section & Vessel Diagram
+          const waveY = cy + 25;
+          ctx.fillStyle = 'rgba(6, 182, 212, 0.22)';
+          ctx.beginPath();
+          ctx.moveTo(40, waveY);
+          for (let x = 40; x <= W - 40; x += 15) {
+            ctx.lineTo(x, waveY + Math.sin(x * 0.04 + t * 3) * 8);
+          }
+          ctx.lineTo(W - 40, waveY + 110);
+          ctx.lineTo(40, waveY + 110);
+          ctx.closePath();
+          ctx.fill();
+
+          // Stylized Hull / Submarine Silhouette
+          const bobY = waveY - 12 + Math.sin(t * 2.5) * 5;
+          ctx.fillStyle = 'rgba(250, 204, 21, 0.88)';
+          drawRoundedRect(ctx, cx - 75, bobY - 18, 150, 36, 18);
+          ctx.fill();
+          ctx.fillStyle = '#0f172a';
+          [-35, 0, 35].forEach((ox) => {
+            ctx.beginPath();
+            ctx.arc(cx + ox, bobY, 6, 0, Math.PI * 2);
+            ctx.fill();
+          });
+
+          // Pressure Arrows
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 2.5;
+          const pulse = Math.sin(t * 4) * 6;
+          [
+            [cx - 115 + pulse, bobY, cx - 85 + pulse, bobY],
+            [cx + 115 - pulse, bobY, cx + 85 - pulse, bobY],
+          ].forEach(([x1, y1, x2, y2]) => {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+          });
+        } else if (mode === 'space-orbit') {
+          // Orbit Ring & Animated Rocket/Satellite
+          ctx.strokeStyle = 'rgba(167, 139, 250, 0.45)';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([6, 6]);
+          ctx.beginPath();
+          ctx.ellipse(cx, cy, 120, 48, -0.2, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Central Planet
+          ctx.fillStyle = '#6366f1';
+          ctx.beginPath();
+          ctx.arc(cx, cy, 34, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Orbiting Craft
+          const angle = t * 1.6;
+          const rx = cx + Math.cos(angle) * 120;
+          const ry = cy + Math.sin(angle) * 48;
+          ctx.fillStyle = '#facc15';
+          ctx.beginPath();
+          ctx.arc(rx, ry, 9, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (mode === 'growth-chart') {
+          // Animated Bar Chart
+          const bars = [0.4, 0.62, 0.85, 1.0];
+          const barW = 34;
+          const gap = 18;
+          const startX = cx - ((bars.length * barW + (bars.length - 1) * gap) / 2);
+          const baseY = cy + 65;
+
+          bars.forEach((val, idx) => {
+            const animH = (95 * val) * Math.min(1, (Math.sin(t * 1.5 - idx * 0.4) + 1.5) * 0.6);
+            ctx.fillStyle = idx === 3 ? '#10b981' : 'rgba(139, 92, 246, 0.75)';
+            drawRoundedRect(ctx, startX + idx * (barW + gap), baseY - animH, barW, animH, 8);
+            ctx.fill();
+          });
+        } else {
+          // Universal System Gears / Flow Nodes
+          [
+            [cx - 46, cy, 34, t * 1.4, '#8b5cf6'],
+            [cx + 42, cy + 16, 26, -t * 1.8, '#10b981'],
+          ].forEach(([gx, gy, gr, rot, color]) => {
+            ctx.save();
+            ctx.translate(gx, gy);
+            ctx.rotate(rot);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 5;
+            ctx.setLineDash([10, 7]);
+            ctx.beginPath();
+            ctx.arc(0, 0, gr, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+          });
+        }
+        ctx.restore();
+      }
+
+      // --- Comedy Skit Talking Character Avatar (Synced Mouth Movement) ---
+      function drawComedyAvatar(ctx, W, H, t, sc, isSpeaking) {
+        if (!showAvatarToggle.checked) return;
+        const cx = W * 0.5;
+        const cy = H * 0.37;
+        const bounce = isSpeaking ? Math.abs(Math.sin(t * 14)) * 5 : Math.sin(t * 2.5) * 3;
+        const hoodieColor = charHairColorSelect.value || '#f59e0b';
+        const expr = sc.charExpression || 'happy';
+
+        ctx.save();
+        ctx.translate(cx, cy - bounce);
+
+        // Shoulders / Hoodie
+        ctx.fillStyle = hoodieColor;
+        drawRoundedRect(ctx, -72, 46, 144, 68, 32);
+        ctx.fill();
+        ctx.strokeStyle = '#09090b';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        // Head
+        ctx.fillStyle = '#fed7aa';
+        ctx.beginPath();
+        ctx.arc(0, 0, 54, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Stylized Hair
+        ctx.fillStyle = '#18181b';
+        ctx.beginPath();
+        ctx.arc(0, -14, 54, Math.PI, Math.PI * 2);
+        ctx.fill();
+
+        // Eyes based on Expression
+        ctx.fillStyle = '#09090b';
+        if (expr === 'shocked') {
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(-20, -6, 12, 0, Math.PI * 2);
+          ctx.arc(20, -6, 12, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#09090b';
+          ctx.beginPath();
+          ctx.arc(-20, -6, 4, 0, Math.PI * 2);
+          ctx.arc(20, -6, 4, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (expr === 'smug') {
+          // Sunglasses
+          ctx.fillStyle = '#09090b';
+          drawRoundedRect(ctx, -38, -16, 32, 18, 5);
+          drawRoundedRect(ctx, 6, -16, 32, 18, 5);
+          ctx.fill();
+          ctx.fillRect(-6, -11, 12, 4);
+        } else {
+          const pupilOffset = expr === 'sarcastic' ? 4 : 0;
+          ctx.beginPath();
+          ctx.arc(-19 + pupilOffset, -5, 6, 0, Math.PI * 2);
+          ctx.arc(19 + pupilOffset, -5, 6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Eyebrows
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        if (expr === 'angry') {
+          ctx.moveTo(-30, -20);
+          ctx.lineTo(-10, -12);
+          ctx.moveTo(30, -20);
+          ctx.lineTo(10, -12);
+        } else if (expr === 'sarcastic') {
+          ctx.moveTo(-30, -16);
+          ctx.lineTo(-10, -16);
+          ctx.moveTo(10, -22);
+          ctx.lineTo(30, -14);
+        } else {
+          ctx.moveTo(-29, -18);
+          ctx.lineTo(-11, -18);
+          ctx.moveTo(11, -18);
+          ctx.lineTo(29, -18);
+        }
+        ctx.stroke();
+
+        // Lip-Syncing Animated Mouth
+        const mouthOpen = isSpeaking ? 4 + Math.abs(Math.sin(t * 22)) * 14 : 3;
+        ctx.fillStyle = '#7f1d1d';
+        ctx.beginPath();
+        if (expr === 'shocked') {
+          ctx.ellipse(0, 22, 12, 14 + (isSpeaking ? 4 : 0), 0, 0, Math.PI * 2);
+        } else {
+          ctx.ellipse(0, 20, 16, mouthOpen, 0, 0, Math.PI * 2);
+        }
+        ctx.fill();
+        ctx.stroke();
+
+        // Character Name Tag Pill
+        const nameText = (sc.charName || 'Alex').toUpperCase();
+        ctx.font = '800 13px Inter, sans-serif';
+        const nw = ctx.measureText(nameText).width + 24;
+        ctx.fillStyle = '#09090b';
+        drawRoundedRect(ctx, -nw / 2, 82, nw, 26, 13);
+        ctx.fill();
+        ctx.fillStyle = '#facc15';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(nameText, 0, 95);
+
+        ctx.restore();
+      }
+
+      // --- Main 60FPS Real-Time Render Loop ---
       function renderCanvasFrame(now) {
+        const totalDur = getTotalDuration();
+
         if (state.isPlaying) {
           const dt = (now - state.lastTimestamp) / 1000;
           state.elapsedSec += dt;
-          if (state.elapsedSec >= state.durationSec) {
-            state.elapsedSec = state.durationSec;
+          if (state.elapsedSec >= totalDur) {
+            state.elapsedSec = totalDur;
             stopPlayback();
           }
         }
         state.lastTimestamp = now;
 
-        const progress = Math.min(1, state.elapsedSec / Math.max(0.1, state.durationSec));
-        timelineFill.style.width = `${progress * 100}%`;
+        const { index: sceneIdx, scene: sc, localProgress } = getSceneAtTime(state.elapsedSec);
+
+        // Trigger voiceover automatically when entering a new scene during playback
+        if (state.isPlaying && sceneIdx !== state.lastSpokenSceneIndex) {
+          state.lastSpokenSceneIndex = sceneIdx;
+          stageSceneIndicator.textContent = `Scene ${sceneIdx + 1}/${state.scenes.length}`;
+          speakSceneScript(sceneIdx);
+        }
+
+        const globalProgress = Math.min(1, state.elapsedSec / Math.max(0.1, totalDur));
+        timelineFill.style.width = `${globalProgress * 100}%`;
         currentTimeLabel.textContent = formatTime(state.elapsedSec);
 
         const W = canvas.width;
@@ -1157,32 +1909,67 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
         const isLandscape = W > H;
 
         ctx.clearRect(0, 0, W, H);
+        ctx.save();
 
-        // 1. BACKGROUND LAYER (Custom Media -> Pexels Stock -> Procedural Shader/Theme)
-        if (state.customMediaType === 'image' && state.customMediaImg) {
-          const zoom = 1.04 + Math.sin(t * 0.45) * 0.04;
-          const panX = Math.cos(t * 0.35) * 14;
-          const panY = Math.sin(t * 0.3) * 14;
-          drawCoverMedia(ctx, state.customMediaImg, state.customMediaImg.width, state.customMediaImg.height, W, H, zoom, panX, panY);
-        } else if (state.customMediaType === 'video' && state.customVideoReady && customVideoEl.readyState >= 2) {
-          drawCoverMedia(ctx, customVideoEl, customVideoEl.videoWidth, customVideoEl.videoHeight, W, H);
-        } else if (bgThemeSelect.value === 'pexels' && state.pexelsVideoReady && stockVideoEl.readyState >= 2) {
-          drawCoverMedia(ctx, stockVideoEl, stockVideoEl.videoWidth, stockVideoEl.videoHeight, W, H);
+        // Apply Camera Motion & Transition Transform
+        let zoom = 1.0;
+        let panX = 0;
+        let panY = 0;
+        if (sc.motion === 'zoom-in') zoom = 1.0 + localProgress * 0.12;
+        else if (sc.motion === 'zoom-out') zoom = 1.14 - localProgress * 0.14;
+        else if (sc.motion === 'pan-right') { zoom = 1.1; panX = -24 + localProgress * 48; }
+        else if (sc.motion === 'pan-left') { zoom = 1.1; panX = 24 - localProgress * 48; }
+        else if (sc.motion === 'float') { zoom = 1.05; panY = Math.sin(t * 2.5) * 10; }
+        else if (sc.motion === 'shake') { zoom = 1.08; panX = Math.sin(t * 38) * 7; panY = Math.cos(t * 34) * 5; }
+        else if (sc.motion === 'spotlight') { zoom = 1.04 + Math.sin(t * 4) * 0.04; }
+
+        if (state.studioMode === 'comedy' && sc.punchlineEffect === 'dramatic-zoom') {
+          zoom *= 1.18;
+        }
+
+        // Transition Entry Effect (First 0.35s of scene)
+        const transT = Math.min(1, localProgress * 6);
+        if (sc.transition === 'slide') {
+          ctx.translate((1 - transT) * W * 0.35, 0);
+        } else if (sc.transition === 'zoom') {
+          const s = 0.88 + transT * 0.12;
+          ctx.translate(W / 2, H / 2);
+          ctx.scale(s, s);
+          ctx.translate(-W / 2, -H / 2);
+        }
+
+        // Apply Refiner Color Filters
+        const f = state.filters;
+        const extraBW = state.studioMode === 'comedy' && sc.punchlineEffect === 'freeze-bw' ? 'grayscale(100%)' :
+                        f.tint === 'noir' ? 'grayscale(100%)' : '';
+        ctx.filter = `brightness(${f.brightness}%) contrast(${f.contrast}%) saturate(${f.saturation}%) ${extraBW}`.trim();
+
+        const effectiveZoom = zoom * (state.studioMode === 'refiner' ? f.cropZoom : 1.02);
+
+        // 1. BACKGROUND VISUAL LAYER (Custom Video -> Custom Photo -> AI Scene Art -> Procedural Theme)
+        if (sc.customMediaType === 'video' && customVideoEl.readyState >= 2) {
+          drawCoverMedia(ctx, customVideoEl, customVideoEl.videoWidth, customVideoEl.videoHeight, W, H, effectiveZoom, panX, panY);
+        } else if (sc.customMediaType === 'image' && sc.customMediaImg) {
+          drawCoverMedia(ctx, sc.customMediaImg, sc.customMediaImg.width, sc.customMediaImg.height, W, H, effectiveZoom, panX, panY);
+        } else if (sc.aiImage) {
+          drawCoverMedia(ctx, sc.aiImage, sc.aiImage.width, sc.aiImage.height, W, H, effectiveZoom, panX, panY);
         } else {
-          // Procedural 60FPS Motion Gradient Backdrop
-          const theme = bgThemeSelect.value;
+          // Procedural 60FPS Theme Backdrop
+          const theme = sc.bgTheme || 'aurora';
           const grad = ctx.createLinearGradient(0, 0, W, H);
-          if (state.mode === 'aigen') {
-            grad.addColorStop(0, '#09090b');
-            grad.addColorStop(0.5, '#1e1b4b');
-            grad.addColorStop(1, '#042f2e');
+          if (theme === 'blueprint') {
+            grad.addColorStop(0, '#020617');
+            grad.addColorStop(1, '#0c4a6e');
           } else if (theme === 'sunset') {
             grad.addColorStop(0, '#1c0a00');
             grad.addColorStop(0.5, '#451a03');
             grad.addColorStop(1, '#09090b');
+          } else if (theme === 'comic-halftone') {
+            grad.addColorStop(0, '#311042');
+            grad.addColorStop(0.5, '#1e1b4b');
+            grad.addColorStop(1, '#0f172a');
           } else if (theme === 'cyber') {
             grad.addColorStop(0, '#020617');
-            grad.addColorStop(0.5, '#0f172a');
             grad.addColorStop(1, '#042f2e');
           } else {
             grad.addColorStop(0, '#09090b');
@@ -1193,27 +1980,25 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
           ctx.fillRect(0, 0, W, H);
 
           // Animated Glowing Orbs
-          const orb1X = W * 0.5 + Math.cos(t * 0.8) * (W * 0.25);
-          const orb1Y = H * 0.35 + Math.sin(t * 0.6) * (H * 0.16);
-          const rad1 = ctx.createRadialGradient(orb1X, orb1Y, 10, orb1X, orb1Y, Math.max(W, H) * 0.36);
-          rad1.addColorStop(0, theme === 'sunset' ? 'rgba(245, 158, 11, 0.38)' : theme === 'cyber' ? 'rgba(16, 185, 129, 0.32)' : 'rgba(124, 58, 237, 0.42)');
-          rad1.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = rad1;
+          const orbX = W * 0.5 + Math.cos(t * 0.8) * (W * 0.24) + panX;
+          const orbY = H * 0.36 + Math.sin(t * 0.6) * (H * 0.14) + panY;
+          const rad = ctx.createRadialGradient(orbX, orbY, 10, orbX, orbY, Math.max(W, H) * 0.38);
+          rad.addColorStop(0, theme === 'blueprint' ? 'rgba(56, 189, 248, 0.35)' : theme === 'sunset' ? 'rgba(245, 158, 11, 0.38)' : 'rgba(124, 58, 237, 0.42)');
+          rad.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = rad;
           ctx.fillRect(0, 0, W, H);
 
-          const orb2X = W * 0.5 + Math.sin(t * 0.7) * (W * 0.25);
-          const orb2Y = H * 0.7 + Math.cos(t * 0.9) * (H * 0.14);
-          const rad2 = ctx.createRadialGradient(orb2X, orb2Y, 10, orb2X, orb2Y, Math.max(W, H) * 0.32);
-          rad2.addColorStop(0, theme === 'sunset' ? 'rgba(225, 29, 72, 0.28)' : 'rgba(16, 185, 129, 0.28)');
-          rad2.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = rad2;
-          ctx.fillRect(0, 0, W, H);
-
-          // Motion Grid
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+          // Blueprint / Motion Grid
+          ctx.strokeStyle = theme === 'blueprint' ? 'rgba(56, 189, 248, 0.14)' : 'rgba(255, 255, 255, 0.05)';
           ctx.lineWidth = 1;
-          const gridOffset = (t * 25) % 45;
-          for (let y = gridOffset; y < H; y += 45) {
+          const step = 40;
+          for (let x = (t * 15) % step; x < W; x += step) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, H);
+            ctx.stroke();
+          }
+          for (let y = (t * 15) % step; y < H; y += step) {
             ctx.beginPath();
             ctx.moveTo(0, y);
             ctx.lineTo(W, y);
@@ -1221,200 +2006,206 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
           }
         }
 
-        // Generative AI Mode Neural Particle Overlay
-        if (state.mode === 'aigen') {
-          ctx.save();
-          state.particles.forEach((p) => {
-            const px = ((p.x + t * p.vx + 10) % 1) * W;
-            const py = ((p.y + t * p.vy + 10) % 1) * H;
-            ctx.beginPath();
-            ctx.arc(px, py, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${p.hue}, 90%, 68%, 0.55)`;
-            ctx.fill();
-          });
-          ctx.restore();
+        // Reset filter for crisp text and vector graphics
+        ctx.filter = 'none';
+
+        // Optional Color Tint Overlay from Refiner
+        if (f.tint === 'warm-gold') {
+          ctx.fillStyle = 'rgba(245, 158, 11, 0.14)';
+          ctx.fillRect(0, 0, W, H);
+        } else if (f.tint === 'cool-teal') {
+          ctx.fillStyle = 'rgba(6, 182, 212, 0.14)';
+          ctx.fillRect(0, 0, W, H);
         }
 
-        // 2. CINEMATIC VIGNETTE OVERLAY
+        // Cinematic Vignette
+        const vigAlpha = (f.vignette / 100) * 0.85;
         const vignette = ctx.createLinearGradient(0, 0, 0, H);
-        vignette.addColorStop(0, 'rgba(0, 0, 0, 0.62)');
-        vignette.addColorStop(0.25, 'rgba(0, 0, 0, 0.22)');
-        vignette.addColorStop(0.75, 'rgba(0, 0, 0, 0.26)');
-        vignette.addColorStop(1, 'rgba(0, 0, 0, 0.78)');
+        vignette.addColorStop(0, `rgba(0, 0, 0, ${vigAlpha})`);
+        vignette.addColorStop(0.3, 'rgba(0, 0, 0, 0.16)');
+        vignette.addColorStop(0.72, 'rgba(0, 0, 0, 0.22)');
+        vignette.addColorStop(1, `rgba(0, 0, 0, ${Math.min(0.9, vigAlpha + 0.25)})`);
         ctx.fillStyle = vignette;
         ctx.fillRect(0, 0, W, H);
 
-        const templateStyle = templateStyleSelect.value;
-
-        // Minimalist Quote / Story Editorial Frame
-        if (templateStyle === 'quote') {
-          ctx.save();
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
-          ctx.lineWidth = 2;
-          const pad = isLandscape ? 26 : 24;
-          drawRoundedRect(ctx, pad, pad, W - pad * 2, H - pad * 2, 20);
-          ctx.stroke();
-          ctx.restore();
+        // 2. MODE-SPECIFIC VISUAL OVERLAYS
+        if (state.studioMode === 'explainer') {
+          drawExplainerVectorGraphic(ctx, W, H, t, sc, topicInput.value);
+        } else if (state.studioMode === 'comedy') {
+          const isSpeaking = state.isPlaying && sc.script.trim().length > 0;
+          drawComedyAvatar(ctx, W, H, t, sc, isSpeaking);
         }
 
-        // 3. CUSTOM BRAND LOGO WATERMARK
+        // 3. BRAND LOGO WATERMARK
         if (state.logoImg) {
           ctx.save();
-          const maxLogoH = isLandscape ? 46 : 52;
-          const scale = maxLogoH / state.logoImg.height;
-          const lw = Math.min(140, state.logoImg.width * scale);
+          const maxLogoH = isLandscape ? 42 : 48;
+          const lw = Math.min(130, state.logoImg.width * (maxLogoH / state.logoImg.height));
           const lh = state.logoImg.height * (lw / state.logoImg.width);
-          const margin = 24;
-          const lx = logoCornerSelect.value === 'top-right' ? W - lw - margin : margin;
-          const ly = margin;
+          const lx = logoCornerSelect.value === 'top-right' ? W - lw - 22 : 22;
           ctx.globalAlpha = 0.92;
-          ctx.drawImage(state.logoImg, lx, ly, lw, lh);
+          ctx.drawImage(state.logoImg, lx, 22, lw, lh);
           ctx.restore();
         }
 
-        // 4. TOP HOOK BANNER (Shown on E-Commerce & Viral templates)
-        if (templateStyle !== 'quote') {
-          const hookText = (hookInput.value || 'WATCH THIS').toUpperCase();
+        // 4. TOP HOOK / CHAPTER HEADLINE BANNER
+        const hookText = (sc.hook || '').toUpperCase();
+        if (hookText) {
           ctx.save();
-          ctx.font = `900 ${isLandscape ? 20 : 21}px Montserrat, sans-serif`;
-          const hookMetrics = ctx.measureText(hookText);
-          const bannerW = Math.min(W - 48, hookMetrics.width + 44);
-          const bannerH = 44;
+          ctx.font = `900 ${isLandscape ? 19 : 20}px Montserrat, sans-serif`;
+          const hm = ctx.measureText(hookText);
+          const bannerW = Math.min(W - 44, hm.width + 42);
+          const bannerH = 42;
           const bannerX = (W - bannerW) / 2;
-          const bannerY = state.logoImg ? (isLandscape ? 32 : 86) : (isLandscape ? 28 : 54);
+          const bannerY = state.logoImg ? (isLandscape ? 26 : 80) : (isLandscape ? 24 : 46);
 
           ctx.fillStyle = 'rgba(24, 24, 27, 0.88)';
-          drawRoundedRect(ctx, bannerX, bannerY, bannerW, bannerH, 14);
+          drawRoundedRect(ctx, bannerX, bannerY, bannerW, bannerH, 13);
           ctx.fill();
-          ctx.strokeStyle = 'rgba(167, 139, 250, 0.5)';
+          ctx.strokeStyle = state.studioMode === 'explainer' ? 'rgba(34, 211, 238, 0.55)' : 'rgba(167, 139, 250, 0.5)';
           ctx.lineWidth = 2;
           ctx.stroke();
 
-          ctx.fillStyle = '#fde047';
+          ctx.fillStyle = state.studioMode === 'explainer' ? '#67e8f9' : '#fde047';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(hookText, W / 2, bannerY + bannerH / 2 + 1, bannerW - 24);
+          ctx.fillText(hookText, W / 2, bannerY + bannerH / 2 + 1, bannerW - 22);
           ctx.restore();
         }
 
-        // 5. E-COMMERCE FLOATING PRICE BADGE & DISCOUNT STICKER
-        if (templateStyle === 'ecommerce') {
-          const floatY = Math.sin(t * 3.2) * 5;
-          const badgeY = isLandscape ? 92 + floatY : 154 + floatY;
+        // 5. FLOATING CALLOUT BADGE / POINTER (Available in ALL Modes)
+        if (sc.callout && sc.callout.trim()) {
+          ctx.save();
+          const callText = sc.callout.trim();
+          ctx.font = '700 15px Inter, sans-serif';
+          const cm = ctx.measureText(callText);
+          const cw = Math.min(W - 48, cm.width + 32);
+          const ch = 34;
+          const floatY = Math.sin(t * 3) * 4;
+          const cyPos = (isLandscape ? 82 : 104) + floatY;
+          let cxPos = (W - cw) / 2;
+          if (state.studioMode === 'explainer') {
+            if (sc.pointerTarget === 'top-left') cxPos = 26;
+            else if (sc.pointerTarget === 'top-right') cxPos = W - cw - 26;
+          }
 
-          // Discount Sticker (Left)
-          const discountText = (discountInput.value || '50% OFF').toUpperCase();
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+          drawRoundedRect(ctx, cxPos, cyPos, cw, ch, 17);
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.fillStyle = '#e0f2fe';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(callText, cxPos + cw / 2, cyPos + ch / 2 + 1, cw - 20);
+          ctx.restore();
+        }
+
+        // 6. AD & E-COMMERCE FLOATING PRICE & DISCOUNT STICKERS
+        if (state.studioMode === 'ad' && showAdBadgesToggle.checked) {
+          const floatY = Math.sin(t * 3.2) * 5;
+          const badgeY = isLandscape ? 128 + floatY : 162 + floatY;
+
+          const discountText = (discountInput.value || '').toUpperCase();
           if (discountText) {
             ctx.save();
-            ctx.translate(isLandscape ? 110 : 96, badgeY);
-            ctx.rotate(-0.08);
+            ctx.translate(isLandscape ? 105 : 92, badgeY);
+            ctx.rotate(-0.07);
             ctx.fillStyle = '#e11d48';
-            drawRoundedRect(ctx, -64, -20, 128, 40, 12);
+            drawRoundedRect(ctx, -60, -18, 120, 36, 11);
             ctx.fill();
-            ctx.strokeStyle = '#fda4af';
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-
-            ctx.font = '900 17px Montserrat, sans-serif';
+            ctx.font = '900 16px Montserrat, sans-serif';
             ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(discountText, 0, 1, 114);
+            ctx.fillText(discountText, 0, 1, 108);
             ctx.restore();
           }
 
-          // Price Badge (Right)
-          const priceText = (priceInput.value || '$29.99').toUpperCase();
+          const priceText = (priceInput.value || '').toUpperCase();
           if (priceText) {
             ctx.save();
-            ctx.translate(isLandscape ? W - 110 : W - 96, badgeY);
+            ctx.translate(isLandscape ? W - 105 : W - 92, badgeY);
             ctx.rotate(0.06);
             ctx.fillStyle = '#059669';
-            drawRoundedRect(ctx, -64, -22, 128, 44, 14);
+            drawRoundedRect(ctx, -60, -20, 120, 40, 12);
             ctx.fill();
-            ctx.strokeStyle = '#6ee7b7';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            ctx.font = '900 20px Montserrat, sans-serif';
+            ctx.font = '900 18px Montserrat, sans-serif';
             ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(priceText, 0, 1, 114);
+            ctx.fillText(priceText, 0, 1, 108);
             ctx.restore();
           }
         }
 
-        // 6. DYNAMIC WORD-BY-WORD SYNCED CAPTIONS
-        if (state.words.length > 0) {
-          const activeWordIndex = Math.min(
-            state.words.length - 1,
-            Math.floor(progress * state.words.length)
-          );
-          const chunkSize = isLandscape ? 5 : 3;
+        // 7. DYNAMIC SYNCED CAPTIONS
+        const words = sc.script.trim() ? sc.script.trim().split(/\s+/) : [];
+        if (words.length > 0) {
+          const activeWordIndex = Math.min(words.length - 1, Math.floor(localProgress * words.length));
+          const chunkSize = isLandscape ? 6 : 4;
           const chunkStart = Math.floor(activeWordIndex / chunkSize) * chunkSize;
-          const visibleWords = state.words.slice(chunkStart, chunkStart + chunkSize);
+          const visibleWords = words.slice(chunkStart, chunkStart + chunkSize);
           const capStyle = captionStyleSelect.value;
 
           ctx.save();
-          if (capStyle === 'minimal-box') {
-            // Minimalist Subtitle Box at lower-middle
+          if (capStyle === 'comic-bubble' || capStyle === 'minimal-box') {
             const lineText = visibleWords.join(' ');
-            ctx.font = `700 ${isLandscape ? 28 : 30}px Inter, sans-serif`;
+            ctx.font = `700 ${isLandscape ? 24 : 26}px Inter, sans-serif`;
             const m = ctx.measureText(lineText);
-            const boxW = Math.min(W - 48, m.width + 44);
-            const boxH = 56;
-            const boxY = isLandscape ? H * 0.62 : H * 0.54;
+            const boxW = Math.min(W - 44, m.width + 44);
+            const boxH = 54;
+            const boxY = isLandscape ? H * 0.68 : H * 0.62;
 
-            ctx.fillStyle = 'rgba(9, 9, 11, 0.82)';
-            drawRoundedRect(ctx, (W - boxW) / 2, boxY - boxH / 2, boxW, boxH, 14);
+            ctx.fillStyle = capStyle === 'comic-bubble' ? '#ffffff' : 'rgba(9, 9, 11, 0.85)';
+            drawRoundedRect(ctx, (W - boxW) / 2, boxY - boxH / 2, boxW, boxH, capStyle === 'comic-bubble' ? 22 : 14);
             ctx.fill();
-            ctx.strokeStyle = 'rgba(255,255,255,0.14)';
-            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = capStyle === 'comic-bubble' ? '#09090b' : 'rgba(255,255,255,0.16)';
+            ctx.lineWidth = capStyle === 'comic-bubble' ? 3 : 1.5;
             ctx.stroke();
 
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = capStyle === 'comic-bubble' ? '#09090b' : '#ffffff';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(lineText, W / 2, boxY + 1, boxW - 24);
           } else {
-            // TikTok Bold Pop or Neon Cyber Glow
-            const fontSize = isLandscape ? 38 : 44;
-            const lineHeight = isLandscape ? 48 : 58;
+            const fontSize = isLandscape ? 34 : 40;
+            const lineHeight = isLandscape ? 44 : 52;
             ctx.font = `900 ${fontSize}px Montserrat, sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            const centerY = isLandscape ? H * 0.52 : H * 0.50;
+            const centerY = isLandscape ? H * 0.64 : H * 0.58;
             const lineYStart = centerY - ((visibleWords.length - 1) * lineHeight) / 2;
 
             visibleWords.forEach((word, idx) => {
-              const globalIdx = chunkStart + idx;
-              const isHighlighted = globalIdx === activeWordIndex;
+              const isHighlighted = chunkStart + idx === activeWordIndex;
               const cleanWord = word.toUpperCase();
               const yPos = lineYStart + idx * lineHeight;
 
               ctx.save();
               ctx.translate(W / 2, yPos);
-              ctx.scale(isHighlighted ? 1.08 : 1.0, isHighlighted ? 1.08 : 1.0);
+              ctx.scale(isHighlighted ? 1.07 : 1.0, isHighlighted ? 1.07 : 1.0);
 
               if (capStyle === 'tiktok-pop' && isHighlighted) {
                 const wm = ctx.measureText(cleanWord);
-                const pw = wm.width + 32;
-                const ph = fontSize + 14;
+                const pw = wm.width + 28;
+                const ph = fontSize + 12;
                 ctx.fillStyle = '#7c3aed';
-                drawRoundedRect(ctx, -pw / 2, -ph / 2, pw, ph, 14);
+                drawRoundedRect(ctx, -pw / 2, -ph / 2, pw, ph, 13);
                 ctx.fill();
               }
 
               ctx.lineJoin = 'round';
-              ctx.lineWidth = 9;
+              ctx.lineWidth = 8;
               ctx.strokeStyle = '#09090b';
               ctx.strokeText(cleanWord, 0, 0);
 
               if (capStyle === 'neon-cyber') {
                 ctx.shadowColor = isHighlighted ? '#22d3ee' : '#e879f9';
-                ctx.shadowBlur = isHighlighted ? 22 : 8;
+                ctx.shadowBlur = isHighlighted ? 20 : 8;
                 ctx.fillStyle = isHighlighted ? '#67e8f9' : '#f5d0fe';
               } else {
                 ctx.fillStyle = isHighlighted ? '#facc15' : '#ffffff';
@@ -1427,50 +2218,73 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
           ctx.restore();
         }
 
-        // 7. PULSING BOTTOM CALL-TO-ACTION (CTA) PILL
-        if (templateStyle !== 'quote') {
+        // 8. BOTTOM CTA PILL (In Ad Mode) OR SCENE CHAPTER PILL (In Explainer Mode)
+        if (state.studioMode === 'ad') {
           const ctaText = ctaInput.value || 'Shop Now →';
           const pulse = 1 + Math.sin(t * 5) * 0.03;
-          const ctaY = isLandscape ? H - 56 : H - 96;
+          const ctaY = isLandscape ? H - 48 : H - 82;
 
           ctx.save();
           ctx.translate(W / 2, ctaY);
           ctx.scale(pulse, pulse);
-
-          ctx.font = '800 20px Inter, sans-serif';
-          const ctaMetrics = ctx.measureText(ctaText);
-          const ctaW = Math.min(W - 60, Math.max(230, ctaMetrics.width + 54));
-          const ctaH = 50;
-
+          ctx.font = '800 18px Inter, sans-serif';
+          const ctaW = Math.min(W - 60, Math.max(210, ctx.measureText(ctaText).width + 48));
           const ctaGrad = ctx.createLinearGradient(-ctaW / 2, 0, ctaW / 2, 0);
           ctaGrad.addColorStop(0, '#7c3aed');
           ctaGrad.addColorStop(1, '#10b981');
-
           ctx.fillStyle = ctaGrad;
-          drawRoundedRect(ctx, -ctaW / 2, -ctaH / 2, ctaW, ctaH, 25);
+          drawRoundedRect(ctx, -ctaW / 2, -23, ctaW, 46, 23);
           ctx.fill();
-
           ctx.fillStyle = '#ffffff';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(ctaText, 0, 1, ctaW - 28);
+          ctx.fillText(ctaText, 0, 1, ctaW - 24);
+          ctx.restore();
+        } else if (state.studioMode === 'explainer' && sc.stepBadge) {
+          ctx.save();
+          const badge = sc.stepBadge.toUpperCase();
+          ctx.font = '800 13px Inter, sans-serif';
+          const bw = ctx.measureText(badge).width + 28;
+          ctx.fillStyle = 'rgba(6, 182, 212, 0.25)';
+          drawRoundedRect(ctx, (W - bw) / 2, H - 56, bw, 28, 14);
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(34, 211, 238, 0.6)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.fillStyle = '#67e8f9';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(badge, W / 2, H - 42);
           ctx.restore();
         }
 
-        // 8. SUBTLE BOTTOM PROGRESS BAR
+        // Smooth Fade Transition Overlay
+        if (sc.transition === 'fade' && localProgress < 0.14) {
+          const alpha = 1 - localProgress / 0.14;
+          ctx.fillStyle = `rgba(9, 9, 11, ${alpha * 0.85})`;
+          ctx.fillRect(0, 0, W, H);
+        } else if (sc.transition === 'wipe' && localProgress < 0.18) {
+          const wipeW = (1 - localProgress / 0.18) * W;
+          ctx.fillStyle = '#09090b';
+          ctx.fillRect(W - wipeW, 0, wipeW, H);
+        }
+
+        ctx.restore();
+
+        // 9. BOTTOM PROGRESS BAR
         ctx.fillStyle = 'rgba(255,255,255,0.18)';
         ctx.fillRect(0, H - 5, W, 5);
         ctx.fillStyle = '#a78bfa';
-        ctx.fillRect(0, H - 5, W * progress, 5);
+        ctx.fillRect(0, H - 5, W * globalProgress, 5);
 
         requestAnimationFrame(renderCanvasFrame);
       }
 
-      // --- Export & Download Video (.webm) with Mixed Audio ---
+      // --- Export Video (.webm) with Mixed Music & SFX Audio ---
       function exportVideoFile() {
         if (state.isRecording) return;
         if (typeof MediaRecorder === 'undefined') {
-          showToast('Video recording is not supported in this browser. Try Chrome or Edge.', 'error');
+          showToast('Video export requires Chrome, Edge, or Firefox.', 'error');
           return;
         }
 
@@ -1481,17 +2295,12 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
         exportBtnLabel.textContent = 'Recording...';
         exportVideoBtn.disabled = true;
 
-        // Capture 30fps video stream from canvas
         const combinedStream = canvas.captureStream(30);
-
-        // Attach Web Audio music track if active
-        if (musicPresetSelect.value !== 'none') {
-          MusicEngine.init();
-          if (MusicEngine.mediaDest) {
-            MusicEngine.mediaDest.stream.getAudioTracks().forEach((track) => {
-              combinedStream.addTrack(track);
-            });
-          }
+        AudioEngine.init();
+        if (AudioEngine.mediaDest) {
+          AudioEngine.mediaDest.stream.getAudioTracks().forEach((track) => {
+            combinedStream.addTrack(track);
+          });
         }
 
         const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
@@ -1509,7 +2318,7 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
           const blob = new Blob(chunks, { type: 'video/webm' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
-          const cleanName = (topicInput.value || 'reelforge-pro')
+          const cleanName = (topicInput.value || 'reelforge-studio')
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, '-');
           a.href = url;
@@ -1523,14 +2332,15 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
           recordingBadge.classList.add('hidden');
           exportBtnLabel.textContent = 'Export Video';
           exportVideoBtn.disabled = false;
-          showToast('Video exported! Saved to your device Downloads.');
+          showToast('Full multi-scene video exported to Downloads!');
         };
 
         recorder.start();
         startPlayback();
 
+        const totalDur = getTotalDuration();
         const checkDone = setInterval(() => {
-          if (!state.isPlaying || state.elapsedSec >= state.durationSec) {
+          if (!state.isPlaying || state.elapsedSec >= totalDur) {
             clearInterval(checkDone);
             if (recorder.state === 'recording') {
               recorder.stop();
@@ -1539,38 +2349,203 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
         }, 200);
       }
 
+      // --- Populate Voices ---
+      function populateVoices() {
+        if (!('speechSynthesis' in window)) return;
+        const voices = window.speechSynthesis.getVoices();
+        if (!voices.length) return;
+        const currentVal = voiceSelect.value;
+        voiceSelect.innerHTML = '<option value="">Auto Best English Voice</option>';
+        voices
+          .filter((v) => v.lang.startsWith('en'))
+          .forEach((v) => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = `${v.name.replace(/Microsoft |Google /g, '')} (${v.lang})`;
+            voiceSelect.appendChild(opt);
+          });
+        if (currentVal) voiceSelect.value = currentVal;
+      }
+      if ('speechSynthesis' in window) {
+        populateVoices();
+        window.speechSynthesis.onvoiceschanged = populateVoices;
+      }
+
+      function refreshApiStatus() {
+        geminiKeyInput.value = state.geminiKey;
+        pexelsKeyInput.value = state.pexelsKey;
+        apiStatusDot.className =
+          state.geminiKey || state.pexelsKey
+            ? 'w-2 h-2 rounded-full bg-emerald-400'
+            : 'w-2 h-2 rounded-full bg-zinc-600';
+      }
+
+      function setAspectRatio(ratioKey) {
+        const cfg = RATIOS[ratioKey];
+        if (!cfg) return;
+        state.ratio = ratioKey;
+        canvas.width = cfg.width;
+        canvas.height = cfg.height;
+        stageRatioTitle.textContent = cfg.label;
+        canvasWrapper.className = `relative w-full ${cfg.cssAspect} rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800 mx-auto transition-all duration-300`;
+        stageCard.className = `w-full ${cfg.maxCardW} bg-zinc-900/85 border border-zinc-800 rounded-3xl p-4 phone-stage-shadow transition-all duration-300`;
+
+        document.querySelectorAll('.ratio-btn').forEach((btn) => {
+          const active = btn.getAttribute('data-ratio') === ratioKey;
+          btn.className = active
+            ? 'ratio-btn py-2 px-2 rounded-lg text-xs font-semibold bg-violet-600 text-white shadow transition flex flex-col items-center'
+            : 'ratio-btn py-2 px-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition flex flex-col items-center';
+        });
+      }
+
       // --- Event Listeners ---
+      document.querySelectorAll('.studio-mode-tab').forEach((tab) => {
+        tab.addEventListener('click', () => setStudioMode(tab.getAttribute('data-studio-mode')));
+      });
+
       document.querySelectorAll('.ratio-btn').forEach((btn) => {
         btn.addEventListener('click', () => setAspectRatio(btn.getAttribute('data-ratio')));
       });
 
-      modeTemplateBtn.addEventListener('click', () => {
-        state.mode = 'template';
-        modeTemplateBtn.className = 'flex items-center gap-3 p-3 rounded-lg text-left transition bg-violet-600/20 border border-violet-500/40 text-white';
-        modeAiGenBtn.className = 'flex items-center gap-3 p-3 rounded-lg text-left transition hover:bg-zinc-900 border border-transparent text-zinc-400';
-        modeBadge.textContent = 'Template & Stock B-Roll';
+      document.getElementById('addSceneBtn').addEventListener('click', () => {
+        if (state.scenes.length >= 5) {
+          showToast('Maximum 5 scenes supported per video.', 'info');
+          return;
+        }
+        state.scenes.push(
+          createScene({
+            hook: `SCENE ${state.scenes.length + 1}`,
+            stepBadge: `PART 0${state.scenes.length + 1}`,
+          })
+        );
+        selectScene(state.scenes.length - 1);
+        showToast(`Added Scene ${state.scenes.length}!`);
       });
 
-      modeAiGenBtn.addEventListener('click', () => {
-        state.mode = 'aigen';
-        modeAiGenBtn.className = 'flex items-center gap-3 p-3 rounded-lg text-left transition bg-emerald-600/20 border border-emerald-500/40 text-white';
-        modeTemplateBtn.className = 'flex items-center gap-3 p-3 rounded-lg text-left transition hover:bg-zinc-900 border border-transparent text-zinc-400';
-        modeBadge.textContent = 'Generative AI Visuals Active';
-        showToast('Switched to Generative AI Visuals mode!');
+      document.getElementById('removeSceneBtn').addEventListener('click', () => {
+        if (state.scenes.length <= 1) {
+          showToast('At least 1 scene is required.', 'info');
+          return;
+        }
+        state.scenes.splice(state.activeSceneIndex, 1);
+        selectScene(Math.max(0, state.activeSceneIndex - 1));
+        showToast('Scene removed.', 'info');
+      });
+
+      // Live Scene Field Updates
+      [
+        sceneDurationSelect,
+        sceneTransitionSelect,
+        sceneMotionSelect,
+        hookInput,
+        calloutInput,
+        scriptTextarea,
+        sceneVisualPromptInput,
+        artStyleSelect,
+        bgThemeSelect,
+        explainerDiagramSelect,
+        stepBadgeInput,
+        pointerTargetSelect,
+        charNameInput,
+        charExpressionSelect,
+        punchlineZoomToggle,
+      ].forEach((el) => {
+        el.addEventListener('input', saveCurrentSceneFields);
+        el.addEventListener('change', saveCurrentSceneFields);
       });
 
       document.querySelectorAll('.preset-chip').forEach((chip) => {
         chip.addEventListener('click', () => {
+          const targetMode = chip.getAttribute('data-preset-mode');
+          if (targetMode) setStudioMode(targetMode);
           topicInput.value = chip.getAttribute('data-topic');
-          generateAdContent();
+          autoBuildAllScenes();
         });
       });
 
-      generateAdBtn.addEventListener('click', generateAdContent);
-      scriptTextarea.addEventListener('input', syncScriptMetrics);
+      generateAdBtn.addEventListener('click', autoBuildAllScenes);
+      generateSceneArtBtn.addEventListener('click', () => generateAIArtForScene(state.activeSceneIndex, false));
+      generateAllArtBtn.addEventListener('click', async () => {
+        showToast('Generating AI visuals for all scenes...');
+        for (let i = 0; i < state.scenes.length; i++) {
+          await generateAIArtForScene(i, true);
+        }
+        showToast('All scene visuals updated!');
+      });
 
-      templateStyleSelect.addEventListener('change', () => {
-        ecommerceFieldsBox.classList.toggle('hidden', templateStyleSelect.value !== 'ecommerce');
+      // Comedy SFX Soundboard
+      document.querySelectorAll('.sfx-btn').forEach((btn) => {
+        btn.addEventListener('click', () => AudioEngine.playSFX(btn.getAttribute('data-sfx')));
+      });
+
+      // Image Refiner Sliders
+      function syncRefinerSliders() {
+        state.filters.brightness = parseInt(brightnessRange.value, 10);
+        state.filters.contrast = parseInt(contrastRange.value, 10);
+        state.filters.saturation = parseInt(saturationRange.value, 10);
+        state.filters.cropZoom = parseFloat(cropZoomRange.value);
+        state.filters.vignette = parseInt(vignetteRange.value, 10);
+        state.filters.tint = colorTintSelect.value;
+
+        document.getElementById('brightnessVal').textContent = `${state.filters.brightness}%`;
+        document.getElementById('contrastVal').textContent = `${state.filters.contrast}%`;
+        document.getElementById('saturationVal').textContent = `${state.filters.saturation}%`;
+        document.getElementById('cropZoomVal').textContent = `${state.filters.cropZoom.toFixed(2)}x`;
+        document.getElementById('vignetteVal').textContent = `${state.filters.vignette}%`;
+      }
+      [brightnessRange, contrastRange, saturationRange, cropZoomRange, vignetteRange, colorTintSelect].forEach((el) => {
+        el.addEventListener('input', syncRefinerSliders);
+        el.addEventListener('change', syncRefinerSliders);
+      });
+
+      document.getElementById('resetRefinerBtn').addEventListener('click', () => {
+        brightnessRange.value = 100;
+        contrastRange.value = 105;
+        saturationRange.value = 110;
+        cropZoomRange.value = 1.05;
+        vignetteRange.value = 45;
+        colorTintSelect.value = 'none';
+        syncRefinerSliders();
+        showToast('Image filters reset.', 'info');
+      });
+
+      // Custom Media Upload per Scene
+      customMediaInput.addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        const sc = state.scenes[state.activeSceneIndex];
+
+        if (file.type.startsWith('video/')) {
+          sc.customMediaType = 'video';
+          sc.customVideoUrl = url;
+          sc.aiImage = null;
+          customVideoEl.src = url;
+          customVideoEl.play().catch(() => {});
+          clearMediaBtn.classList.remove('hidden');
+          showToast(`Video loaded into Scene ${state.activeSceneIndex + 1}!`);
+        } else if (file.type.startsWith('image/')) {
+          const img = new Image();
+          img.onload = () => {
+            sc.customMediaType = 'image';
+            sc.customMediaImg = img;
+            sc.aiImage = null;
+            clearMediaBtn.classList.remove('hidden');
+            showToast(`Image loaded into Scene ${state.activeSceneIndex + 1}!`);
+          };
+          img.src = url;
+        }
+      });
+
+      clearMediaBtn.addEventListener('click', () => {
+        const sc = state.scenes[state.activeSceneIndex];
+        sc.customMediaType = null;
+        sc.customMediaImg = null;
+        sc.customVideoUrl = null;
+        sc.aiImage = null;
+        customMediaInput.value = '';
+        clearMediaBtn.classList.add('hidden');
+        showToast('Reverted scene to procedural backdrop.', 'info');
       });
 
       // Brand Logo Upload
@@ -1583,7 +2558,7 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
           img.onload = () => {
             state.logoImg = img;
             clearLogoBtn.classList.remove('hidden');
-            showToast('Brand logo watermark added!');
+            showToast('Brand watermark added!');
           };
           img.src = ev.target.result;
         };
@@ -1597,98 +2572,44 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
         showToast('Brand logo removed.', 'info');
       });
 
-      // Custom Gallery Photo / Video Upload
-      customMediaInput.addEventListener('change', (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        const url = URL.createObjectURL(file);
-
-        if (file.type.startsWith('video/')) {
-          state.customMediaType = 'video';
-          state.customVideoReady = false;
-          customVideoEl.src = url;
-          customVideoEl.onloadeddata = () => {
-            state.customVideoReady = true;
-            if (state.isPlaying) customVideoEl.play().catch(() => {});
-          };
-          clearMediaBtn.classList.remove('hidden');
-          showToast('Custom video clip loaded as background!');
-        } else if (file.type.startsWith('image/')) {
-          const img = new Image();
-          img.onload = () => {
-            state.customMediaType = 'image';
-            state.customMediaImg = img;
-            clearMediaBtn.classList.remove('hidden');
-            showToast('Product photo loaded with Ken Burns motion!');
-          };
-          img.src = url;
-        }
-      });
-
-      clearMediaBtn.addEventListener('click', () => {
-        state.customMediaType = null;
-        state.customMediaImg = null;
-        state.customVideoReady = false;
-        customVideoEl.pause();
-        customVideoEl.src = '';
-        customMediaInput.value = '';
-        clearMediaBtn.classList.add('hidden');
-        showToast('Reverted to built-in backdrop.', 'info');
-      });
-
-      bgThemeSelect.addEventListener('change', async () => {
-        if (bgThemeSelect.value === 'pexels') {
-          await loadPexelsVideo(topicInput.value || 'business');
-        }
-      });
-
-      // Music Controls
+      // Music & Voice Controls
       musicPresetSelect.addEventListener('change', () => {
-        if (state.isPlaying) {
-          MusicEngine.start(musicPresetSelect.value);
-        }
+        if (state.isPlaying) AudioEngine.startMusic(musicPresetSelect.value);
       });
-
       musicVolumeRange.addEventListener('input', () => {
         musicVolumeLabel.textContent = `${musicVolumeRange.value}%`;
-        MusicEngine.updateVolume();
+        AudioEngine.updateVolume();
       });
 
-      // Voice Controls
       voiceToggleBtn.addEventListener('click', () => {
         state.voiceEnabled = !state.voiceEnabled;
         voiceToggleBtn.textContent = state.voiceEnabled ? 'Voice: ON' : 'Voice: OFF';
         voiceToggleBtn.className = state.voiceEnabled
           ? 'px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
           : 'px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-zinc-800 text-zinc-400 border border-zinc-700';
-        if (!state.voiceEnabled && 'speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-        }
+        if (!state.voiceEnabled && 'speechSynthesis' in window) window.speechSynthesis.cancel();
       });
 
       voiceSpeedRange.addEventListener('input', () => {
         state.voiceSpeed = parseFloat(voiceSpeedRange.value);
         voiceSpeedLabel.textContent = `${state.voiceSpeed.toFixed(2)}x`;
-        syncScriptMetrics();
       });
 
       playPauseBtn.addEventListener('click', () => {
-        if (state.isPlaying) {
-          stopPlayback();
-        } else {
-          startPlayback();
-        }
+        if (state.isPlaying) stopPlayback();
+        else startPlayback();
       });
 
       timelineTrack.addEventListener('click', (e) => {
         const rect = timelineTrack.getBoundingClientRect();
         const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        state.elapsedSec = ratio * state.durationSec;
+        state.elapsedSec = ratio * getTotalDuration();
+        state.lastSpokenSceneIndex = -1;
       });
 
       exportVideoBtn.addEventListener('click', exportVideoFile);
 
-      // Modal Controls
+      // Modals
       document.getElementById('apiKeysBtn').addEventListener('click', () => apiKeysModal.classList.remove('hidden'));
       document.getElementById('closeApiModalBtn').addEventListener('click', () => apiKeysModal.classList.add('hidden'));
       document.getElementById('saveApiKeysBtn').addEventListener('click', () => {
@@ -1698,7 +2619,7 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
         localStorage.setItem('rf_pexels_key', state.pexelsKey);
         refreshApiStatus();
         apiKeysModal.classList.add('hidden');
-        showToast('API keys saved securely in your browser!');
+        showToast('API keys saved locally!');
       });
 
       document.getElementById('pwaInfoBtn').addEventListener('click', () => pwaModal.classList.remove('hidden'));
@@ -1707,7 +2628,7 @@ Return ONLY valid JSON with keys: "hook" (max 5 uppercase words), "script" (spok
 
       // --- Initialize Studio ---
       refreshApiStatus();
-      syncScriptMetrics();
+      selectScene(0);
       requestAnimationFrame((now) => {
         state.lastTimestamp = now;
         renderCanvasFrame(now);
