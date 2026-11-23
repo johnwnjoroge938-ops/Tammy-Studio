@@ -1,0 +1,2642 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>ReelForge Studio 3D Pro — Mobile 3D, Stock Media & AI Video Creator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #09090b;
+      color: #f4f4f5;
+      overscroll-behavior-y: none;
+      padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    input[type="range"] { accent-color: #8b5cf6; }
+    button, select, input { touch-action: manipulation; }
+    @media (max-width: 640px) {
+      input[type="text"], textarea, select { font-size: 16px !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 selection:bg-violet-500/30">
+
+  <!-- Top App Bar -->
+  <header class="sticky top-0 z-30 bg-zinc-950/95 backdrop-blur-md border-b border-zinc-800/80 px-3 py-2 flex items-center justify-between gap-2">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 via-fuchsia-600 to-amber-500 flex items-center justify-center shadow-lg shadow-violet-600/20">
+        <span class="text-white font-black text-xs">3D</span>
+      </div>
+      <div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-extrabold text-sm tracking-tight text-white">ReelForge 3D</span>
+          <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">1080p HD</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-1.5">
+      <!-- Aspect Ratio Toggle -->
+      <div class="flex bg-zinc-900 p-0.5 rounded-lg border border-zinc-800">
+        <button id="ratio916Btn" type="button" class="px-2.5 py-1.5 rounded-md text-[11px] font-bold bg-violet-600 text-white transition">9:16</button>
+        <button id="ratio169Btn" type="button" class="px-2.5 py-1.5 rounded-md text-[11px] font-bold text-zinc-400 hover:text-white transition">16:9</button>
+      </div>
+
+      <!-- BYOK API Key Button -->
+      <button id="openKeysModalBtn" type="button" class="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5 transition" title="Free Stock & AI Keys">
+        <span>🔑</span>
+        <span class="hidden sm:inline">Keys</span>
+        <span id="keyStatusDot" class="w-2 h-2 rounded-full bg-zinc-600"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="flex-1 w-full max-w-5xl mx-auto px-3 pt-2.5 pb-24 flex flex-col lg:flex-row gap-4">
+
+    <!-- Left / Sticky Top Stage Preview -->
+    <section class="w-full lg:w-[400px] lg:shrink-0 sticky top-[49px] z-20 lg:static bg-zinc-950/95 backdrop-blur-md pb-2">
+      <div class="bg-zinc-900/95 border border-zinc-800 rounded-2xl p-2.5 shadow-2xl">
+        <!-- Stage Status Strip -->
+        <div class="flex items-center justify-between mb-1.5 px-1">
+          <div class="flex items-center gap-1.5">
+            <span id="engineBadgeDot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span id="engineBadgeText" class="text-[11px] font-bold text-zinc-200">3D WebGL Stage</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span id="exportResLabel" class="text-[10px] font-mono text-zinc-400">1080×1920</span>
+            <span id="activeSceneBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-violet-500/20 text-violet-300">1/3</span>
+          </div>
+        </div>
+
+        <!-- Compact Mobile-Friendly Stage Wrapper -->
+        <div id="canvasWrapper" class="relative w-full h-[29vh] sm:h-[370px] aspect-[9/16] rounded-xl overflow-hidden bg-zinc-950 border border-zinc-800 mx-auto flex items-center justify-center">
+          <canvas id="studioCanvas" width="540" height="960" class="w-full h-full object-contain block"></canvas>
+
+          <!-- Recording Indicator -->
+          <div id="recordingBadge" class="hidden absolute top-2.5 right-2.5 bg-rose-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg">
+            <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+            RENDERING 1080P HD...
+          </div>
+        </div>
+
+        <!-- Timeline Progress -->
+        <div class="mt-2 px-1">
+          <div class="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+            <div id="timelineBar" class="h-full bg-gradient-to-r from-cyan-400 via-violet-500 to-fuchsia-500 w-0 transition-all duration-75"></div>
+          </div>
+          <div class="flex justify-between text-[10px] font-mono text-zinc-400 mt-1">
+            <span id="timeElapsed">00:00</span>
+            <span id="timeTotal">00:12</span>
+          </div>
+        </div>
+
+        <!-- Transport & Export Controls -->
+        <div class="grid grid-cols-2 gap-2 mt-1.5">
+          <button id="playPauseBtn" type="button" class="min-h-[44px] py-2.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 active:scale-[0.98] text-white font-bold text-xs flex items-center justify-center gap-1.5 border border-zinc-700 transition">
+            <span id="playIcon">▶️</span>
+            <span id="playLabel">Play Story</span>
+          </button>
+
+          <button id="exportHdBtn" type="button" class="min-h-[44px] py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 active:scale-[0.98] text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/20 transition">
+            <span>⬇️</span>
+            <span id="exportBtnText">Export 1080p HD</span>
+          </button>
+        </div>
+
+        <!-- Download Ready Banner -->
+        <div id="downloadReadyBox" class="hidden mt-2 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-2">
+          <div class="text-[11px] text-emerald-300 font-semibold">1080p HD Video Ready!</div>
+          <a id="downloadVideoLink" href="#" download="reelforge-3d-1080p.webm" class="px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-extrabold text-xs transition">
+            Save Video
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right / Bottom Studio Controls -->
+    <section class="flex-1 space-y-3.5">
+
+      <!-- Scene Timeline Strip -->
+      <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Timeline Scenes (1–6)</span>
+          <div class="flex items-center gap-1.5">
+            <button id="addSceneBtn" type="button" class="min-h-[34px] px-3 py-1 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-[11px] font-bold transition">+ Scene</button>
+            <button id="duplicateSceneBtn" type="button" class="min-h-[34px] px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-semibold transition">Copy</button>
+            <button id="deleteSceneBtn" type="button" class="min-h-[34px] px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-rose-900/60 text-zinc-400 hover:text-rose-300 text-[11px] font-semibold transition">Del</button>
+          </div>
+        </div>
+
+        <div id="sceneTabsList" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+
+        <div class="grid grid-cols-2 gap-2 mt-2.5 pt-2.5 border-t border-zinc-800/80">
+          <div>
+            <label for="sceneDurationSelect" class="block text-[10px] text-zinc-400 mb-1">Scene Duration</label>
+            <select id="sceneDurationSelect" class="w-full min-h-[40px] px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
+              <option value="3">3 Seconds</option>
+              <option value="4" selected>4 Seconds</option>
+              <option value="5">5 Seconds</option>
+              <option value="7">7 Seconds</option>
+              <option value="10">10 Seconds</option>
+            </select>
+          </div>
+          <div>
+            <label for="sceneTransitionSelect" class="block text-[10px] text-zinc-400 mb-1">Transition</label>
+            <select id="sceneTransitionSelect" class="w-full min-h-[40px] px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
+              <option value="fade" selected>Smooth Fade</option>
+              <option value="slide">Slide Cut</option>
+              <option value="zoom">Punch Zoom</option>
+              <option value="none">Instant Cut</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3-in-1 Engine Quick Selector -->
+      <div class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-2.5">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5 px-1">Active Scene Visual Engine</div>
+        <div class="grid grid-cols-3 gap-1.5">
+          <button id="mode3dBtn" type="button" class="engine-mode-btn min-h-[48px] py-2 px-2 rounded-xl bg-cyan-600 text-white font-bold text-[11px] flex flex-col items-center justify-center gap-0.5 shadow-md transition">
+            <span>🧊 3D Stage</span>
+            <span class="text-[9px] font-normal opacity-90">Free Mobile 3D</span>
+          </button>
+          <button id="mode2dBtn" type="button" class="engine-mode-btn min-h-[48px] py-2 px-2 rounded-xl bg-zinc-950 text-zinc-400 hover:text-white border border-zinc-800 font-bold text-[11px] flex flex-col items-center justify-center gap-0.5 transition">
+            <span>🎭 2D Puppet</span>
+            <span class="text-[9px] font-normal opacity-80">Free Flat Cartoon</span>
+          </button>
+          <button id="modeAiBtn" type="button" class="engine-mode-btn min-h-[48px] py-2 px-2 rounded-xl bg-zinc-950 text-zinc-400 hover:text-white border border-zinc-800 font-bold text-[11px] flex flex-col items-center justify-center gap-0.5 transition">
+            <span>🌐 Stock & AI</span>
+            <span class="text-[9px] font-normal opacity-80">Free Clips / Photos</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <div class="grid grid-cols-4 gap-1 bg-zinc-900 p-1 rounded-xl border border-zinc-800">
+        <button type="button" data-tab="story" class="studio-tab active min-h-[42px] py-2 px-1 rounded-lg text-[11px] font-bold bg-violet-600 text-white transition">📖 1. Story</button>
+        <button type="button" data-tab="characters" class="studio-tab min-h-[42px] py-2 px-1 rounded-lg text-[11px] font-bold text-zinc-400 hover:text-white transition">🧊 2. 3D/2D</button>
+        <button type="button" data-tab="ai-cinema" class="studio-tab min-h-[42px] py-2 px-1 rounded-lg text-[11px] font-bold text-zinc-400 hover:text-white transition">🌐 3. Media</button>
+        <button type="button" data-tab="audio-fx" class="studio-tab min-h-[42px] py-2 px-1 rounded-lg text-[11px] font-bold text-zinc-400 hover:text-white transition">🔊 4. Audio</button>
+      </div>
+
+      <!-- TAB 1: UNIVERSAL MULTI-GENRE STORY BUILDER -->
+      <div id="tab-story" class="tab-panel space-y-3.5">
+        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3.5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-violet-400">Multi-Genre Story Generator</span>
+            <span class="text-[10px] text-zinc-400">Any Topic • Zero Errors</span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-1.5">
+            <button type="button" data-genre="general" class="genre-pill active min-h-[38px] py-1.5 px-2 rounded-lg text-[11px] font-bold bg-violet-600 text-white border border-violet-500">🌟 General</button>
+            <button type="button" data-genre="romance" class="genre-pill min-h-[38px] py-1.5 px-2 rounded-lg text-[11px] font-bold bg-zinc-950 text-zinc-300 border border-zinc-800 hover:border-pink-500/50">❤️ Romance</button>
+            <button type="button" data-genre="crime" class="genre-pill min-h-[38px] py-1.5 px-2 rounded-lg text-[11px] font-bold bg-zinc-950 text-zinc-300 border border-zinc-800 hover:border-amber-500/50">🕵️ Crime</button>
+            <button type="button" data-genre="comedy" class="genre-pill min-h-[38px] py-1.5 px-2 rounded-lg text-[11px] font-bold bg-zinc-950 text-zinc-300 border border-zinc-800 hover:border-emerald-500/50">😂 Comedy</button>
+            <button type="button" data-genre="explainer" class="genre-pill min-h-[38px] py-1.5 px-2 rounded-lg text-[11px] font-bold bg-zinc-950 text-zinc-300 border border-zinc-800 hover:border-cyan-500/50">🧠 Explainer</button>
+            <button type="button" data-genre="ad" class="genre-pill min-h-[38px] py-1.5 px-2 rounded-lg text-[11px] font-bold bg-zinc-950 text-zinc-300 border border-zinc-800 hover:border-fuchsia-500/50">🛍️ Promo Ad</button>
+          </div>
+
+          <div>
+            <label for="storyPromptInput" class="block text-[11px] text-zinc-400 mb-1">Describe Your Story, Skit, Lesson, or Product</label>
+            <input id="storyPromptInput" type="text" value="A young man walks to the neighborhood shop to buy flowers"
+              placeholder="e.g., A detective solves a midnight theft, or a hilarious shop mix-up..."
+              class="w-full min-h-[44px] px-3 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500" />
+          </div>
+
+          <button id="autoGenerateStoryBtn" type="button" class="w-full min-h-[46px] py-2.5 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-violet-600/20 transition">
+            <span>⚡</span>
+            <span id="autoGenBtnText">Build 3D Multi-Scene Story</span>
+          </button>
+
+          <!-- Instant One-Tap Presets -->
+          <div class="pt-1 flex flex-wrap gap-1.5">
+            <button type="button" class="preset-story-btn min-h-[34px] text-[11px] px-3 py-1.5 rounded-full bg-zinc-950 border border-zinc-800 text-zinc-300 hover:border-pink-500"
+              data-genre="romance" data-topic="A nervous guy brings roses to meet his crush at the sunset cafe">❤️ Love Story: Sunset Cafe</button>
+            <button type="button" class="preset-story-btn min-h-[34px] text-[11px] px-3 py-1.5 rounded-full bg-zinc-950 border border-zinc-800 text-zinc-300 hover:border-amber-500"
+              data-genre="crime" data-topic="A sharp detective inspects a glowing clue in a dark midnight alley">🕵️ Crime: Midnight Clue</button>
+            <button type="button" class="preset-story-btn min-h-[34px] text-[11px] px-3 py-1.5 rounded-full bg-zinc-950 border border-zinc-800 text-zinc-300 hover:border-emerald-500"
+              data-genre="comedy" data-topic="A shopper grabs ten bags of groceries then realizes his wallet is at home">😂 Comedy: Forgot Wallet</button>
+          </div>
+        </div>
+
+        <!-- Active Scene Script & Captions -->
+        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3.5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span id="scriptEditorTitle" class="text-xs font-bold text-emerald-400">Scene 1 Script & Captions</span>
+            <span id="wordCountBadge" class="text-[10px] text-zinc-400">12 words</span>
+          </div>
+
+          <div>
+            <label for="sceneHeadlineInput" class="block text-[10px] text-zinc-400 mb-1">Top Story / Chapter Banner</label>
+            <input id="sceneHeadlineInput" type="text" value="PART 1: ON THE WAY"
+              class="w-full min-h-[42px] px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-bold text-white focus:outline-none focus:border-violet-500" />
+          </div>
+
+          <div>
+            <label for="captionStyleSelect" class="block text-[10px] text-zinc-400 mb-1">Caption / Speech Style</label>
+            <select id="captionStyleSelect" class="w-full min-h-[42px] px-2.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
+              <option value="speech-bubble" selected>3D/2D Speech Bubble</option>
+              <option value="tiktok-bold">Viral Bold Subtitles</option>
+              <option value="cinema-bar">Cinematic Lower-Third</option>
+              <option value="none">Clean Stage (No Text)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="sceneScriptInput" class="block text-[10px] text-zinc-400 mb-1">Spoken Dialogue / Narration</label>
+            <textarea id="sceneScriptInput" rows="3"
+              class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500 leading-relaxed">David stepped outside and walked cheerfully down the street toward the corner shop.</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: 3D & 2D CHARACTERS, SETS & 3D CAMERA ANGLES -->
+      <div id="tab-characters" class="tab-panel hidden space-y-3.5">
+        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3.5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">3D Set, Camera & Action</span>
+            <span class="text-[10px] text-zinc-400">Smooth Mobile WebGL</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label for="locationSelect" class="block text-[10px] text-zinc-400 mb-1">3D / 2D Environment Set</label>
+              <select id="locationSelect" class="w-full min-h-[42px] px-2.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-cyan-500">
+                <option value="street" selected>🏙️ City Street (Walking Set)</option>
+                <option value="shop">🏪 Local Shop / Store</option>
+                <option value="home">🏠 Cozy Living Room</option>
+                <option value="cafe">☕ Romantic Sunset Cafe</option>
+                <option value="alley">🌃 Dark Crime Alley</option>
+                <option value="office">💼 Modern Office / Studio</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="camera3dSelect" class="block text-[10px] text-zinc-400 mb-1">3D Camera Angle</label>
+              <select id="camera3dSelect" class="w-full min-h-[42px] px-2.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-cyan-500">
+                <option value="medium" selected>🎥 Medium Story Shot</option>
+                <option value="orbit">🔄 Cinematic 3D Orbit</option>
+                <option value="closeup">🔍 Dramatic Close-Up</option>
+                <option value="wide">🌆 Wide Establishing Shot</option>
+                <option value="over-shoulder">👤 Over-The-Shoulder</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Actor 1 -->
+          <div class="p-3 rounded-xl bg-zinc-950/90 border border-zinc-800 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-white">Actor 1 (Lead Character)</span>
+              <label class="inline-flex items-center gap-2 text-xs text-zinc-300 cursor-pointer min-h-[32px]">
+                <input id="char1Visible" type="checkbox" checked class="w-4 h-4 rounded bg-zinc-800 border-zinc-700 text-cyan-500" />
+                On Stage
+              </label>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="char1Name" class="block text-[10px] text-zinc-400 mb-1">Name</label>
+                <input id="char1Name" type="text" value="David" class="w-full min-h-[40px] px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white" />
+              </div>
+              <div>
+                <label for="char1Outfit" class="block text-[10px] text-zinc-400 mb-1">Outfit Style</label>
+                <select id="char1Outfit" class="w-full min-h-[40px] px-2 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white">
+                  <option value="casual-blue" selected>Casual Blue Jacket</option>
+                  <option value="suit-dark">Sharp Dark Suit</option>
+                  <option value="detective">Detective Trench & Hat</option>
+                  <option value="red-hoodie">Street Red Hoodie</option>
+                  <option value="shopkeeper">Green Shop Apron</option>
+                </select>
+              </div>
+              <div>
+                <label for="char1Action" class="block text-[10px] text-zinc-400 mb-1">3D/2D Action</label>
+                <select id="char1Action" class="w-full min-h-[40px] px-2 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white">
+                  <option value="walk" selected>🚶 Walking Cycle</option>
+                  <option value="talk">🗣️ Talking & Gesturing</option>
+                  <option value="wave">👋 Waving Hello</option>
+                  <option value="celebrate">🙌 Excited / Jump</option>
+                  <option value="inspect">🕵️ Detective Inspect</option>
+                  <option value="idle">🧍 Standing / Listening</option>
+                </select>
+              </div>
+              <div>
+                <label for="char1Prop" class="block text-[10px] text-zinc-400 mb-1">Prop in Hand</label>
+                <select id="char1Prop" class="w-full min-h-[40px] px-2 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white">
+                  <option value="none" selected>No Prop</option>
+                  <option value="flowers">💐 Bouquet of Flowers</option>
+                  <option value="bag">🛍️ Shopping Bag</option>
+                  <option value="phone">📱 Smartphone</option>
+                  <option value="magnifier">🔍 Magnifying Glass</option>
+                  <option value="briefcase">💼 Briefcase</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="char1Emotion" class="block text-[10px] text-zinc-400 mb-1">Expression</label>
+              <select id="char1Emotion" class="w-full min-h-[40px] px-2 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white">
+                <option value="happy" selected>😊 Happy / Confident</option>
+                <option value="shocked">😱 Shocked / Surprised</option>
+                <option value="serious">🤨 Serious / Detective</option>
+                <option value="love">😍 In Love / Romantic</option>
+                <option value="angry">😠 Frustrated / Dramatic</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Actor 2 -->
+          <div class="p-3 rounded-xl bg-zinc-950/90 border border-zinc-800 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-white">Actor 2 (Co-Star / Partner / Suspect)</span>
+              <label class="inline-flex items-center gap-2 text-xs text-zinc-300 cursor-pointer min-h-[32px]">
+                <input id="char2Visible" type="checkbox" class="w-4 h-4 rounded bg-zinc-800 border-zinc-700 text-cyan-500" />
+                On Stage
+              </label>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="char2Name" class="block text-[10px] text-zinc-400 mb-1">Name</label>
+                <input id="char2Name" type="text" value="Sarah" class="w-full min-h-[40px] px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white" />
+              </div>
+              <div>
+                <label for="char2Outfit" class="block text-[10px] text-zinc-400 mb-1">Outfit Style</label>
+                <select id="char2Outfit" class="w-full min-h-[40px] px-2 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white">
+                  <option value="pink-dress" selected>Rose Pink Outfit</option>
+                  <option value="shopkeeper">Green Shop Apron</option>
+                  <option value="suit-dark">Dark Suspect Coat</option>
+                  <option value="casual-blue">Casual Blue Top</option>
+                </select>
+              </div>
+              <div>
+                <label for="char2Action" class="block text-[10px] text-zinc-400 mb-1">Action</label>
+                <select id="char2Action" class="w-full min-h-[40px] px-2 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white">
+                  <option value="talk" selected>🗣️ Talking / Reacting</option>
+                  <option value="wave">👋 Waving</option>
+                  <option value="walk">🚶 Walking</option>
+                  <option value="celebrate">🙌 Excited / Surprised</option>
+                  <option value="idle">🧍 Listening</option>
+                </select>
+              </div>
+              <div>
+                <label for="char2Prop" class="block text-[10px] text-zinc-400 mb-1">Prop in Hand</label>
+                <select id="char2Prop" class="w-full min-h-[40px] px-2 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-white">
+                  <option value="none" selected>No Prop</option>
+                  <option value="flowers">💐 Bouquet of Flowers</option>
+                  <option value="bag">🛍️ Shopping Bag</option>
+                  <option value="phone">📱 Smartphone</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: MULTI-SOURCE FREE STOCK MEDIA + AI CINEMA + CUSTOM UPLOAD -->
+      <div id="tab-ai-cinema" class="tab-panel hidden space-y-3.5">
+
+        <!-- NEW: FREE STOCK PHOTO & VIDEO SEARCH HUB -->
+        <div class="bg-zinc-900/90 border border-cyan-500/40 rounded-2xl p-3.5 space-y-3 shadow-lg">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-cyan-400 block">Free Stock Video & Photo Library</span>
+              <span class="text-[10px] text-zinc-400">Tap any clip or photo to load onto Scene <span id="stockTargetSceneNum">1</span></span>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold">Instant Search</span>
+          </div>
+
+          <!-- Source & Type Selectors -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label for="stockSourceSelect" class="block text-[10px] text-zinc-400 mb-1">Free Platform Source</label>
+              <select id="stockSourceSelect" class="w-full min-h-[42px] px-2.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-cyan-500">
+                <option value="all-free" selected>✨ All Free (No Key Needed)</option>
+                <option value="wikimedia">🌍 Wikimedia Commons (Photos)</option>
+                <option value="nasa">🚀 NASA Space Library (Videos & Photos)</option>
+                <option value="pixabay-video">🎬 Pixabay HD Videos (Free Key)</option>
+                <option value="pixabay-photo">📸 Pixabay Photos (Free Key)</option>
+                <option value="pexels-video">🎥 Pexels Videos (Key)</option>
+                <option value="pexels-photo">🖼️ Pexels Photos (Key)</option>
+                <option value="unsplash">📷 Unsplash Photos (Free Key)</option>
+              </select>
+            </div>
+            <div>
+              <label for="stockSearchInput" class="block text-[10px] text-zinc-400 mb-1">Search Topic</label>
+              <div class="flex gap-1.5">
+                <input id="stockSearchInput" type="text" value="city sunset" placeholder="e.g., ocean, flowers, rocket, coffee..."
+                  class="w-full min-h-[42px] px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-cyan-500" />
+              </div>
+            </div>
+          </div>
+
+          <button id="runStockSearchBtn" type="button" class="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-[0.99] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition">
+            <span>🔍</span>
+            <span id="stockSearchBtnText">Search Free Videos & Photos</span>
+          </button>
+
+          <!-- Quick One-Tap Mobile Search Chips -->
+          <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+            <button type="button" class="stock-chip shrink-0 min-h-[32px] px-3 py-1 rounded-full bg-zinc-950 border border-zinc-800 text-[11px] text-zinc-300 hover:border-cyan-500" data-q="sunset beach" data-src="all-free">🌅 Sunset Beach</button>
+            <button type="button" class="stock-chip shrink-0 min-h-[32px] px-3 py-1 rounded-full bg-zinc-950 border border-zinc-800 text-[11px] text-zinc-300 hover:border-cyan-500" data-q="earth from space" data-src="nasa">🚀 Space Video (NASA)</button>
+            <button type="button" class="stock-chip shrink-0 min-h-[32px] px-3 py-1 rounded-full bg-zinc-950 border border-zinc-800 text-[11px] text-zinc-300 hover:border-cyan-500" data-q="red roses bouquet" data-src="wikimedia">💐 Roses</button>
+            <button type="button" class="stock-chip shrink-0 min-h-[32px] px-3 py-1 rounded-full bg-zinc-950 border border-zinc-800 text-[11px] text-zinc-300 hover:border-cyan-500" data-q="city night street" data-src="all-free">🌃 City Night</button>
+            <button type="button" class="stock-chip shrink-0 min-h-[32px] px-3 py-1 rounded-full bg-zinc-950 border border-zinc-800 text-[11px] text-zinc-300 hover:border-cyan-500" data-q="coffee shop" data-src="all-free">☕ Coffee</button>
+          </div>
+
+          <!-- Stock Results Grid -->
+          <div id="stockStatusLine" class="text-[11px] text-zinc-400">
+            Ready — Works out-of-the-box with <strong>Wikimedia Commons</strong> & <strong>NASA</strong> (no key), plus <strong>Pixabay</strong>, <strong>Pexels</strong> & <strong>Unsplash</strong> if you add free keys in 🔑.
+          </div>
+
+          <div id="stockResultsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[320px] overflow-y-auto pr-0.5"></div>
+        </div>
+
+        <!-- AI CINEMA & IMAGE STUDIO -->
+        <div class="bg-zinc-900/80 border border-emerald-500/30 rounded-2xl p-3.5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">AI Cinema & Image Studio</span>
+            <span class="text-[10px] text-zinc-400">gen.pollinations.ai • BYOK</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div class="sm:col-span-2">
+              <label for="aiPromptInput" class="block text-[10px] text-zinc-400 mb-1">AI Visual / Video Prompt</label>
+              <input id="aiPromptInput" type="text" value="Cinematic 3D Pixar-style animated street scene at golden hour, charming flower shop, warm lighting"
+                class="w-full min-h-[42px] px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+
+            <div>
+              <label for="aiStyleSelect" class="block text-[10px] text-zinc-400 mb-1">Style</label>
+              <select id="aiStyleSelect" class="w-full min-h-[42px] px-2.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-emerald-500">
+                <option value="pixar" selected>3D Pixar / Disney Style</option>
+                <option value="anime">2D Classic Hand-Drawn</option>
+                <option value="noir">Dramatic Crime Noir</option>
+                <option value="romance">Soft Romantic Cinema</option>
+                <option value="commercial">Commercial Studio Photo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button id="generateAiVisualBtn" type="button" class="min-h-[44px] py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition">
+              <span>🖼️</span>
+              <span id="generateAiVisualText">Generate AI 3D Image</span>
+            </button>
+
+            <button id="generateAiVideoBtn" type="button" class="min-h-[44px] py-2.5 px-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-violet-600/20 transition">
+              <span>🎬</span>
+              <span id="generateAiVideoText">Generate AI Video (Veo/Seedance)</span>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between gap-2 pt-1">
+            <select id="aiVideoModelSelect" class="min-h-[38px] px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-[11px] text-zinc-300 focus:outline-none">
+              <option value="seedance" selected>Model: Seedance (Fast 3D Motion)</option>
+              <option value="veo">Model: Veo (Cinematic)</option>
+            </select>
+
+            <button id="switchBackTo3dBtn" type="button" class="min-h-[38px] py-1.5 px-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-cyan-300 font-semibold text-[11px] border border-zinc-700 transition">
+              Use Built-In 3D Stage
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Photo / Video Upload -->
+        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-zinc-300">Upload From Phone Gallery</span>
+            <button id="clearCustomMediaBtn" type="button" class="text-[11px] text-rose-400 hover:underline font-semibold">Reset Scene</button>
+          </div>
+          <label class="flex flex-col items-center justify-center w-full min-h-[68px] py-3.5 px-4 rounded-xl border-2 border-dashed border-zinc-700 hover:border-violet-500 bg-zinc-950/60 cursor-pointer transition">
+            <span class="text-xs font-semibold text-zinc-200">Tap to Pick Photo or Video From Device</span>
+            <span class="text-[10px] text-zinc-500 mt-0.5">Overlays your captions & voiceover automatically</span>
+            <input id="customMediaUpload" type="file" accept="image/*,video/*" class="hidden" />
+          </label>
+        </div>
+      </div>
+
+      <!-- TAB 4: VOICEOVER, SFX & COLOR GRADE -->
+      <div id="tab-audio-fx" class="tab-panel hidden space-y-3.5">
+        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3.5 space-y-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-400 block">Voiceover & Sound Effects</span>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label for="voiceEnableSelect" class="block text-[10px] text-zinc-400 mb-1">Auto Narrator Voice</label>
+              <select id="voiceEnableSelect" class="w-full min-h-[42px] px-2.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white">
+                <option value="on" selected>Voiceover ON (Lip-Sync)</option>
+                <option value="off">Silent / Music Only</option>
+              </select>
+            </div>
+            <div>
+              <label for="voicePitchSelect" class="block text-[10px] text-zinc-400 mb-1">Voice Tone</label>
+              <select id="voicePitchSelect" class="w-full min-h-[42px] px-2.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white">
+                <option value="1.0" selected>Natural Storyteller</option>
+                <option value="0.82">Deep Detective / Dramatic</option>
+                <option value="1.22">Upbeat Comedy / Energetic</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <span class="block text-[10px] text-zinc-400 mb-1.5">Instant Web Audio Soundboard</span>
+            <div class="grid grid-cols-4 gap-1.5">
+              <button type="button" data-sfx="rimshot" class="sfx-btn min-h-[42px] py-2 px-1 rounded-lg bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 text-[10px] font-bold text-amber-300">🥁 Rimshot</button>
+              <button type="button" data-sfx="boing" class="sfx-btn min-h-[42px] py-2 px-1 rounded-lg bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 text-[10px] font-bold text-emerald-300">🦘 Boing</button>
+              <button type="button" data-sfx="dramatic" class="sfx-btn min-h-[42px] py-2 px-1 rounded-lg bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 text-[10px] font-bold text-rose-300">😱 Dun-Dun</button>
+              <button type="button" data-sfx="chime" class="sfx-btn min-h-[42px] py-2 px-1 rounded-lg bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 text-[10px] font-bold text-pink-300">✨ Sparkle</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Color Grade -->
+        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3.5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-fuchsia-400">Color Grade & Lighting</span>
+            <button id="resetGradeBtn" type="button" class="text-[11px] text-zinc-400 hover:text-white font-semibold">Reset</button>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between text-[10px] text-zinc-400 mb-1">
+                <span>Brightness</span><span id="brightnessVal">100%</span>
+              </div>
+              <input id="brightnessSlider" type="range" min="70" max="135" value="100" class="w-full h-2" />
+            </div>
+            <div>
+              <div class="flex justify-between text-[10px] text-zinc-400 mb-1">
+                <span>Contrast</span><span id="contrastVal">105%</span>
+              </div>
+              <input id="contrastSlider" type="range" min="80" max="140" value="105" class="w-full h-2" />
+            </div>
+            <div>
+              <label for="colorTintSelect" class="block text-[10px] text-zinc-400 mb-1">Mood Filter</label>
+              <select id="colorTintSelect" class="w-full min-h-[42px] px-2.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white">
+                <option value="none" selected>Natural Studio</option>
+                <option value="golden">Golden Sunset (Romance)</option>
+                <option value="noir">Midnight Blue (Crime)</option>
+                <option value="vivid">Vibrant Pop (Comedy)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- BYOK API Keys Modal (Stock Platforms + AI) -->
+  <div id="keysModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-5 space-y-3.5 shadow-2xl my-auto">
+      <div class="flex items-center justify-between">
+        <h3 class="font-extrabold text-sm text-white">Optional Free Stock & AI Keys</h3>
+        <button id="closeKeysModalBtn" type="button" class="min-w-[36px] min-h-[36px] flex items-center justify-center text-zinc-400 hover:text-white text-sm font-bold">✕</button>
+      </div>
+      <p class="text-[11px] text-zinc-400 leading-relaxed">
+        <strong>3D Stage</strong>, <strong>2D Puppet</strong>, <strong>Wikimedia Commons</strong>, and <strong>NASA</strong> work 100% free with <strong>zero keys</strong>. Add free keys below to unlock Pixabay, Pexels, Unsplash, or AI video generation. Stored only on your phone/browser.
+      </p>
+      <div class="space-y-2.5">
+        <div>
+          <label for="pixabayKeyInput" class="block text-[11px] font-semibold text-cyan-300 mb-1">Pixabay API Key (Free HD Videos & Photos — pixabay.com/api/docs)</label>
+          <input id="pixabayKeyInput" type="password" placeholder="Paste free Pixabay key..." class="w-full min-h-[40px] px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white" />
+        </div>
+        <div>
+          <label for="pexelsKeyInput" class="block text-[11px] font-semibold text-emerald-300 mb-1">Pexels API Key (Optional Existing Key)</label>
+          <input id="pexelsKeyInput" type="password" placeholder="Paste Pexels key if you have one..." class="w-full min-h-[40px] px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white" />
+        </div>
+        <div>
+          <label for="unsplashKeyInput" class="block text-[11px] font-semibold text-amber-300 mb-1">Unsplash Access Key (Free Photos — unsplash.com/developers)</label>
+          <input id="unsplashKeyInput" type="password" placeholder="Paste free Unsplash Access Key..." class="w-full min-h-[40px] px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white" />
+        </div>
+        <div class="pt-1 border-t border-zinc-800">
+          <label for="pollinationsKeyInput" class="block text-[11px] font-medium text-zinc-300 mb-1">Pollinations AI Key (<code class="text-emerald-400">sk_...</code> for Veo/Seedance AI Video)</label>
+          <input id="pollinationsKeyInput" type="password" placeholder="sk_..." class="w-full min-h-[40px] px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white" />
+        </div>
+      </div>
+      <button id="saveKeysBtn" type="button" class="w-full min-h-[44px] py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs transition">
+        Save Keys Locally
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastBanner" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full bg-zinc-900 border border-zinc-700 text-xs font-semibold text-white shadow-2xl max-w-[90vw] text-center"></div>
+
+  <script>
+    (function () {
+      const RATIOS = {
+        '9:16': { previewW: 540, previewH: 960, exportW: 1080, exportH: 1920, cssAspect: 'aspect-[9/16]' },
+        '16:9': { previewW: 960, previewH: 540, exportW: 1920, exportH: 1080, cssAspect: 'aspect-[16/9]' },
+      };
+
+      const OUTFITS = {
+        'casual-blue': { top: '#2563eb', topHex: 0x2563eb, pants: '#1e293b', pantsHex: 0x1e293b, skin: '#c68642', skinHex: 0xc68642, hair: '#18181b', hairHex: 0x18181b, hat: false },
+        'suit-dark':   { top: '#18181b', topHex: 0x18181b, pants: '#09090b', pantsHex: 0x09090b, skin: '#d99b66', skinHex: 0xd99b66, hair: '#27272a', hairHex: 0x27272a, hat: false },
+        'detective':   { top: '#92400e', topHex: 0x92400e, pants: '#451a03', pantsHex: 0x451a03, skin: '#b5743c', skinHex: 0xb5743c, hair: '#18181b', hairHex: 0x18181b, hat: true },
+        'red-hoodie':  { top: '#dc2626', topHex: 0xdc2626, pants: '#1f2937', pantsHex: 0x1f2937, skin: '#8d5524', skinHex: 0x8d5524, hair: '#09090b', hairHex: 0x09090b, hat: false },
+        'shopkeeper':  { top: '#059669', topHex: 0x059669, pants: '#1e293b', pantsHex: 0x1e293b, skin: '#c68642', skinHex: 0xc68642, hair: '#18181b', hairHex: 0x18181b, hat: false },
+        'pink-dress':  { top: '#db2777', topHex: 0xdb2777, pants: '#831843', pantsHex: 0x831843, skin: '#a86535', skinHex: 0xa86535, hair: '#18181b', hairHex: 0x18181b, hat: false },
+      };
+
+      const AI_STYLES = {
+        pixar: '3D Pixar Disney animated movie still, expressive stylized 3D characters, global illumination, soft rim lighting, 4k',
+        anime: '2D classic hand-drawn theatrical animation, vibrant colors, crisp linework',
+        noir: 'Dramatic midnight crime noir animation, moody shadows, neon reflections, cinematic lighting',
+        romance: 'Warm golden sunset romantic animation, soft bokeh lights, dreamy atmosphere',
+        commercial: 'Clean commercial studio photography, crisp product lighting, modern aesthetic',
+      };
+
+      function createDefaultScene(overrides = {}) {
+        return {
+          engine: '3d-stage',
+          duration: 4,
+          transition: 'fade',
+          location: 'street',
+          camera3d: 'medium',
+          headline: 'PART 1: ON THE WAY',
+          captionStyle: 'speech-bubble',
+          script: 'David stepped outside and walked cheerfully down the street toward the corner shop.',
+          c1Show: true,
+          c1Name: 'David',
+          c1Outfit: 'casual-blue',
+          c1Action: 'walk',
+          c1Prop: 'none',
+          c1Emotion: 'happy',
+          c2Show: false,
+          c2Name: 'Sarah',
+          c2Outfit: 'pink-dress',
+          c2Action: 'talk',
+          c2Prop: 'none',
+          aiImg: null,
+          customImg: null,
+          customType: null,
+          customVideoUrl: null,
+          ...overrides,
+        };
+      }
+
+      const state = {
+        ratio: '9:16',
+        genre: 'general',
+        activeScene: 0,
+        playing: false,
+        exporting: false,
+        currentTime: 0,
+        lastTs: 0,
+        speaking: false,
+        scenes: [
+          createDefaultScene({
+            engine: '3d-stage',
+            location: 'street',
+            camera3d: 'medium',
+            headline: 'PART 1: ON THE WAY',
+            script: 'David stepped outside and walked cheerfully down the street toward the corner shop.',
+            c1Action: 'walk',
+            c1Prop: 'none',
+            c2Show: false,
+          }),
+          createDefaultScene({
+            engine: '3d-stage',
+            location: 'shop',
+            camera3d: 'over-shoulder',
+            headline: 'PART 2: AT THE SHOP',
+            script: 'Inside the shop, he picked up a fresh bouquet of red roses for his surprise.',
+            c1Action: 'talk',
+            c1Prop: 'flowers',
+            c2Show: true,
+            c2Name: 'Shopkeeper',
+            c2Outfit: 'shopkeeper',
+            c2Action: 'wave',
+          }),
+          createDefaultScene({
+            engine: '3d-stage',
+            location: 'cafe',
+            camera3d: 'orbit',
+            headline: 'PART 3: THE SURPRISE',
+            script: 'At the sunset cafe, Sarah smiled with joy the moment she saw the flowers!',
+            c1Action: 'wave',
+            c1Prop: 'flowers',
+            c1Emotion: 'love',
+            c2Show: true,
+            c2Name: 'Sarah',
+            c2Outfit: 'pink-dress',
+            c2Action: 'celebrate',
+          }),
+        ],
+        grade: { brightness: 100, contrast: 105, tint: 'none' },
+        pixabayKey: localStorage.getItem('rf_pixabay_key') || '',
+        pexelsKey: localStorage.getItem('rf_pexels_key') || '',
+        unsplashKey: localStorage.getItem('rf_unsplash_key') || '',
+        pollinationsKey: localStorage.getItem('rf_pollinations_key') || '',
+      };
+
+      const canvas = document.getElementById('studioCanvas');
+      const ctx = canvas.getContext('2d');
+      const canvasWrapper = document.getElementById('canvasWrapper');
+      const customVideoEl = document.createElement('video');
+      customVideoEl.crossOrigin = 'anonymous';
+      customVideoEl.muted = true;
+      customVideoEl.loop = true;
+      customVideoEl.playsInline = true;
+
+      // =========================================================================
+      // LIGHTWEIGHT MOBILE-OPTIMIZED THREE.JS 3D STAGE ENGINE
+      // =========================================================================
+      const engine3D = {
+        ready: false,
+        renderer: null,
+        scene: null,
+        camera: null,
+        glCanvas: null,
+        envGroup: null,
+        scrollingProps: [],
+        actor1: null,
+        actor2: null,
+        currentLoc: null,
+        currentOutfit1: null,
+        currentOutfit2: null,
+        currentProp1: null,
+        currentProp2: null,
+      };
+
+      function create3DPropMesh(type) {
+        if (!window.THREE || type === 'none') return null;
+        const g = new THREE.Group();
+        if (type === 'flowers') {
+          const wrap = new THREE.Mesh(
+            new THREE.ConeGeometry(0.14, 0.32, 8),
+            new THREE.MeshLambertMaterial({ color: 0xfde68a })
+          );
+          wrap.rotation.x = Math.PI;
+          g.add(wrap);
+          const colors = [0xf43f5e, 0xfb7185, 0xfacc15];
+          colors.forEach((col, i) => {
+            const bud = new THREE.Mesh(
+              new THREE.SphereGeometry(0.08, 8, 8),
+              new THREE.MeshLambertMaterial({ color: col })
+            );
+            bud.position.set((i - 1) * 0.08, 0.16, (i % 2) * 0.05);
+            g.add(bud);
+          });
+        } else if (type === 'bag') {
+          const bag = new THREE.Mesh(
+            new THREE.BoxGeometry(0.28, 0.34, 0.16),
+            new THREE.MeshLambertMaterial({ color: 0xf59e0b })
+          );
+          bag.position.y = -0.15;
+          g.add(bag);
+        } else if (type === 'phone') {
+          const phone = new THREE.Mesh(
+            new THREE.BoxGeometry(0.09, 0.16, 0.02),
+            new THREE.MeshLambertMaterial({ color: 0x38bdf8, emissive: 0x0284c7, emissiveIntensity: 0.4 })
+          );
+          g.add(phone);
+        } else if (type === 'magnifier') {
+          const handle = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.02, 0.02, 0.18, 6),
+            new THREE.MeshLambertMaterial({ color: 0x78350f })
+          );
+          const lens = new THREE.Mesh(
+            new THREE.TorusGeometry(0.09, 0.02, 6, 12),
+            new THREE.MeshLambertMaterial({ color: 0xe2e8f0 })
+          );
+          lens.position.y = 0.16;
+          g.add(handle, lens);
+        } else if (type === 'briefcase') {
+          const caseMesh = new THREE.Mesh(
+            new THREE.BoxGeometry(0.32, 0.24, 0.1),
+            new THREE.MeshLambertMaterial({ color: 0x451a03 })
+          );
+          caseMesh.position.y = -0.12;
+          g.add(caseMesh);
+        }
+        return g;
+      }
+
+      function build3DCharacter(outfitKey) {
+        const THREE = window.THREE;
+        const o = OUTFITS[outfitKey] || OUTFITS['casual-blue'];
+        const root = new THREE.Group();
+
+        const skinMat = new THREE.MeshLambertMaterial({ color: o.skinHex });
+        const topMat = new THREE.MeshLambertMaterial({ color: o.topHex });
+        const pantsMat = new THREE.MeshLambertMaterial({ color: o.pantsHex });
+        const hairMat = new THREE.MeshLambertMaterial({ color: o.hairHex });
+        const shoeMat = new THREE.MeshLambertMaterial({ color: 0x111827 });
+
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.72, 0.32), topMat);
+        torso.position.y = 1.05;
+        root.add(torso);
+
+        const headGroup = new THREE.Group();
+        headGroup.position.y = 1.68;
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 14, 12), skinMat);
+        headGroup.add(head);
+
+        const hair = new THREE.Mesh(
+          new THREE.SphereGeometry(0.29, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.52),
+          hairMat
+        );
+        hair.position.y = 0.03;
+        headGroup.add(hair);
+
+        if (o.hat) {
+          const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.04, 14), pantsMat);
+          brim.position.y = 0.2;
+          const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.27, 0.2, 14), pantsMat);
+          crown.position.y = 0.3;
+          headGroup.add(brim, crown);
+        }
+
+        const eyeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const pupilMat = new THREE.MeshBasicMaterial({ color: 0x09090b });
+        [-0.1, 0.1].forEach((ex) => {
+          const eye = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), eyeMat);
+          eye.position.set(ex, 0.03, 0.25);
+          const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.024, 6, 6), pupilMat);
+          pupil.position.set(ex, 0.03, 0.285);
+          headGroup.add(eye, pupil);
+        });
+
+        const mouth = new THREE.Mesh(
+          new THREE.BoxGeometry(0.13, 0.04, 0.04),
+          new THREE.MeshBasicMaterial({ color: 0xbe123c })
+        );
+        mouth.position.set(0, -0.1, 0.26);
+        headGroup.add(mouth);
+        root.add(headGroup);
+
+        const leftArmPivot = new THREE.Group();
+        leftArmPivot.position.set(-0.37, 1.34, 0);
+        const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.075, 0.58, 8), topMat);
+        leftArm.position.y = -0.26;
+        const leftHand = new THREE.Mesh(new THREE.SphereGeometry(0.085, 8, 8), skinMat);
+        leftHand.position.y = -0.56;
+        leftArmPivot.add(leftArm, leftHand);
+        root.add(leftArmPivot);
+
+        const rightArmPivot = new THREE.Group();
+        rightArmPivot.position.set(0.37, 1.34, 0);
+        const rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.075, 0.58, 8), topMat);
+        rightArm.position.y = -0.26;
+        const rightHand = new THREE.Mesh(new THREE.SphereGeometry(0.085, 8, 8), skinMat);
+        rightHand.position.y = -0.56;
+        const propAnchor = new THREE.Group();
+        propAnchor.position.set(0, -0.58, 0.12);
+        rightArmPivot.add(rightArm, rightHand, propAnchor);
+        root.add(rightArmPivot);
+
+        const leftLegPivot = new THREE.Group();
+        leftLegPivot.position.set(-0.15, 0.7, 0);
+        const leftLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.64, 8), pantsMat);
+        leftLeg.position.y = -0.32;
+        const leftShoe = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.12, 0.32), shoeMat);
+        leftShoe.position.set(0, -0.64, 0.05);
+        leftLegPivot.add(leftLeg, leftShoe);
+        root.add(leftLegPivot);
+
+        const rightLegPivot = new THREE.Group();
+        rightLegPivot.position.set(0.15, 0.7, 0);
+        const rightLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.64, 8), pantsMat);
+        rightLeg.position.y = -0.32;
+        const rightShoe = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.12, 0.32), shoeMat);
+        rightShoe.position.set(0, -0.64, 0.05);
+        rightLegPivot.add(rightLeg, rightShoe);
+        root.add(rightLegPivot);
+
+        const shadow = new THREE.Mesh(
+          new THREE.CircleGeometry(0.45, 16),
+          new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.32 })
+        );
+        shadow.rotation.x = -Math.PI / 2;
+        shadow.position.y = 0.01;
+        root.add(shadow);
+
+        return {
+          root,
+          headGroup,
+          mouth,
+          leftArmPivot,
+          rightArmPivot,
+          leftLegPivot,
+          rightLegPivot,
+          propAnchor,
+        };
+      }
+
+      function rebuild3DEnvironment(loc) {
+        const THREE = window.THREE;
+        while (engine3D.envGroup.children.length > 0) {
+          engine3D.envGroup.remove(engine3D.envGroup.children[0]);
+        }
+        engine3D.scrollingProps = [];
+
+        const configs = {
+          street: { sky: 0x38bdf8, fog: 0x7dd3fc, ground: 0x334155 },
+          shop:   { sky: 0xfef3c7, fog: 0xfde68a, ground: 0x92400e },
+          home:   { sky: 0xfde68a, fog: 0xfcd34d, ground: 0x78350f },
+          cafe:   { sky: 0xf43f5e, fog: 0xfb7185, ground: 0x1e1b4b },
+          alley:  { sky: 0x09090b, fog: 0x18181b, ground: 0x09090b },
+          office: { sky: 0xe2e8f0, fog: 0xcbd5e1, ground: 0x475569 },
+        };
+        const c = configs[loc] || configs.street;
+        engine3D.scene.background = new THREE.Color(c.sky);
+        engine3D.scene.fog = new THREE.Fog(c.fog, 7, 22);
+
+        const ground = new THREE.Mesh(
+          new THREE.PlaneGeometry(36, 36),
+          new THREE.MeshLambertMaterial({ color: c.ground })
+        );
+        ground.rotation.x = -Math.PI / 2;
+        engine3D.envGroup.add(ground);
+
+        if (loc === 'street' || loc === 'alley') {
+          const bColors = loc === 'alley' ? [0x18181b, 0x27272a] : [0x475569, 0x64748b, 0x3b82f6];
+          for (let i = -3; i <= 3; i++) {
+            const h = 2.4 + (Math.abs(i) % 3) * 0.9;
+            const bldg = new THREE.Mesh(
+              new THREE.BoxGeometry(2.1, h, 2.0),
+              new THREE.MeshLambertMaterial({ color: bColors[Math.abs(i) % bColors.length] })
+            );
+            bldg.position.set(i * 2.8, h / 2, -4.2);
+            engine3D.envGroup.add(bldg);
+            engine3D.scrollingProps.push(bldg);
+
+            const dash = new THREE.Mesh(
+              new THREE.BoxGeometry(0.9, 0.02, 0.14),
+              new THREE.MeshBasicMaterial({ color: loc === 'alley' ? 0x52525b : 0xfacc15 })
+            );
+            dash.position.set(i * 2.4, 0.02, 1.3);
+            engine3D.envGroup.add(dash);
+            engine3D.scrollingProps.push(dash);
+          }
+          if (loc === 'alley') {
+            const lamp = new THREE.PointLight(0xf59e0b, 1.5, 9);
+            lamp.position.set(0, 3.2, -1);
+            engine3D.envGroup.add(lamp);
+          }
+        } else if (loc === 'shop') {
+          const wall = new THREE.Mesh(
+            new THREE.BoxGeometry(14, 5, 0.4),
+            new THREE.MeshLambertMaterial({ color: 0xfef9c3 })
+          );
+          wall.position.set(0, 2.5, -3.5);
+          engine3D.envGroup.add(wall);
+
+          const shelfColors = [0xef4444, 0x22c55e, 0x3b82f6, 0xf59e0b];
+          for (let row = 0; row < 2; row++) {
+            const shelf = new THREE.Mesh(
+              new THREE.BoxGeometry(5.5, 0.12, 0.5),
+              new THREE.MeshLambertMaterial({ color: 0x78350f })
+            );
+            shelf.position.set(0, 1.2 + row * 0.9, -3.1);
+            engine3D.envGroup.add(shelf);
+            for (let item = -2; item <= 2; item++) {
+              const box = new THREE.Mesh(
+                new THREE.BoxGeometry(0.35, 0.35, 0.3),
+                new THREE.MeshLambertMaterial({ color: shelfColors[Math.abs(item + row) % shelfColors.length] })
+              );
+              box.position.set(item * 0.95, 1.44 + row * 0.9, -3.05);
+              engine3D.envGroup.add(box);
+            }
+          }
+        } else if (loc === 'cafe') {
+          const sun = new THREE.Mesh(
+            new THREE.SphereGeometry(1.4, 16, 16),
+            new THREE.MeshBasicMaterial({ color: 0xfde047 })
+          );
+          sun.position.set(0, 2.8, -9);
+          engine3D.envGroup.add(sun);
+
+          const table = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.65, 0.65, 0.08, 16),
+            new THREE.MeshLambertMaterial({ color: 0xf8fafc })
+          );
+          table.position.set(0, 0.85, -0.3);
+          const leg = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.08, 0.12, 0.85, 8),
+            new THREE.MeshLambertMaterial({ color: 0x334155 })
+          );
+          leg.position.set(0, 0.42, -0.3);
+          engine3D.envGroup.add(table, leg);
+        } else if (loc === 'home' || loc === 'office') {
+          const wall = new THREE.Mesh(
+            new THREE.BoxGeometry(14, 5, 0.4),
+            new THREE.MeshLambertMaterial({ color: loc === 'home' ? 0xfef3c7 : 0xf1f5f9 })
+          );
+          wall.position.set(0, 2.5, -3.5);
+          const couchOrDesk = new THREE.Mesh(
+            new THREE.BoxGeometry(2.6, 0.75, 0.9),
+            new THREE.MeshLambertMaterial({ color: loc === 'home' ? 0x0d9488 : 0x334155 })
+          );
+          couchOrDesk.position.set(0, 0.38, -2.2);
+          engine3D.envGroup.add(wall, couchOrDesk);
+        }
+      }
+
+      function init3DEngine() {
+        if (engine3D.ready || !window.THREE) return;
+        const THREE = window.THREE;
+        engine3D.glCanvas = document.createElement('canvas');
+        engine3D.renderer = new THREE.WebGLRenderer({
+          canvas: engine3D.glCanvas,
+          antialias: true,
+          alpha: false,
+          powerPreference: 'low-power',
+        });
+        engine3D.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
+
+        engine3D.scene = new THREE.Scene();
+        engine3D.camera = new THREE.PerspectiveCamera(42, 540 / 960, 0.1, 60);
+        engine3D.camera.position.set(0, 1.65, 4.6);
+        engine3D.camera.lookAt(0, 1.15, 0);
+
+        const hemi = new THREE.HemisphereLight(0xffffff, 0x334155, 0.95);
+        engine3D.scene.add(hemi);
+        const dir = new THREE.DirectionalLight(0xffffff, 0.85);
+        dir.position.set(3, 6, 4);
+        engine3D.scene.add(dir);
+
+        engine3D.envGroup = new THREE.Group();
+        engine3D.scene.add(engine3D.envGroup);
+
+        engine3D.ready = true;
+      }
+
+      function animate3DActor(actor, action, t, isSpeaking, walkSpeed) {
+        if (!actor) return;
+        const walkPhase = t * walkSpeed;
+        actor.root.position.y = 0;
+        actor.leftLegPivot.rotation.x = 0;
+        actor.rightLegPivot.rotation.x = 0;
+        actor.leftArmPivot.rotation.set(0, 0, 0.12);
+        actor.rightArmPivot.rotation.set(0, 0, -0.12);
+        actor.headGroup.rotation.set(0, 0, 0);
+
+        if (action === 'walk') {
+          actor.leftLegPivot.rotation.x = Math.sin(walkPhase) * 0.65;
+          actor.rightLegPivot.rotation.x = -Math.sin(walkPhase) * 0.65;
+          actor.leftArmPivot.rotation.x = -Math.sin(walkPhase) * 0.45;
+          actor.rightArmPivot.rotation.x = Math.sin(walkPhase) * 0.45;
+          actor.root.position.y = Math.abs(Math.sin(walkPhase)) * 0.06;
+        } else if (action === 'wave') {
+          actor.rightArmPivot.rotation.z = -2.4 + Math.sin(t * 9) * 0.35;
+          actor.headGroup.rotation.z = Math.sin(t * 4) * 0.08;
+        } else if (action === 'celebrate') {
+          actor.leftArmPivot.rotation.z = 2.5 + Math.sin(t * 8) * 0.2;
+          actor.rightArmPivot.rotation.z = -2.5 - Math.sin(t * 8) * 0.2;
+          actor.root.position.y = Math.abs(Math.sin(t * 6)) * 0.16;
+        } else if (action === 'talk') {
+          actor.rightArmPivot.rotation.x = -0.5 + Math.sin(t * 6) * 0.25;
+          actor.rightArmPivot.rotation.z = -0.35;
+          actor.headGroup.rotation.y = Math.sin(t * 3) * 0.12;
+        } else if (action === 'inspect') {
+          actor.rightArmPivot.rotation.x = -1.1;
+          actor.headGroup.rotation.x = 0.22;
+        } else {
+          actor.root.position.y = Math.sin(t * 2.5) * 0.02;
+        }
+
+        const talkOpen = isSpeaking || action === 'talk' ? 0.6 + Math.abs(Math.sin(t * 16)) * 2.2 : 0.4;
+        actor.mouth.scale.y = talkOpen;
+      }
+
+      function render3DStageToCanvas(targetCtx, W, H, sc, t) {
+        init3DEngine();
+        if (!engine3D.ready) {
+          draw2DLocationSet(targetCtx, W, H, sc.location, t, sc.c1Action === 'walk');
+          return;
+        }
+
+        if (engine3D.glCanvas.width !== W || engine3D.glCanvas.height !== H) {
+          engine3D.renderer.setSize(W, H, false);
+          engine3D.camera.aspect = W / H;
+          engine3D.camera.updateProjectionMatrix();
+        }
+
+        if (engine3D.currentLoc !== sc.location) {
+          rebuild3DEnvironment(sc.location);
+          engine3D.currentLoc = sc.location;
+        }
+
+        if (sc.c1Show) {
+          if (!engine3D.actor1 || engine3D.currentOutfit1 !== sc.c1Outfit) {
+            if (engine3D.actor1) engine3D.scene.remove(engine3D.actor1.root);
+            engine3D.actor1 = build3DCharacter(sc.c1Outfit);
+            engine3D.scene.add(engine3D.actor1.root);
+            engine3D.currentOutfit1 = sc.c1Outfit;
+            engine3D.currentProp1 = null;
+          }
+          if (engine3D.currentProp1 !== sc.c1Prop) {
+            while (engine3D.actor1.propAnchor.children.length > 0) {
+              engine3D.actor1.propAnchor.remove(engine3D.actor1.propAnchor.children[0]);
+            }
+            const propMesh = create3DPropMesh(sc.c1Prop);
+            if (propMesh) engine3D.actor1.propAnchor.add(propMesh);
+            engine3D.currentProp1 = sc.c1Prop;
+          }
+          engine3D.actor1.root.visible = true;
+          engine3D.actor1.root.position.x = sc.c2Show ? -0.68 : 0;
+          engine3D.actor1.root.rotation.y = sc.c2Show ? 0.42 : (sc.c1Action === 'walk' ? 0.35 : 0);
+          animate3DActor(engine3D.actor1, sc.c1Action, t, state.speaking || state.playing, 7.5);
+        } else if (engine3D.actor1) {
+          engine3D.actor1.root.visible = false;
+        }
+
+        if (sc.c2Show) {
+          if (!engine3D.actor2 || engine3D.currentOutfit2 !== sc.c2Outfit) {
+            if (engine3D.actor2) engine3D.scene.remove(engine3D.actor2.root);
+            engine3D.actor2 = build3DCharacter(sc.c2Outfit);
+            engine3D.scene.add(engine3D.actor2.root);
+            engine3D.currentOutfit2 = sc.c2Outfit;
+            engine3D.currentProp2 = null;
+          }
+          if (engine3D.currentProp2 !== sc.c2Prop) {
+            while (engine3D.actor2.propAnchor.children.length > 0) {
+              engine3D.actor2.propAnchor.remove(engine3D.actor2.propAnchor.children[0]);
+            }
+            const propMesh = create3DPropMesh(sc.c2Prop);
+            if (propMesh) engine3D.actor2.propAnchor.add(propMesh);
+            engine3D.currentProp2 = sc.c2Prop;
+          }
+          engine3D.actor2.root.visible = true;
+          engine3D.actor2.root.position.x = 0.68;
+          engine3D.actor2.root.rotation.y = -0.45;
+          animate3DActor(engine3D.actor2, sc.c2Action, t + 1.1, false, 6.5);
+        } else if (engine3D.actor2) {
+          engine3D.actor2.root.visible = false;
+        }
+
+        if (sc.c1Show && sc.c1Action === 'walk' && engine3D.scrollingProps.length > 0) {
+          engine3D.scrollingProps.forEach((mesh) => {
+            mesh.position.x -= 0.045;
+            if (mesh.position.x < -9.5) mesh.position.x += 19.0;
+          });
+        }
+
+        const camMode = sc.camera3d || 'medium';
+        if (camMode === 'orbit') {
+          const angle = Math.sin(t * 0.75) * 0.55;
+          engine3D.camera.position.set(Math.sin(angle) * 4.5, 1.75, Math.cos(angle) * 4.5);
+          engine3D.camera.lookAt(0, 1.15, 0);
+        } else if (camMode === 'closeup') {
+          engine3D.camera.position.set(sc.c2Show ? -0.45 : 0, 1.55, 2.45);
+          engine3D.camera.lookAt(sc.c2Show ? -0.35 : 0, 1.42, 0);
+        } else if (camMode === 'wide') {
+          engine3D.camera.position.set(0, 2.2, 6.4);
+          engine3D.camera.lookAt(0, 1.1, 0);
+        } else if (camMode === 'over-shoulder') {
+          engine3D.camera.position.set(-1.35, 1.62, 2.85);
+          engine3D.camera.lookAt(0.35, 1.25, 0);
+        } else {
+          engine3D.camera.position.set(0, 1.62, 4.4);
+          engine3D.camera.lookAt(0, 1.15, 0);
+        }
+
+        engine3D.renderer.render(engine3D.scene, engine3D.camera);
+        targetCtx.drawImage(engine3D.glCanvas, 0, 0, W, H);
+      }
+
+      // =========================================================================
+      // ENGINE B: 2D ARTICULATED PUPPET STAGE
+      // =========================================================================
+      function draw2DLocationSet(targetCtx, W, H, loc, t, isWalking) {
+        const scrollX = isWalking ? (t * 95) % W : 0;
+        if (loc === 'street') {
+          const sky = targetCtx.createLinearGradient(0, 0, 0, H * 0.72);
+          sky.addColorStop(0, '#38bdf8');
+          sky.addColorStop(1, '#bae6fd');
+          targetCtx.fillStyle = sky;
+          targetCtx.fillRect(0, 0, W, H);
+          targetCtx.fillStyle = '#fef08a';
+          targetCtx.beginPath();
+          targetCtx.arc(W * 0.8, H * 0.16, W * 0.08, 0, Math.PI * 2);
+          targetCtx.fill();
+
+          const bColors = ['#64748b', '#475569', '#3b82f6', '#0ea5e9'];
+          for (let i = -1; i < 6; i++) {
+            const bx = i * (W * 0.28) - (scrollX % (W * 0.28));
+            const bh = H * (0.24 + ((i + 3) % 3) * 0.06);
+            targetCtx.fillStyle = bColors[(i + 4) % bColors.length];
+            targetCtx.fillRect(bx, H * 0.72 - bh, W * 0.25, bh);
+          }
+          targetCtx.fillStyle = '#334155';
+          targetCtx.fillRect(0, H * 0.72, W, H * 0.28);
+          targetCtx.fillStyle = '#facc15';
+          for (let d = -1; d < 7; d++) {
+            const dx = d * (W * 0.22) - (scrollX % (W * 0.22));
+            targetCtx.fillRect(dx, H * 0.85, W * 0.11, H * 0.012);
+          }
+        } else if (loc === 'shop') {
+          targetCtx.fillStyle = '#fef3c7';
+          targetCtx.fillRect(0, 0, W, H);
+          targetCtx.fillStyle = '#92400e';
+          targetCtx.fillRect(0, H * 0.73, W, H * 0.27);
+          targetCtx.fillStyle = '#d97706';
+          targetCtx.fillRect(W * 0.08, H * 0.22, W * 0.84, H * 0.025);
+          targetCtx.fillRect(W * 0.08, H * 0.4, W * 0.84, H * 0.025);
+        } else if (loc === 'cafe') {
+          const sunset = targetCtx.createLinearGradient(0, 0, 0, H * 0.74);
+          sunset.addColorStop(0, '#be123c');
+          sunset.addColorStop(0.55, '#f97316');
+          sunset.addColorStop(1, '#fde047');
+          targetCtx.fillStyle = sunset;
+          targetCtx.fillRect(0, 0, W, H);
+          targetCtx.fillStyle = '#1e1b4b';
+          targetCtx.fillRect(0, H * 0.74, W, H * 0.26);
+        } else if (loc === 'alley') {
+          targetCtx.fillStyle = '#09090b';
+          targetCtx.fillRect(0, 0, W, H);
+          const glow = targetCtx.createRadialGradient(W * 0.5, H * 0.28, 10, W * 0.5, H * 0.45, W * 0.55);
+          glow.addColorStop(0, 'rgba(245, 158, 11, 0.35)');
+          glow.addColorStop(1, 'rgba(9, 9, 11, 0)');
+          targetCtx.fillStyle = glow;
+          targetCtx.fillRect(0, 0, W, H);
+        } else {
+          targetCtx.fillStyle = loc === 'home' ? '#fde68a' : '#e2e8f0';
+          targetCtx.fillRect(0, 0, W, H);
+          targetCtx.fillStyle = loc === 'home' ? '#78350f' : '#475569';
+          targetCtx.fillRect(0, H * 0.74, W, H * 0.26);
+        }
+      }
+
+      function draw2DPuppet(targetCtx, x, y, scale, outfitKey, action, prop, emotion, t, isSpeaking, flipX) {
+        const o = OUTFITS[outfitKey] || OUTFITS['casual-blue'];
+        targetCtx.save();
+        targetCtx.translate(x, y);
+        if (flipX) targetCtx.scale(-1, 1);
+        targetCtx.scale(scale, scale);
+
+        const walkCycle = action === 'walk' ? Math.sin(t * 8) : 0;
+        const bob = action === 'walk' ? Math.abs(Math.sin(t * 8)) * 8 : action === 'celebrate' ? Math.abs(Math.sin(t * 6)) * 16 : Math.sin(t * 2.5) * 3;
+        targetCtx.translate(0, -bob);
+
+        targetCtx.strokeStyle = o.pants;
+        targetCtx.lineWidth = 18;
+        targetCtx.lineCap = 'round';
+        targetCtx.beginPath();
+        targetCtx.moveTo(-14, 10);
+        targetCtx.lineTo(-16 + walkCycle * 22, 85);
+        targetCtx.stroke();
+        targetCtx.beginPath();
+        targetCtx.moveTo(14, 10);
+        targetCtx.lineTo(16 - walkCycle * 22, 85);
+        targetCtx.stroke();
+
+        targetCtx.fillStyle = o.top;
+        targetCtx.beginPath();
+        targetCtx.roundRect(-32, -72, 64, 90, 18);
+        targetCtx.fill();
+
+        targetCtx.strokeStyle = o.top;
+        targetCtx.lineWidth = 15;
+        targetCtx.beginPath();
+        targetCtx.moveTo(-30, -56);
+        targetCtx.lineTo(-46 - walkCycle * 16, action === 'celebrate' ? -115 : -8);
+        targetCtx.stroke();
+
+        let rx = 48 + walkCycle * 16;
+        let ry = -8;
+        if (action === 'wave') {
+          rx = 66 + Math.sin(t * 10) * 14;
+          ry = -102;
+        } else if (action === 'celebrate') {
+          rx = 52;
+          ry = -115;
+        } else if (action === 'talk' || prop !== 'none') {
+          rx = 58;
+          ry = -44 + Math.sin(t * 6) * 6;
+        }
+        targetCtx.beginPath();
+        targetCtx.moveTo(30, -56);
+        targetCtx.lineTo(rx, ry);
+        targetCtx.stroke();
+
+        if (prop === 'flowers') {
+          targetCtx.font = '34px sans-serif';
+          targetCtx.fillText('💐', rx - 14, ry - 6);
+        } else if (prop === 'bag') {
+          targetCtx.font = '32px sans-serif';
+          targetCtx.fillText('🛍️', rx - 14, ry + 18);
+        } else if (prop === 'phone') {
+          targetCtx.font = '28px sans-serif';
+          targetCtx.fillText('📱', rx - 10, ry - 4);
+        } else if (prop === 'magnifier') {
+          targetCtx.font = '30px sans-serif';
+          targetCtx.fillText('🔍', rx - 10, ry - 6);
+        } else if (prop === 'briefcase') {
+          targetCtx.font = '32px sans-serif';
+          targetCtx.fillText('💼', rx - 14, ry + 18);
+        }
+
+        targetCtx.fillStyle = o.skin;
+        targetCtx.beginPath();
+        targetCtx.arc(0, -108, 34, 0, Math.PI * 2);
+        targetCtx.fill();
+
+        targetCtx.fillStyle = o.hair;
+        targetCtx.beginPath();
+        targetCtx.arc(0, -114, 34, Math.PI, Math.PI * 2);
+        targetCtx.fill();
+        if (o.hat) {
+          targetCtx.fillStyle = o.pants;
+          targetCtx.fillRect(-42, -134, 84, 8);
+          targetCtx.fillRect(-26, -154, 52, 22);
+        }
+
+        targetCtx.fillStyle = '#09090b';
+        targetCtx.beginPath();
+        targetCtx.arc(-11, -110, 4, 0, Math.PI * 2);
+        targetCtx.arc(11, -110, 4, 0, Math.PI * 2);
+        targetCtx.fill();
+
+        const mouthOpen = isSpeaking || action === 'talk' ? 4 + Math.abs(Math.sin(t * 16)) * 8 : 3;
+        targetCtx.fillStyle = '#be123c';
+        targetCtx.beginPath();
+        targetCtx.ellipse(0, -93, 9, mouthOpen, 0, 0, Math.PI * 2);
+        targetCtx.fill();
+
+        targetCtx.restore();
+      }
+
+      // =========================================================================
+      // FREE MULTI-SOURCE STOCK VIDEO & PHOTO ENGINE
+      // =========================================================================
+      async function searchWikimediaImages(query) {
+        const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(
+          query + ' filetype:bitmap'
+        )}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|size&iiurlwidth=960&format=json&origin=*`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Wikimedia search failed');
+        const data = await res.json();
+        const pages = (data.query && data.query.pages) ? Object.values(data.query.pages) : [];
+        return pages
+          .filter((p) => p.imageinfo && p.imageinfo[0] && p.imageinfo[0].thumburl)
+          .map((p) => ({
+            id: `wiki-${p.pageid}`,
+            source: 'Wikimedia',
+            type: 'image',
+            thumb: p.imageinfo[0].thumburl,
+            mediaUrl: p.imageinfo[0].thumburl,
+            title: (p.title || '').replace('File:', '').slice(0, 32),
+          }));
+      }
+
+      async function searchNasaMedia(query) {
+        const url = `https://images-api.nasa.gov/search?q=${encodeURIComponent(query)}&page_size=8`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('NASA search failed');
+        const data = await res.json();
+        const items = (data.collection && data.collection.items) || [];
+        const results = [];
+        for (const item of items.slice(0, 6)) {
+          const meta = item.data && item.data[0];
+          const link = item.links && item.links.find((l) => l.rel === 'preview');
+          if (!meta || !link) continue;
+          if (meta.media_type === 'video' && item.href) {
+            try {
+              const assetRes = await fetch(item.href);
+              const assetList = await assetRes.json();
+              const mp4 = Array.isArray(assetList)
+                ? assetList.find((u) => typeof u === 'string' && u.endsWith('.mp4') && !u.includes('orig'))
+                : null;
+              if (mp4) {
+                results.push({
+                  id: `nasa-v-${meta.nasa_id}`,
+                  source: 'NASA Video',
+                  type: 'video',
+                  thumb: link.href,
+                  mediaUrl: mp4.replace('http://', 'https://'),
+                  title: (meta.title || 'NASA Clip').slice(0, 32),
+                });
+                continue;
+              }
+            } catch (_) {}
+          }
+          results.push({
+            id: `nasa-i-${meta.nasa_id}`,
+            source: 'NASA Photo',
+            type: 'image',
+            thumb: link.href,
+            mediaUrl: link.href,
+            title: (meta.title || 'NASA Image').slice(0, 32),
+          });
+        }
+        return results;
+      }
+
+      async function searchPixabay(query, kind) {
+        if (!state.pixabayKey) {
+          throw new Error('NO_PIXABAY_KEY');
+        }
+        const orientation = state.ratio === '9:16' ? 'vertical' : 'horizontal';
+        if (kind === 'video') {
+          const url = `https://pixabay.com/api/videos/?key=${encodeURIComponent(state.pixabayKey)}&q=${encodeURIComponent(query)}&per_page=8`;
+          const res = await fetch(url);
+          if (!res.ok) throw new Error('Pixabay video error');
+          const data = await res.json();
+          return (data.hits || []).map((h) => {
+            const vid = h.videos && (h.videos.medium || h.videos.small);
+            const thumb = h.videos && h.videos.tiny ? h.videos.tiny.thumbnail : '';
+            return {
+              id: `pxb-v-${h.id}`,
+              source: 'Pixabay Video',
+              type: 'video',
+              thumb: thumb || '',
+              mediaUrl: vid ? vid.url : '',
+              title: (h.tags || 'Pixabay Clip').slice(0, 32),
+            };
+          }).filter((x) => x.mediaUrl);
+        } else {
+          const url = `https://pixabay.com/api/?key=${encodeURIComponent(state.pixabayKey)}&q=${encodeURIComponent(query)}&image_type=photo&orientation=${orientation}&per_page=8`;
+          const res = await fetch(url);
+          if (!res.ok) throw new Error('Pixabay photo error');
+          const data = await res.json();
+          return (data.hits || []).map((h) => ({
+            id: `pxb-i-${h.id}`,
+            source: 'Pixabay Photo',
+            type: 'image',
+            thumb: h.webformatURL,
+            mediaUrl: h.largeImageURL || h.webformatURL,
+            title: (h.tags || 'Pixabay Photo').slice(0, 32),
+          }));
+        }
+      }
+
+      async function searchPexels(query, kind) {
+        if (!state.pexelsKey) {
+          throw new Error('NO_PEXELS_KEY');
+        }
+        const orientation = state.ratio === '9:16' ? 'portrait' : 'landscape';
+        if (kind === 'video') {
+          const url = `https://api.pexels.com/videos/search?query=${encodeURIComponent(query)}&orientation=${orientation}&per_page=8`;
+          const res = await fetch(url, { headers: { Authorization: state.pexelsKey } });
+          if (!res.ok) throw new Error('Pexels video error');
+          const data = await res.json();
+          return (data.videos || []).map((v) => {
+            const file = (v.video_files || []).find((f) => f.quality === 'hd' && f.file_type === 'video/mp4') || (v.video_files || [])[0];
+            return {
+              id: `pxl-v-${v.id}`,
+              source: 'Pexels Video',
+              type: 'video',
+              thumb: v.image,
+              mediaUrl: file ? file.link : '',
+              title: `Pexels Clip #${v.id}`,
+            };
+          }).filter((x) => x.mediaUrl);
+        } else {
+          const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&orientation=${orientation}&per_page=8`;
+          const res = await fetch(url, { headers: { Authorization: state.pexelsKey } });
+          if (!res.ok) throw new Error('Pexels photo error');
+          const data = await res.json();
+          return (data.photos || []).map((p) => ({
+            id: `pxl-i-${p.id}`,
+            source: 'Pexels Photo',
+            type: 'image',
+            thumb: p.src.medium,
+            mediaUrl: p.src.large2x || p.src.large,
+            title: (p.alt || 'Pexels Photo').slice(0, 32),
+          }));
+        }
+      }
+
+      async function searchUnsplash(query) {
+        if (!state.unsplashKey) {
+          throw new Error('NO_UNSPLASH_KEY');
+        }
+        const orientation = state.ratio === '9:16' ? 'portrait' : 'landscape';
+        const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&orientation=${orientation}&per_page=8&client_id=${encodeURIComponent(state.unsplashKey)}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Unsplash error');
+        const data = await res.json();
+        return (data.results || []).map((r) => ({
+          id: `uns-${r.id}`,
+          source: 'Unsplash',
+          type: 'image',
+          thumb: r.urls.small,
+          mediaUrl: r.urls.regular,
+          title: (r.alt_description || 'Unsplash Photo').slice(0, 32),
+        }));
+      }
+
+      async function runStockMediaSearch() {
+        const query = document.getElementById('stockSearchInput').value.trim() || 'sunset';
+        const source = document.getElementById('stockSourceSelect').value;
+        const btnText = document.getElementById('stockSearchBtnText');
+        const statusLine = document.getElementById('stockStatusLine');
+        const grid = document.getElementById('stockResultsGrid');
+
+        btnText.textContent = 'Searching...';
+        statusLine.textContent = `Searching "${query}"...`;
+        grid.innerHTML = '';
+
+        try {
+          let items = [];
+          if (source === 'wikimedia') {
+            items = await searchWikimediaImages(query);
+          } else if (source === 'nasa') {
+            items = await searchNasaMedia(query);
+          } else if (source === 'pixabay-video') {
+            items = await searchPixabay(query, 'video');
+          } else if (source === 'pixabay-photo') {
+            items = await searchPixabay(query, 'photo');
+          } else if (source === 'pexels-video') {
+            items = await searchPexels(query, 'video');
+          } else if (source === 'pexels-photo') {
+            items = await searchPexels(query, 'photo');
+          } else if (source === 'unsplash') {
+            items = await searchUnsplash(query);
+          } else {
+            // 'all-free': combine keyless Wikimedia + NASA + any configured free keys
+            const tasks = [
+              searchWikimediaImages(query).catch(() => []),
+              searchNasaMedia(query).catch(() => []),
+            ];
+            if (state.pixabayKey) tasks.unshift(searchPixabay(query, 'video').catch(() => []));
+            if (state.pexelsKey) tasks.unshift(searchPexels(query, 'video').catch(() => []));
+            if (state.unsplashKey) tasks.push(searchUnsplash(query).catch(() => []));
+            const settled = await Promise.all(tasks);
+            items = settled.flat().slice(0, 12);
+          }
+
+          if (!items.length) {
+            statusLine.textContent = `No results found for "${query}". Try a simpler keyword like "ocean", "city", or "space".`;
+            btnText.textContent = 'Search Free Videos & Photos';
+            return;
+          }
+
+          statusLine.textContent = `Found ${items.length} results — tap any thumbnail to apply to Scene ${state.activeScene + 1}:`;
+          items.forEach((item) => {
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className = 'group relative aspect-[9/12] rounded-xl overflow-hidden bg-zinc-950 border border-zinc-800 hover:border-cyan-400 active:scale-[0.98] text-left transition';
+            card.innerHTML = `
+              <img src="${item.thumb}" alt="${item.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-200" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
+              <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase ${
+                item.type === 'video' ? 'bg-rose-600 text-white' : 'bg-cyan-600 text-white'
+              }">${item.type === 'video' ? '▶ VIDEO' : '🖼 PHOTO'}</span>
+              <div class="absolute bottom-1.5 left-1.5 right-1.5">
+                <div class="text-[9px] font-bold text-cyan-300 truncate">${item.source}</div>
+                <div class="text-[10px] font-semibold text-white truncate">${item.title}</div>
+              </div>
+            `;
+            card.addEventListener('click', () => applyStockItemToActiveScene(item));
+            grid.appendChild(card);
+          });
+        } catch (err) {
+          if (String(err.message).startsWith('NO_')) {
+            document.getElementById('keysModal').classList.remove('hidden');
+            statusLine.textContent = 'Add your free API key in the popup, or switch source to "All Free (No Key Needed)".';
+          } else {
+            statusLine.textContent = 'Search temporarily unavailable — check internet or try "All Free (No Key Needed)".';
+          }
+        } finally {
+          btnText.textContent = 'Search Free Videos & Photos';
+        }
+      }
+
+      async function applyStockItemToActiveScene(item) {
+        const sc = state.scenes[state.activeScene];
+        toast(`Loading ${item.source} ${item.type}...`);
+
+        if (item.type === 'video') {
+          sc.customType = 'video';
+          sc.customVideoUrl = item.mediaUrl;
+          sc.aiImg = null;
+          sc.customImg = null;
+          sc.engine = 'ai-media';
+          customVideoEl.src = item.mediaUrl;
+          customVideoEl.play().catch(() => {});
+          syncUIWithActiveScene();
+          toast(`Loaded ${item.source} video onto Scene ${state.activeScene + 1}!`);
+        } else {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            sc.customImg = img;
+            sc.customType = 'image';
+            sc.aiImg = null;
+            sc.customVideoUrl = null;
+            sc.engine = 'ai-media';
+            syncUIWithActiveScene();
+            toast(`Loaded ${item.source} photo onto Scene ${state.activeScene + 1}!`);
+          };
+          img.onerror = () => {
+            toast('Could not load image directly — try another result.', 'err');
+          };
+          img.src = item.mediaUrl;
+        }
+      }
+
+      // =========================================================================
+      // MAIN COMPOSITOR (3D STAGE + 2D PUPPET + STOCK/AI MEDIA + CAPTIONS)
+      // =========================================================================
+      function getTotalDuration() {
+        return state.scenes.reduce((acc, s) => acc + Number(s.duration || 4), 0);
+      }
+
+      function getSceneAtTime(sec) {
+        let elapsed = 0;
+        for (let i = 0; i < state.scenes.length; i++) {
+          const d = Number(state.scenes[i].duration || 4);
+          if (sec < elapsed + d || i === state.scenes.length - 1) {
+            return { index: i, scene: state.scenes[i], localTime: Math.max(0, sec - elapsed), duration: d };
+          }
+          elapsed += d;
+        }
+        return { index: 0, scene: state.scenes[0], localTime: 0, duration: 4 };
+      }
+
+      function drawWrappedText(targetCtx, text, x, y, maxWidth, lineHeight) {
+        const words = (text || '').split(' ');
+        let line = '';
+        const lines = [];
+        for (let n = 0; n < words.length; n++) {
+          const testLine = line + words[n] + ' ';
+          if (targetCtx.measureText(testLine).width > maxWidth && n > 0) {
+            lines.push(line.trim());
+            line = words[n] + ' ';
+          } else {
+            line = testLine;
+          }
+        }
+        if (line.trim()) lines.push(line.trim());
+        lines.forEach((l, idx) => targetCtx.fillText(l, x, y + idx * lineHeight));
+        return lines.length;
+      }
+
+      function drawSceneToContext(targetCtx, W, H, sc, localTime, globalTime) {
+        targetCtx.save();
+        targetCtx.clearRect(0, 0, W, H);
+
+        const b = state.grade.brightness;
+        const c = state.grade.contrast;
+        let filterStr = `brightness(${b}%) contrast(${c}%)`;
+        if (state.grade.tint === 'golden') filterStr += ' sepia(22%) saturate(125%)';
+        else if (state.grade.tint === 'noir') filterStr += ' saturate(65%) hue-rotate(190deg)';
+        else if (state.grade.tint === 'vivid') filterStr += ' saturate(140%)';
+        targetCtx.filter = filterStr;
+
+        if (sc.engine === 'ai-media' && (sc.aiImg || sc.customImg || sc.customType === 'video')) {
+          if (sc.customType === 'video' && sc.customVideoUrl && customVideoEl.src !== sc.customVideoUrl) {
+            customVideoEl.src = sc.customVideoUrl;
+            customVideoEl.play().catch(() => {});
+          }
+          const media = sc.customType === 'video' ? customVideoEl : sc.customImg || sc.aiImg;
+          const mw = media && (media.videoWidth || media.width);
+          const mh = media && (media.videoHeight || media.height);
+          if (mw && mh) {
+            const zoom = 1 + Math.min(localTime * 0.025, 0.12);
+            const scale = Math.max(W / mw, H / mh) * zoom;
+            targetCtx.drawImage(media, (W - mw * scale) / 2, (H - mh * scale) / 2, mw * scale, mh * scale);
+          } else {
+            render3DStageToCanvas(targetCtx, W, H, sc, globalTime);
+          }
+        } else if (sc.engine === 'puppet') {
+          const isWalking = sc.c1Show && sc.c1Action === 'walk';
+          draw2DLocationSet(targetCtx, W, H, sc.location, globalTime, isWalking);
+          const charScale = W < H ? W / 420 : H / 460;
+          const groundY = H * 0.72;
+          if (sc.c1Show) {
+            draw2DPuppet(
+              targetCtx,
+              sc.c2Show ? W * 0.34 : W * 0.5,
+              groundY,
+              charScale,
+              sc.c1Outfit,
+              sc.c1Action,
+              sc.c1Prop,
+              sc.c1Emotion,
+              globalTime,
+              state.speaking || state.playing,
+              false
+            );
+          }
+          if (sc.c2Show) {
+            draw2DPuppet(
+              targetCtx,
+              W * 0.68,
+              groundY,
+              charScale,
+              sc.c2Outfit,
+              sc.c2Action,
+              sc.c2Prop,
+              'happy',
+              globalTime + 1,
+              false,
+              true
+            );
+          }
+        } else {
+          render3DStageToCanvas(targetCtx, W, H, sc, globalTime);
+        }
+
+        targetCtx.filter = 'none';
+
+        if (sc.transition === 'fade' && localTime < 0.35) {
+          targetCtx.fillStyle = `rgba(9, 9, 11, ${1 - localTime / 0.35})`;
+          targetCtx.fillRect(0, 0, W, H);
+        }
+
+        if (sc.headline && sc.headline.trim()) {
+          const padY = H * 0.045;
+          const fontSize = Math.round(W * 0.044);
+          targetCtx.font = `900 ${fontSize}px Inter, sans-serif`;
+          const textW = Math.min(targetCtx.measureText(sc.headline).width + 36, W * 0.88);
+          targetCtx.fillStyle = 'rgba(9, 9, 11, 0.78)';
+          targetCtx.beginPath();
+          targetCtx.roundRect((W - textW) / 2, padY, textW, fontSize * 1.9, 14);
+          targetCtx.fill();
+          targetCtx.strokeStyle = 'rgba(139, 92, 246, 0.6)';
+          targetCtx.lineWidth = 2;
+          targetCtx.stroke();
+
+          targetCtx.fillStyle = '#ffffff';
+          targetCtx.textAlign = 'center';
+          targetCtx.textBaseline = 'middle';
+          targetCtx.fillText(sc.headline, W / 2, padY + fontSize * 0.95, W * 0.82);
+        }
+
+        if (sc.captionStyle !== 'none' && sc.script && sc.script.trim()) {
+          const boxW = W * 0.88;
+          const boxX = (W - boxW) / 2;
+          const fontSize = Math.round(W * 0.038);
+          targetCtx.font = `700 ${fontSize}px Inter, sans-serif`;
+
+          const boxH = H * 0.17;
+          const boxY = H - boxH - H * 0.045;
+
+          if (sc.captionStyle === 'speech-bubble') {
+            targetCtx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            targetCtx.beginPath();
+            targetCtx.roundRect(boxX, boxY, boxW, boxH, 20);
+            targetCtx.fill();
+            targetCtx.fillStyle = '#09090b';
+          } else {
+            targetCtx.fillStyle = 'rgba(9, 9, 11, 0.82)';
+            targetCtx.beginPath();
+            targetCtx.roundRect(boxX, boxY, boxW, boxH, 16);
+            targetCtx.fill();
+            targetCtx.fillStyle = '#facc15';
+          }
+
+          targetCtx.textAlign = 'center';
+          targetCtx.textBaseline = 'top';
+          drawWrappedText(targetCtx, sc.script, W / 2, boxY + boxH * 0.2, boxW * 0.88, fontSize * 1.32);
+        }
+
+        targetCtx.restore();
+      }
+
+      function renderFrame(ts) {
+        const dt = state.lastTs ? Math.min((ts - state.lastTs) / 1000, 0.1) : 0.016;
+        state.lastTs = ts;
+
+        const total = getTotalDuration();
+        if (state.playing && !state.exporting) {
+          state.currentTime += dt;
+          if (state.currentTime >= total) {
+            state.currentTime = 0;
+            state.playing = false;
+            updatePlayButtonUI();
+          }
+        }
+
+        const activeInfo = state.playing
+          ? getSceneAtTime(state.currentTime)
+          : {
+              index: state.activeScene,
+              scene: state.scenes[state.activeScene],
+              localTime: ts / 1000,
+              duration: state.scenes[state.activeScene].duration,
+            };
+
+        if (state.playing && activeInfo.index !== state.activeScene) {
+          state.activeScene = activeInfo.index;
+          syncUIWithActiveScene();
+        }
+
+        drawSceneToContext(ctx, canvas.width, canvas.height, activeInfo.scene, activeInfo.localTime, ts / 1000);
+
+        const pct = total > 0 ? Math.min((state.currentTime / total) * 100, 100) : 0;
+        document.getElementById('timelineBar').style.width = `${pct}%`;
+        document.getElementById('timeElapsed').textContent = formatTime(state.currentTime);
+        document.getElementById('timeTotal').textContent = formatTime(total);
+
+        requestAnimationFrame(renderFrame);
+      }
+
+      function formatTime(sec) {
+        const s = Math.floor(sec);
+        const m = Math.floor(s / 60);
+        const rem = s % 60;
+        return `${String(m).padStart(2, '0')}:${String(rem).padStart(2, '0')}`;
+      }
+
+      // =========================================================================
+      // SPEECH SYNTHESIS & WEB AUDIO SFX
+      // =========================================================================
+      function speakSceneScript(sc) {
+        if (document.getElementById('voiceEnableSelect').value !== 'on') return;
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(sc.script);
+        utter.pitch = parseFloat(document.getElementById('voicePitchSelect').value || '1.0');
+        utter.rate = 1.02;
+        utter.onstart = () => { state.speaking = true; };
+        utter.onend = () => { state.speaking = false; };
+        utter.onerror = () => { state.speaking = false; };
+        window.speechSynthesis.speak(utter);
+      }
+
+      function playWebAudioSfx(type) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ac = new AudioCtx();
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.connect(gain);
+        gain.connect(ac.destination);
+        const now = ac.currentTime;
+
+        if (type === 'boing') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(160, now);
+          osc.frequency.exponentialRampToValueAtTime(580, now + 0.35);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        } else if (type === 'dramatic') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(110, now);
+          osc.frequency.setValueAtTime(78, now + 0.25);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+          osc.start(now);
+          osc.stop(now + 0.7);
+        } else if (type === 'chime') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(783.99, now + 0.14);
+          gain.gain.setValueAtTime(0.22, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+          osc.start(now);
+          osc.stop(now + 0.45);
+        } else {
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(240, now);
+          osc.frequency.exponentialRampToValueAtTime(90, now + 0.25);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          osc.start(now);
+          osc.stop(now + 0.28);
+        }
+      }
+
+      // =========================================================================
+      // 1080P FULL HD VIDEO EXPORT PIPELINE
+      // =========================================================================
+      async function exportFullHdVideo() {
+        if (state.exporting) return;
+        if (typeof MediaRecorder === 'undefined') {
+          toast('Video export requires Chrome, Edge, or Safari 14.5+.');
+          return;
+        }
+        state.exporting = true;
+        state.playing = false;
+        updatePlayButtonUI();
+
+        const badge = document.getElementById('recordingBadge');
+        const btnText = document.getElementById('exportBtnText');
+        badge.classList.remove('hidden');
+        btnText.textContent = 'Rendering 1080p...';
+
+        const cfg = RATIOS[state.ratio];
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = cfg.exportW;
+        exportCanvas.height = cfg.exportH;
+        const exportCtx = exportCanvas.getContext('2d');
+
+        const stream = exportCanvas.captureStream(30);
+        const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+          ? 'video/webm;codecs=vp9'
+          : MediaRecorder.isTypeSupported('video/webm')
+          ? 'video/webm'
+          : '';
+        const recorder = mimeType
+          ? new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 6000000 })
+          : new MediaRecorder(stream);
+        const chunks = [];
+        recorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+
+        recorder.onstop = () => {
+          const blob = new Blob(chunks, { type: mimeType || 'video/webm' });
+          const url = URL.createObjectURL(blob);
+          const link = document.getElementById('downloadVideoLink');
+          link.href = url;
+          link.download = `reelforge-3d-${state.ratio.replace(':', 'x')}-1080p.webm`;
+          document.getElementById('downloadReadyBox').classList.remove('hidden');
+          badge.classList.add('hidden');
+          btnText.textContent = 'Export 1080p HD';
+          state.exporting = false;
+          toast('1080p HD Video Export Complete!');
+        };
+
+        try {
+          recorder.start();
+        } catch (err) {
+          badge.classList.add('hidden');
+          btnText.textContent = 'Export 1080p HD';
+          state.exporting = false;
+          toast('Could not start video recorder on this browser.');
+          return;
+        }
+
+        const total = getTotalDuration();
+        const startPerf = performance.now();
+
+        function stepExport(now) {
+          const elapsed = (now - startPerf) / 1000;
+          if (elapsed >= total) {
+            recorder.stop();
+            return;
+          }
+          const info = getSceneAtTime(elapsed);
+          try {
+            drawSceneToContext(exportCtx, cfg.exportW, cfg.exportH, info.scene, info.localTime, elapsed);
+          } catch (_) {
+            // Fallback if an external stock clip has strict CORS tainting
+            render3DStageToCanvas(exportCtx, cfg.exportW, cfg.exportH, info.scene, elapsed);
+          }
+          requestAnimationFrame(stepExport);
+        }
+        requestAnimationFrame(stepExport);
+      }
+
+      // =========================================================================
+      // ENGINE C: BYOK POLLINATIONS AI IMAGE & VEO/SEEDANCE VIDEO
+      // =========================================================================
+      async function generateAiImageForActiveScene() {
+        const sc = state.scenes[state.activeScene];
+        const prompt = document.getElementById('aiPromptInput').value.trim() || 'Charming 3D animated street scene';
+        const styleMod = AI_STYLES[document.getElementById('aiStyleSelect').value] || AI_STYLES.pixar;
+        const fullPrompt = `${prompt}, ${styleMod}`;
+        const cfg = RATIOS[state.ratio];
+        const seed = Math.floor(Math.random() * 999999);
+
+        const btnText = document.getElementById('generateAiVisualText');
+        btnText.textContent = 'Generating 3D Art...';
+
+        try {
+          const endpoint = state.pollinationsKey
+            ? `https://gen.pollinations.ai/image/${encodeURIComponent(fullPrompt)}?model=flux&width=${cfg.previewW}&height=${cfg.previewH}&nologo=true&seed=${seed}`
+            : `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?width=${cfg.previewW}&height=${cfg.previewH}&nologo=true&seed=${seed}`;
+
+          let imgSrc = endpoint;
+          if (state.pollinationsKey) {
+            const res = await fetch(endpoint, {
+              headers: { Authorization: `Bearer ${state.pollinationsKey}` },
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const blob = await res.blob();
+            imgSrc = URL.createObjectURL(blob);
+          }
+
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            sc.aiImg = img;
+            sc.customType = null;
+            sc.engine = 'ai-media';
+            syncUIWithActiveScene();
+            btnText.textContent = 'Generate AI 3D Image';
+            toast('AI 3D Illustration loaded!');
+          };
+          img.onerror = () => {
+            btnText.textContent = 'Generate AI 3D Image';
+            toast('AI image limit reached — Built-in 3D Stage stays active.');
+          };
+          img.src = imgSrc;
+        } catch (err) {
+          btnText.textContent = 'Generate AI 3D Image';
+          toast('Could not reach AI service — Built-in 3D Stage ready.');
+        }
+      }
+
+      async function generateAiVideoForActiveScene() {
+        const sc = state.scenes[state.activeScene];
+        const prompt = document.getElementById('aiPromptInput').value.trim() || 'Cinematic 3D animated scene';
+        const styleMod = AI_STYLES[document.getElementById('aiStyleSelect').value] || AI_STYLES.pixar;
+        const model = document.getElementById('aiVideoModelSelect').value || 'seedance';
+        const fullPrompt = `${prompt}, ${styleMod}`;
+
+        if (!state.pollinationsKey) {
+          document.getElementById('keysModal').classList.remove('hidden');
+          toast('Paste your Pollinations sk_... key to render Veo/Seedance clips.');
+          return;
+        }
+
+        const btn = document.getElementById('generateAiVideoBtn');
+        const btnText = document.getElementById('generateAiVideoText');
+        btn.disabled = true;
+        btnText.textContent = 'Rendering AI Clip (~30s)...';
+
+        try {
+          const url = `https://gen.pollinations.ai/video/${encodeURIComponent(fullPrompt)}?model=${encodeURIComponent(model)}&aspectRatio=${encodeURIComponent(state.ratio)}`;
+          const res = await fetch(url, {
+            headers: { Authorization: `Bearer ${state.pollinationsKey}` },
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+          const blob = await res.blob();
+          const videoUrl = URL.createObjectURL(blob);
+          sc.customType = 'video';
+          sc.customVideoUrl = videoUrl;
+          sc.aiImg = null;
+          sc.engine = 'ai-media';
+
+          customVideoEl.src = videoUrl;
+          await customVideoEl.play().catch(() => {});
+          syncUIWithActiveScene();
+          toast(`AI ${model.toUpperCase()} clip loaded onto Scene ${state.activeScene + 1}!`);
+        } catch (err) {
+          toast('AI video render failed. Check your sk_ key balance.');
+        } finally {
+          btn.disabled = false;
+          btnText.textContent = 'Generate AI Video (Veo/Seedance)';
+        }
+      }
+
+      // =========================================================================
+      // MULTI-GENRE AUTO STORY BUILDER
+      // =========================================================================
+      function buildMultiSceneStory(genre, topic) {
+        const cleanTopic = topic.trim() || 'A character goes on an unexpected adventure';
+        if (genre === 'romance') {
+          state.scenes = [
+            createDefaultScene({
+              engine: '3d-stage',
+              location: 'street',
+              camera3d: 'medium',
+              headline: 'PART 1: THE PROMISE',
+              script: `With his heart racing, David walked toward the sunset cafe thinking about ${cleanTopic}.`,
+              c1Action: 'walk',
+              c1Prop: 'flowers',
+              c1Emotion: 'love',
+              c2Show: false,
+            }),
+            createDefaultScene({
+              engine: '3d-stage',
+              location: 'cafe',
+              camera3d: 'orbit',
+              headline: 'PART 2: THE MEETING',
+              script: 'When Sarah arrived at the table, the golden sunset lit up the entire cafe.',
+              c1Action: 'wave',
+              c1Prop: 'flowers',
+              c1Emotion: 'love',
+              c2Show: true,
+              c2Name: 'Sarah',
+              c2Outfit: 'pink-dress',
+              c2Action: 'celebrate',
+            }),
+            createDefaultScene({
+              engine: '3d-stage',
+              location: 'cafe',
+              camera3d: 'closeup',
+              headline: 'PART 3: HAPPILY EVER AFTER',
+              script: 'She accepted the roses with a joyful laugh—proving some moments are worth the wait.',
+              c1Action: 'talk',
+              c1Prop: 'none',
+              c1Emotion: 'happy',
+              c2Show: true,
+              c2Name: 'Sarah',
+              c2Outfit: 'pink-dress',
+              c2Prop: 'flowers',
+              c2Action: 'talk',
+            }),
+          ];
+        } else if (genre === 'crime') {
+          state.scenes = [
+            createDefaultScene({
+              engine: '3d-stage',
+              location: 'alley',
+              camera3d: 'wide',
+              headline: 'CASE FILE #09: MIDNIGHT',
+              script: `Late at night, Detective Cole arrived at the scene to investigate: ${cleanTopic}.`,
+              c1Outfit: 'detective',
+              c1Action: 'inspect',
+              c1Prop: 'magnifier',
+              c1Emotion: 'serious',
+              c2Show: false,
+            }),
+            createDefaultScene({
+              engine: '3d-stage',
+              location: 'alley',
+              camera3d: 'over-shoulder',
+              headline: 'THE CONFRONTATION',
+              script: 'A mysterious figure stepped out from behind the shadows near the streetlamp.',
+              c1Outfit: 'detective',
+              c1Action: 'talk',
+              c1Prop: 'magnifier',
+              c1Emotion: 'serious',
+              c2Show: true,
+              c2Name: 'Suspect',
+              c2Outfit: 'suit-dark',
+              c2Action: 'talk',
+            }),
+            createDefaultScene({
+              engine: '3d-stage',
+              location: 'office',
+              camera3d: 'closeup',
+              headline: 'CASE CLOSED',
+              script: 'One overlooked clue cracked the entire mystery wide open before dawn.',
+              c1Outfit: 'detective',
+              c1Action: 'celebrate',
+              c1Prop: 'briefcase',
+              c1Emotion: 'happy',
+              c2Show: false,
+            }),
+          ];
+        } else if (genre === 'comedy') {
+          state.scenes = [
+            createDefaultScene({
+              engine: '3d-stage',
+              location: 'shop',
+              camera3d: 'medium',
+              headline: 'WAIT FOR IT...',
+              script: `Everything was going great while ${cleanTopic} inside the neighborhood store.`,
+              c1Outfit: 'red-hoodie',
+              c1Action: 'celebrate',
+              c1Prop: 'bag',
+              c1Emotion: 'happy',
+              c2Show: true,
+              c2Name: 'Cashier',
+              c2Outfit: 'shopkeeper',
+              c2Action: 'wave',
+            }),
+            createDefaultScene({
+              engine: '3d-stage',
+              location: 'shop',
+              camera3d: 'closeup',
+              headline: 'THE PLOT TWIST',
+              script: 'Until he reached into his pocket at the counter—and realized his wallet was still on his bed!',
+              c1Outfit: 'red-hoodie',
+              c1Action: 'talk',
+              c1Prop: 'none',
+              c1Emotion: 'shocked',
+              c2Show: true,
+              c2Name: 'Cashier',
+              c2Outfit: 'shopkeeper',
+              c2Action: 'idle',
+            }),
+            createDefaultScene({
+              engine: '3d-stage',
+              location: 'street',
+              camera3d: 'orbit',
+              headline: 'RUN FOR IT!',
+              script: 'He sprinted all the way back home in record Olympic time!',
+              c1Outfit: 'red-hoodie',
+              c1Action: 'walk',
+              c1Prop: 'phone',
+              c1Emotion: 'shocked',
+              c2Show: false,
+            }),
+          ];
+        } else {
+          state.scenes = [
+            createDefaultScene({
+              engine: '3d-stage',
+              location: 'street',
+              camera3d: 'medium',
+              headline: 'CHAPTER 1',
+              script: `Here is the story of how ${cleanTopic}.`,
+              c1Action: 'walk',
+              c2Show: false,
+            }),
+            createDefaultScene({
+              engine: '3d-stage',
+              location: 'shop',
+              camera3d: 'orbit',
+              headline: 'CHAPTER 2',
+              script: 'Every step brought a surprising new turn nobody expected.',
+              c1Action: 'talk',
+              c1Prop: 'bag',
+              c2Show: true,
+              c2Action: 'wave',
+            }),
+            createDefaultScene({
+              engine: '3d-stage',
+              location: 'office',
+              camera3d: 'closeup',
+              headline: 'THE TAKEAWAY',
+              script: 'And that is how a simple idea turned into an unforgettable moment!',
+              c1Action: 'celebrate',
+              c2Show: false,
+            }),
+          ];
+        }
+        state.activeScene = 0;
+        state.currentTime = 0;
+        selectScene(0);
+        toast('3D Multi-Scene Story Built!');
+      }
+
+      // =========================================================================
+      // UI SYNC & EVENT LISTENERS
+      // =========================================================================
+      function toast(msg) {
+        const el = document.getElementById('toastBanner');
+        el.textContent = msg;
+        el.classList.remove('hidden');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.add('hidden'), 3200);
+      }
+
+      function updatePlayButtonUI() {
+        document.getElementById('playIcon').textContent = state.playing ? '⏸️' : '▶️';
+        document.getElementById('playLabel').textContent = state.playing ? 'Pause' : 'Play Story';
+      }
+
+      function renderSceneTabs() {
+        const list = document.getElementById('sceneTabsList');
+        list.innerHTML = '';
+        state.scenes.forEach((sc, idx) => {
+          const active = idx === state.activeScene;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `shrink-0 min-h-[46px] px-3.5 py-2 rounded-xl border text-left transition ${
+            active
+              ? 'bg-violet-600/25 border-violet-500 text-white'
+              : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white'
+          }`;
+          const tag = sc.engine === 'ai-media' ? 'MEDIA' : sc.engine === 'puppet' ? '2D' : '3D';
+          btn.innerHTML = `
+            <div class="flex items-center justify-between gap-2 text-[11px] font-extrabold">
+              <span>S${idx + 1} • ${tag}</span>
+              <span class="text-[10px] font-mono opacity-80">${sc.duration}s</span>
+            </div>
+            <div class="text-[9px] uppercase tracking-wider opacity-75 mt-0.5">${sc.location}</div>
+          `;
+          btn.addEventListener('click', () => selectScene(idx));
+          list.appendChild(btn);
+        });
+      }
+
+      function syncUIWithActiveScene() {
+        const sc = state.scenes[state.activeScene];
+        renderSceneTabs();
+
+        document.getElementById('activeSceneBadge').textContent = `${state.activeScene + 1}/${state.scenes.length}`;
+        document.getElementById('scriptEditorTitle').textContent = `Scene ${state.activeScene + 1} Script & Captions`;
+        document.getElementById('stockTargetSceneNum').textContent = `${state.activeScene + 1}`;
+        document.getElementById('sceneDurationSelect').value = String(sc.duration);
+        document.getElementById('sceneTransitionSelect').value = sc.transition;
+        document.getElementById('sceneHeadlineInput').value = sc.headline;
+        document.getElementById('captionStyleSelect').value = sc.captionStyle;
+        document.getElementById('sceneScriptInput').value = sc.script;
+        const words = sc.script.trim() ? sc.script.trim().split(/\s+/).length : 0;
+        document.getElementById('wordCountBadge').textContent = `${words} words`;
+
+        document.getElementById('locationSelect').value = sc.location;
+        document.getElementById('camera3dSelect').value = sc.camera3d || 'medium';
+
+        document.getElementById('char1Visible').checked = sc.c1Show;
+        document.getElementById('char1Name').value = sc.c1Name;
+        document.getElementById('char1Outfit').value = sc.c1Outfit;
+        document.getElementById('char1Action').value = sc.c1Action;
+        document.getElementById('char1Prop').value = sc.c1Prop;
+        document.getElementById('char1Emotion').value = sc.c1Emotion;
+
+        document.getElementById('char2Visible').checked = sc.c2Show;
+        document.getElementById('char2Name').value = sc.c2Name;
+        document.getElementById('char2Outfit').value = sc.c2Outfit;
+        document.getElementById('char2Action').value = sc.c2Action;
+        document.getElementById('char2Prop').value = sc.c2Prop;
+
+        const badgeDot = document.getElementById('engineBadgeDot');
+        const badgeText = document.getElementById('engineBadgeText');
+        const b3d = document.getElementById('mode3dBtn');
+        const b2d = document.getElementById('mode2dBtn');
+        const bai = document.getElementById('modeAiBtn');
+
+        [b3d, b2d, bai].forEach((b) => {
+          b.className = 'engine-mode-btn min-h-[48px] py-2 px-2 rounded-xl bg-zinc-950 text-zinc-400 hover:text-white border border-zinc-800 font-bold text-[11px] flex flex-col items-center justify-center gap-0.5 transition';
+        });
+
+        if (sc.engine === 'ai-media') {
+          badgeDot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+          badgeText.textContent = 'Stock / AI Media';
+          bai.className = 'engine-mode-btn min-h-[48px] py-2 px-2 rounded-xl bg-emerald-600 text-white font-bold text-[11px] flex flex-col items-center justify-center gap-0.5 shadow-md transition';
+        } else if (sc.engine === 'puppet') {
+          badgeDot.className = 'w-2 h-2 rounded-full bg-violet-400 animate-pulse';
+          badgeText.textContent = '2D Puppet Stage';
+          b2d.className = 'engine-mode-btn min-h-[48px] py-2 px-2 rounded-xl bg-violet-600 text-white font-bold text-[11px] flex flex-col items-center justify-center gap-0.5 shadow-md transition';
+        } else {
+          badgeDot.className = 'w-2 h-2 rounded-full bg-cyan-400 animate-pulse';
+          badgeText.textContent = '3D WebGL Stage';
+          b3d.className = 'engine-mode-btn min-h-[48px] py-2 px-2 rounded-xl bg-cyan-600 text-white font-bold text-[11px] flex flex-col items-center justify-center gap-0.5 shadow-md transition';
+        }
+      }
+
+      function selectScene(idx) {
+        state.activeScene = Math.max(0, Math.min(idx, state.scenes.length - 1));
+        syncUIWithActiveScene();
+      }
+
+      // Tabs
+      document.querySelectorAll('.studio-tab').forEach((tabBtn) => {
+        tabBtn.addEventListener('click', () => {
+          document.querySelectorAll('.studio-tab').forEach((b) => {
+            b.className = 'studio-tab min-h-[42px] py-2 px-1 rounded-lg text-[11px] font-bold text-zinc-400 hover:text-white transition';
+          });
+          tabBtn.className = 'studio-tab active min-h-[42px] py-2 px-1 rounded-lg text-[11px] font-bold bg-violet-600 text-white transition';
+          const target = tabBtn.getAttribute('data-tab');
+          document.querySelectorAll('.tab-panel').forEach((p) => p.classList.add('hidden'));
+          document.getElementById(`tab-${target}`).classList.remove('hidden');
+        });
+      });
+
+      // 3-in-1 Engine Switcher Buttons
+      document.getElementById('mode3dBtn').addEventListener('click', () => {
+        state.scenes[state.activeScene].engine = '3d-stage';
+        syncUIWithActiveScene();
+      });
+      document.getElementById('mode2dBtn').addEventListener('click', () => {
+        state.scenes[state.activeScene].engine = 'puppet';
+        syncUIWithActiveScene();
+      });
+      document.getElementById('modeAiBtn').addEventListener('click', () => {
+        state.scenes[state.activeScene].engine = 'ai-media';
+        syncUIWithActiveScene();
+        document.querySelector('[data-tab="ai-cinema"]').click();
+      });
+
+      // Aspect Ratio
+      function setAspectRatio(r) {
+        state.ratio = r;
+        const cfg = RATIOS[r];
+        canvas.width = cfg.previewW;
+        canvas.height = cfg.previewH;
+        canvasWrapper.className = `relative w-full h-[29vh] sm:h-[370px] ${cfg.cssAspect} rounded-xl overflow-hidden bg-zinc-950 border border-zinc-800 mx-auto flex items-center justify-center`;
+        document.getElementById('exportResLabel').textContent = `${cfg.exportW}×${cfg.exportH}`;
+        document.getElementById('ratio916Btn').className = r === '9:16'
+          ? 'px-2.5 py-1.5 rounded-md text-[11px] font-bold bg-violet-600 text-white transition'
+          : 'px-2.5 py-1.5 rounded-md text-[11px] font-bold text-zinc-400 hover:text-white transition';
+        document.getElementById('ratio169Btn').className = r === '16:9'
+          ? 'px-2.5 py-1.5 rounded-md text-[11px] font-bold bg-violet-600 text-white transition'
+          : 'px-2.5 py-1.5 rounded-md text-[11px] font-bold text-zinc-400 hover:text-white transition';
+      }
+      document.getElementById('ratio916Btn').addEventListener('click', () => setAspectRatio('9:16'));
+      document.getElementById('ratio169Btn').addEventListener('click', () => setAspectRatio('16:9'));
+
+      // Play / Pause
+      document.getElementById('playPauseBtn').addEventListener('click', () => {
+        state.playing = !state.playing;
+        if (state.playing) {
+          if (state.currentTime >= getTotalDuration()) state.currentTime = 0;
+          speakSceneScript(state.scenes[state.activeScene]);
+        } else if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+        updatePlayButtonUI();
+      });
+
+      document.getElementById('exportHdBtn').addEventListener('click', exportFullHdVideo);
+
+      // Timeline Add / Copy / Delete
+      document.getElementById('addSceneBtn').addEventListener('click', () => {
+        if (state.scenes.length >= 6) return toast('Max 6 scenes per story.');
+        state.scenes.push(createDefaultScene({ headline: `PART ${state.scenes.length + 1}` }));
+        selectScene(state.scenes.length - 1);
+      });
+      document.getElementById('duplicateSceneBtn').addEventListener('click', () => {
+        if (state.scenes.length >= 6) return toast('Max 6 scenes per story.');
+        const clone = { ...state.scenes[state.activeScene] };
+        state.scenes.splice(state.activeScene + 1, 0, clone);
+        selectScene(state.activeScene + 1);
+      });
+      document.getElementById('deleteSceneBtn').addEventListener('click', () => {
+        if (state.scenes.length <= 1) return toast('At least 1 scene is required.');
+        state.scenes.splice(state.activeScene, 1);
+        selectScene(Math.max(0, state.activeScene - 1));
+      });
+
+      // Scene Inputs
+      document.getElementById('sceneDurationSelect').addEventListener('change', (e) => {
+        state.scenes[state.activeScene].duration = Number(e.target.value);
+        renderSceneTabs();
+      });
+      document.getElementById('sceneTransitionSelect').addEventListener('change', (e) => {
+        state.scenes[state.activeScene].transition = e.target.value;
+      });
+      document.getElementById('sceneHeadlineInput').addEventListener('input', (e) => {
+        state.scenes[state.activeScene].headline = e.target.value;
+      });
+      document.getElementById('captionStyleSelect').addEventListener('change', (e) => {
+        state.scenes[state.activeScene].captionStyle = e.target.value;
+      });
+      document.getElementById('sceneScriptInput').addEventListener('input', (e) => {
+        state.scenes[state.activeScene].script = e.target.value;
+        const words = e.target.value.trim() ? e.target.value.trim().split(/\s+/).length : 0;
+        document.getElementById('wordCountBadge').textContent = `${words} words`;
+      });
+
+      // Genre Pills & Presets
+      document.querySelectorAll('.genre-pill').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.genre-pill').forEach((p) => {
+            p.className = 'genre-pill min-h-[38px] py-1.5 px-2 rounded-lg text-[11px] font-bold bg-zinc-950 text-zinc-300 border border-zinc-800';
+          });
+          btn.className = 'genre-pill active min-h-[38px] py-1.5 px-2 rounded-lg text-[11px] font-bold bg-violet-600 text-white border border-violet-500';
+          state.genre = btn.getAttribute('data-genre');
+        });
+      });
+
+      document.getElementById('autoGenerateStoryBtn').addEventListener('click', () => {
+        buildMultiSceneStory(state.genre, document.getElementById('storyPromptInput').value);
+      });
+
+      document.querySelectorAll('.preset-story-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const g = btn.getAttribute('data-genre');
+          const t = btn.getAttribute('data-topic');
+          state.genre = g;
+          document.getElementById('storyPromptInput').value = t;
+          buildMultiSceneStory(g, t);
+        });
+      });
+
+      // 3D/2D Cast & Set Controls
+      document.getElementById('locationSelect').addEventListener('change', (e) => {
+        state.scenes[state.activeScene].location = e.target.value;
+        renderSceneTabs();
+      });
+      document.getElementById('camera3dSelect').addEventListener('change', (e) => {
+        state.scenes[state.activeScene].camera3d = e.target.value;
+      });
+
+      ['char1Visible', 'char1Name', 'char1Outfit', 'char1Action', 'char1Prop', 'char1Emotion',
+       'char2Visible', 'char2Name', 'char2Outfit', 'char2Action', 'char2Prop'].forEach((id) => {
+        const el = document.getElementById(id);
+        el.addEventListener('change', () => {
+          const sc = state.scenes[state.activeScene];
+          sc.c1Show = document.getElementById('char1Visible').checked;
+          sc.c1Name = document.getElementById('char1Name').value;
+          sc.c1Outfit = document.getElementById('char1Outfit').value;
+          sc.c1Action = document.getElementById('char1Action').value;
+          sc.c1Prop = document.getElementById('char1Prop').value;
+          sc.c1Emotion = document.getElementById('char1Emotion').value;
+
+          sc.c2Show = document.getElementById('char2Visible').checked;
+          sc.c2Name = document.getElementById('char2Name').value;
+          sc.c2Outfit = document.getElementById('char2Outfit').value;
+          sc.c2Action = document.getElementById('char2Action').value;
+          sc.c2Prop = document.getElementById('char2Prop').value;
+        });
+      });
+
+      // Stock Media Search Events
+      document.getElementById('runStockSearchBtn').addEventListener('click', runStockMediaSearch);
+      document.getElementById('stockSearchInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') runStockMediaSearch();
+      });
+      document.querySelectorAll('.stock-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          document.getElementById('stockSearchInput').value = chip.getAttribute('data-q');
+          document.getElementById('stockSourceSelect').value = chip.getAttribute('data-src');
+          runStockMediaSearch();
+        });
+      });
+
+      // AI Cinema & Upload
+      document.getElementById('generateAiVisualBtn').addEventListener('click', generateAiImageForActiveScene);
+      document.getElementById('generateAiVideoBtn').addEventListener('click', generateAiVideoForActiveScene);
+      document.getElementById('switchBackTo3dBtn').addEventListener('click', () => {
+        state.scenes[state.activeScene].engine = '3d-stage';
+        syncUIWithActiveScene();
+      });
+
+      document.getElementById('customMediaUpload').addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        const sc = state.scenes[state.activeScene];
+        if (file.type.startsWith('video/')) {
+          sc.customType = 'video';
+          sc.customVideoUrl = url;
+          sc.engine = 'ai-media';
+          customVideoEl.src = url;
+          customVideoEl.play().catch(() => {});
+          syncUIWithActiveScene();
+          toast('Custom video clip loaded!');
+        } else {
+          const img = new Image();
+          img.onload = () => {
+            sc.customImg = img;
+            sc.customType = 'image';
+            sc.engine = 'ai-media';
+            syncUIWithActiveScene();
+            toast('Custom image loaded!');
+          };
+          img.src = url;
+        }
+      });
+
+      document.getElementById('clearCustomMediaBtn').addEventListener('click', () => {
+        const sc = state.scenes[state.activeScene];
+        sc.aiImg = null;
+        sc.customImg = null;
+        sc.customType = null;
+        sc.customVideoUrl = null;
+        sc.engine = '3d-stage';
+        syncUIWithActiveScene();
+      });
+
+      // Audio SFX & Color Grade
+      document.querySelectorAll('.sfx-btn').forEach((btn) => {
+        btn.addEventListener('click', () => playWebAudioSfx(btn.getAttribute('data-sfx')));
+      });
+
+      document.getElementById('brightnessSlider').addEventListener('input', (e) => {
+        state.grade.brightness = Number(e.target.value);
+        document.getElementById('brightnessVal').textContent = `${e.target.value}%`;
+      });
+      document.getElementById('contrastSlider').addEventListener('input', (e) => {
+        state.grade.contrast = Number(e.target.value);
+        document.getElementById('contrastVal').textContent = `${e.target.value}%`;
+      });
+      document.getElementById('colorTintSelect').addEventListener('change', (e) => {
+        state.grade.tint = e.target.value;
+      });
+      document.getElementById('resetGradeBtn').addEventListener('click', () => {
+        state.grade = { brightness: 100, contrast: 105, tint: 'none' };
+        document.getElementById('brightnessSlider').value = 100;
+        document.getElementById('brightnessVal').textContent = '100%';
+        document.getElementById('contrastSlider').value = 105;
+        document.getElementById('contrastVal').textContent = '105%';
+        document.getElementById('colorTintSelect').value = 'none';
+      });
+
+      // BYOK Keys Modal
+      function updateKeyDot() {
+        document.getElementById('pixabayKeyInput').value = state.pixabayKey;
+        document.getElementById('pexelsKeyInput').value = state.pexelsKey;
+        document.getElementById('unsplashKeyInput').value = state.unsplashKey;
+        document.getElementById('pollinationsKeyInput').value = state.pollinationsKey;
+        const hasAny = state.pixabayKey || state.pexelsKey || state.unsplashKey || state.pollinationsKey;
+        document.getElementById('keyStatusDot').className =
+          hasAny ? 'w-2 h-2 rounded-full bg-emerald-400' : 'w-2 h-2 rounded-full bg-zinc-600';
+      }
+      document.getElementById('openKeysModalBtn').addEventListener('click', () => {
+        updateKeyDot();
+        document.getElementById('keysModal').classList.remove('hidden');
+      });
+      document.getElementById('closeKeysModalBtn').addEventListener('click', () =>
+        document.getElementById('keysModal').classList.add('hidden')
+      );
+      document.getElementById('saveKeysBtn').addEventListener('click', () => {
+        state.pixabayKey = document.getElementById('pixabayKeyInput').value.trim();
+        state.pexelsKey = document.getElementById('pexelsKeyInput').value.trim();
+        state.unsplashKey = document.getElementById('unsplashKeyInput').value.trim();
+        state.pollinationsKey = document.getElementById('pollinationsKeyInput').value.trim();
+        localStorage.setItem('rf_pixabay_key', state.pixabayKey);
+        localStorage.setItem('rf_pexels_key', state.pexelsKey);
+        localStorage.setItem('rf_unsplash_key', state.unsplashKey);
+        localStorage.setItem('rf_pollinations_key', state.pollinationsKey);
+        updateKeyDot();
+        document.getElementById('keysModal').classList.add('hidden');
+        toast('Keys saved locally on your device!');
+      });
+
+      // Immediate Mobile & Desktop Boot
+      function bootStudio() {
+        const cfg = RATIOS[state.ratio];
+        canvas.width = cfg.previewW;
+        canvas.height = cfg.previewH;
+        updateKeyDot();
+        selectScene(0);
+        const now = performance.now();
+        state.lastTs = now;
+        renderFrame(now);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootStudio);
+      } else {
+        bootStudio();
+      }
+    })();
+  </script>
+</body>
+</html>
