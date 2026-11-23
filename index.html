@@ -1,166 +1,6 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ReelForge Studio Pro — Hybrid 2D Animation, AI Cinema & Video Studio</title>
-  <meta name="theme-color" content="#09090b" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Fonts: Inter & Montserrat -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet" />
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            display: ['Montserrat', 'sans-serif'],
-          },
-        },
-      },
-    };
-  </script>
-
-  <style>
-    body {
-      background-color: #09090b;
-      color: #f4f4f5;
-      overflow-x: hidden;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #18181b;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #3f3f46;
-      border-radius: 9999px;
-    }
-
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-
-    input[type="file"]::file-selector-button {
-      background: #27272a;
-      color: #e4e4e7;
-      border: 1px solid #3f3f46;
-      padding: 0.35rem 0.7rem;
-      border-radius: 0.5rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-right: 0.6rem;
-      cursor: pointer;
-    }
-
-    .stage-glow {
-      box-shadow: 0 18px 50px -12px rgba(124, 58, 237, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.08);
-    }
-  </style>
-</head>
-<body class="min-h-screen flex flex-col selection:bg-violet-500 selection:text-white">
-
-  <!-- Embedded PWA Manifest -->
-  <script>
-    (function setupPWA() {
-      const iconSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%237c3aed'/%3E%3Cstop offset='100%25' stop-color='%2310b981'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='116' fill='url(%23g)'/%3E%3Cpolygon points='195,145 365,256 195,367' fill='white'/%3E%3C/svg%3E";
-      const manifest = {
-        name: "ReelForge Studio Pro",
-        short_name: "ReelForge Pro",
-        start_url: ".",
-        display: "standalone",
-        background_color: "#09090b",
-        theme_color: "#09090b",
-        icons: [{ src: iconSvg, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }]
-      };
-      const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-      const link = document.createElement('link');
-      link.rel = 'manifest';
-      link.href = URL.createObjectURL(blob);
-      document.head.appendChild(link);
-    })();
-  </script>
-
-  <!-- Compact Top Header -->
-  <header class="border-b border-zinc-800/80 bg-zinc-950/95 backdrop-blur-md sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-2">
-      <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-violet-600/20 shrink-0">
-          <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-          </svg>
-        </div>
-        <div>
-          <div class="flex items-center gap-1.5">
-            <h1 class="font-bold text-sm sm:text-base tracking-tight text-white">ReelForge Studio</h1>
-            <span class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">1080P HD</span>
-          </div>
-          <p class="text-[10px] text-zinc-400 hidden sm:block">2D Puppet Animator • AI Cinema • Ad & Image Studio</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <!-- Aspect Ratio Quick Toggle in Header -->
-        <div class="flex items-center bg-zinc-900 p-0.5 rounded-xl border border-zinc-800">
-          <button type="button" data-ratio="9:16" class="ratio-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-violet-600 text-white transition">9:16</button>
-          <button type="button" data-ratio="16:9" class="ratio-btn px-2.5 py-1 rounded-lg text-[11px] font-bold text-zinc-400 hover:text-white transition">16:9</button>
-        </div>
-
-        <button id="openKeysModalBtn" type="button" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700/80 transition">
-          <span>🔑</span>
-          <span class="hidden sm:inline">AI Keys</span>
-          <span id="keyStatusDot" class="w-2 h-2 rounded-full bg-zinc-600"></span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Toast Banner -->
-  <div id="toastBanner" class="fixed bottom-4 right-4 left-4 sm:left-auto z-50 sm:max-w-sm transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="bg-zinc-900/95 border border-zinc-700 text-zinc-100 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
-      <div id="toastDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0"></div>
-      <p id="toastMsg" class="text-xs font-medium"></p>
-    </div>
-  </div>
-
-  <!-- Main Responsive Layout: Sticky Stage on Mobile Top / Desktop Right -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-3 sm:py-6 flex flex-col lg:grid lg:grid-cols-12 gap-4 sm:gap-6 items-start">
-
-    <!-- STAGE PANEL (Pinned Top on Mobile so user sees live updates effortlessly, Right Column on Desktop) -->
-    <section class="w-full lg:col-span-5 lg:order-2 sticky top-14 z-30 bg-zinc-950/95 lg:bg-transparent pt-1 pb-2 lg:p-0 border-b border-zinc-800/80 lg:border-none">
-      <div id="stageCard" class="w-full max-w-[340px] sm:max-w-[390px] mx-auto bg-zinc-900/90 border border-zinc-800 rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 stage-glow transition-all">
-
-        <!-- Stage Status Row -->
-        <div class="flex items-center justify-between mb-2 px-1">
-          <div class="flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span id="stageModeLabel" class="text-[11px] font-semibold text-zinc-300">2D Puppet Studio</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span id="exportResLabel" class="text-[10px] font-mono text-zinc-400">Export: 1080×1920</span>
-            <span id="sceneCounterBadge" class="text-[11px] font-mono font-bold text-violet-300 bg-violet-500/15 px-2 py-0.5 rounded-md">1/3</span>
-          </div>
-        </div>
-
+<!-- ... existing code ... -->
         <!-- Compact Responsive Canvas Wrapper (Renders lightweight in preview, scales to full 1080p HD on export) -->
-        <div id="canvasWrapper" class="relative w-full max-h-[34vh] sm:max-h-[440px] aspect-[9/16] rounded-xl sm:rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800 mx-auto flex items-center justify-center">
+        <div id="canvasWrapper" class="relative w-full h-[30vh] sm:h-[380px] aspect-[9/16] rounded-xl sm:rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800 mx-auto flex items-center justify-center">
           <canvas id="studioCanvas" width="540" height="960" class="w-full h-full object-contain block"></canvas>
 
           <!-- Recording Indicator -->
@@ -169,348 +9,22 @@
             RENDERING 1080P HD...
           </div>
         </div>
-
-        <!-- Hidden Custom Video Element -->
-        <video id="customVideoEl" muted loop playsinline class="hidden"></video>
-
-        <!-- Compact Scrub Timeline -->
-        <div class="mt-2.5 space-y-1">
-          <div id="timelineTrack" class="w-full h-2 bg-zinc-800 rounded-full overflow-hidden cursor-pointer">
-            <div id="timelineFill" class="h-full bg-gradient-to-r from-violet-500 to-emerald-400 w-0"></div>
-          </div>
-          <div class="flex justify-between text-[10px] font-mono text-zinc-400 px-0.5">
-            <span id="timeCurrentLabel">00:00</span>
-            <span id="timeTotalLabel">00:12</span>
-          </div>
-        </div>
-
-        <!-- Play & 1080p Export Controls -->
-        <div class="mt-2 grid grid-cols-2 gap-2">
-          <button id="playPauseBtn" type="button" class="py-2 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition active:scale-[0.98]">
-            <span id="playPauseIcon">▶️</span>
-            <span id="playPauseText">Play Story</span>
-          </button>
-
-          <button id="exportHdBtn" type="button" class="py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/20 transition active:scale-[0.98]">
-            <span>⬇️</span>
-            <span id="exportBtnText">Export 1080p HD</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTROLS PANEL (Lightweight Tabbed Workspace so Mobile never feels bloated) -->
-    <section class="w-full lg:col-span-7 lg:order-1 space-y-4 pb-12">
-
-      <!-- 1. Multi-Scene Timeline Strip (1 to 6 Scenes) -->
-      <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3.5 space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-wider text-zinc-400">Timeline Scenes (1–6)</span>
-          <div class="flex items-center gap-1.5">
-            <button id="addSceneBtn" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-violet-600/20 hover:bg-violet-600/30 text-violet-300 border border-violet-500/30 transition">+ Scene</button>
-            <button id="duplicateSceneBtn" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 transition">Copy</button>
-            <button id="deleteSceneBtn" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-zinc-800 hover:bg-rose-950/60 text-zinc-400 hover:text-rose-300 border border-zinc-700 transition">Del</button>
-          </div>
-        </div>
-
-        <div id="sceneTabsGrid" class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
-          <!-- Populated dynamically -->
-        </div>
-
-        <!-- Per-Scene Timing & Transition -->
-        <div class="grid grid-cols-2 gap-2 pt-1">
-          <div>
-            <label for="sceneDurationSelect" class="block text-[10px] text-zinc-400 mb-1">Scene Duration</label>
-            <select id="sceneDurationSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
-              <option value="3">3 Seconds</option>
-              <option value="4" selected>4 Seconds</option>
-              <option value="5">5 Seconds</option>
-              <option value="6">6 Seconds</option>
-              <option value="8">8 Seconds</option>
-              <option value="10">10 Seconds</option>
-              <option value="12">12 Seconds</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="sceneTransitionSelect" class="block text-[10px] text-zinc-400 mb-1">Scene Transition</label>
-            <select id="sceneTransitionSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
-              <option value="fade" selected>Smooth Fade</option>
-              <option value="slide">Slide Left</option>
-              <option value="zoom">Zoom Cut</option>
-              <option value="wipe">Wipe Reveal</option>
-              <option value="flash">Dramatic Flash</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2. Clean Tool Navigation Tabs (Prevents Endless Scrolling on Mobile) -->
-      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-zinc-900/90 p-1.5 rounded-2xl border border-zinc-800">
-        <button type="button" data-tab="story" class="workspace-tab shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-bold bg-violet-600 text-white shadow transition">
-          📖 1. Story & Script
-        </button>
-        <button type="button" data-tab="puppet" class="workspace-tab shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-bold text-zinc-400 hover:text-white transition">
-          🎭 2. 2D Characters & Sets
-        </button>
-        <button type="button" data-tab="ai-cinema" class="workspace-tab shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-bold text-zinc-400 hover:text-white transition">
-          🎬 3. AI Cinema & Photo
-        </button>
-        <button type="button" data-tab="audio-ad" class="workspace-tab shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-bold text-zinc-400 hover:text-white transition">
-          🔊 4. Audio, Ads & Grade
-        </button>
-      </div>
-
-      <!-- TAB 1: UNIVERSAL STORY & SCRIPT GENERATOR -->
-      <div id="tab-story" class="tab-panel space-y-4">
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3.5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-violet-400">Universal Multi-Genre Story Builder</span>
-            <span class="text-[10px] text-zinc-400">Zero Errors • Any Topic</span>
-          </div>
-
-          <!-- Genre Selector Chips -->
-          <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
-            <button type="button" data-genre="general" class="genre-btn py-2 px-1.5 rounded-xl text-[11px] font-semibold bg-violet-600 text-white text-center transition">🌟 General</button>
-            <button type="button" data-genre="love" class="genre-btn py-2 px-1.5 rounded-xl text-[11px] font-semibold bg-zinc-950 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 text-center transition">❤️ Romance</button>
-            <button type="button" data-genre="crime" class="genre-btn py-2 px-1.5 rounded-xl text-[11px] font-semibold bg-zinc-950 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 text-center transition">🕵️ Crime</button>
-            <button type="button" data-genre="comedy" class="genre-btn py-2 px-1.5 rounded-xl text-[11px] font-semibold bg-zinc-950 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 text-center transition">😂 Comedy</button>
-            <button type="button" data-genre="explainer" class="genre-btn py-2 px-1.5 rounded-xl text-[11px] font-semibold bg-zinc-950 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 text-center transition">🧠 Explainer</button>
-            <button type="button" data-genre="ad" class="genre-btn py-2 px-1.5 rounded-xl text-[11px] font-semibold bg-zinc-950 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 text-center transition">🛍️ Promo Ad</button>
-          </div>
-
-          <!-- Story Prompt Box -->
-          <div class="space-y-2">
-            <label for="storyTopicInput" class="block text-xs font-medium text-zinc-300">Describe Your Story, Skit, Lesson, or Product</label>
-            <div class="flex flex-col sm:flex-row gap-2">
-              <input id="storyTopicInput" type="text" value="A young man walks to the neighborhood shop to buy flowers for a surprise date" placeholder="e.g., Detective solving a midnight museum mystery, Funny shopkeeper haggling, Love at first sight..."
-                class="flex-1 px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500" />
-              <button id="autoGenerateStoryBtn" type="button" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-violet-600/20 flex items-center justify-center gap-1.5 shrink-0 transition">
-                <span>⚡</span>
-                <span id="autoStoryBtnText">Build Full Story</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Quick 1-Tap Genre Ideas -->
-          <div class="flex flex-wrap gap-1.5">
-            <button type="button" data-idea-genre="love" data-idea="A shy guy walks to the corner shop to buy roses before meeting his crush at the sunset cafe" class="idea-pill px-2.5 py-1 rounded-lg text-[11px] bg-zinc-950 hover:bg-zinc-800 text-rose-300 border border-zinc-800">❤️ Love Story: The Surprise Date</button>
-            <button type="button" data-idea-genre="crime" data-idea="Detective inspects a dark alley with a magnifying glass and confronts the suspect at the shop" class="idea-pill px-2.5 py-1 rounded-lg text-[11px] bg-zinc-950 hover:bg-zinc-800 text-cyan-300 border border-zinc-800">🕵️ Crime: Midnight Alley Clue</button>
-            <button type="button" data-idea-genre="comedy" data-idea="Man walks to the shop with big confidence only to realize he forgot his wallet at home" class="idea-pill px-2.5 py-1 rounded-lg text-[11px] bg-zinc-950 hover:bg-zinc-800 text-amber-300 border border-zinc-800">😂 Comedy: Forgot The Wallet</button>
-          </div>
-        </div>
-
-        <!-- Active Scene Dialogue & Headline Editor -->
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <span id="editingSceneTitle" class="text-xs font-bold text-emerald-400">Scene 1 Script & Captions</span>
-            <span id="scriptWordCount" class="text-[11px] text-zinc-500">0 words</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label for="sceneBannerInput" class="block text-[11px] text-zinc-400 mb-1">Top Story / Chapter Banner</label>
-              <input id="sceneBannerInput" type="text" value="CHAPTER 1: THE ERRAND" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-bold text-amber-300 focus:outline-none focus:border-violet-500" />
-            </div>
-            <div>
-              <label for="captionStyleSelect" class="block text-[11px] text-zinc-400 mb-1">Subtitle / Speech Style</label>
-              <select id="captionStyleSelect" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-violet-500">
-                <option value="speech-bubble" selected>Cartoon Speech Bubble</option>
-                <option value="tiktok-pop">TikTok Bold Pop</option>
-                <option value="cinema-sub">Cinema Subtitle Bar</option>
-                <option value="none">Hide Subtitles</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label for="sceneNarrationInput" class="block text-[11px] text-zinc-400 mb-1">Spoken Dialogue / Narration for This Scene</label>
-            <textarea id="sceneNarrationInput" rows="2" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs sm:text-sm text-zinc-100 leading-relaxed focus:outline-none focus:border-violet-500">David stepped out of his house and walked briskly down the street toward the corner shop.</textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 2: 2D PUPPET CHARACTERS, ACTIONS & LOCATIONS -->
-      <div id="tab-puppet" class="tab-panel hidden space-y-4">
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3.5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Scene Location & Visual Mode</span>
-            <select id="sceneEngineSelect" class="px-2.5 py-1 rounded-lg bg-zinc-950 border border-emerald-500/40 text-xs font-semibold text-emerald-300 focus:outline-none">
-              <option value="puppet" selected>🎭 2D Puppet Stage (Zero Errors)</option>
-              <option value="ai-media">🎬 AI Cinema / Uploaded Photo</option>
-            </select>
-          </div>
-
-          <!-- Location Selector -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label for="locationSelect" class="block text-[11px] text-zinc-400 mb-1">2D Vector Background Location</label>
-              <select id="locationSelect" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-emerald-500">
-                <option value="street" selected>🏙️ City Street (Scrolling Walk)</option>
-                <option value="shop">🏪 Local Shop / Market Counter</option>
-                <option value="home">🏠 Cozy Home Living Room</option>
-                <option value="cafe">☕ Romantic Cafe / Sunset Park</option>
-                <option value="alley">🌑 Dark Crime Alley / Investigation</option>
-                <option value="office">💼 Modern Office / News Studio</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="cameraMotionSelect" class="block text-[11px] text-zinc-400 mb-1">Camera Framing & Motion</label>
-              <select id="cameraMotionSelect" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-emerald-500">
-                <option value="steady" selected>Steady Wide Shot</option>
-                <option value="zoom-in">Slow Dramatic Zoom In</option>
-                <option value="zoom-out">Pull Back Reveal</option>
-                <option value="shake">Action / Shock Shake</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Main Character (Character 1) Rig Controls -->
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-violet-400">Main Character (Actor 1)</span>
-            <label class="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer">
-              <input id="char1VisibleToggle" type="checkbox" checked class="accent-violet-500" />
-              <span>Show Actor 1</span>
-            </label>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-            <div>
-              <label for="char1NameInput" class="block text-[10px] text-zinc-400 mb-1">Name</label>
-              <input id="char1NameInput" type="text" value="David" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white" />
-            </div>
-
-            <div>
-              <label for="char1ActionSelect" class="block text-[10px] text-zinc-400 mb-1">Body Action / Pose</label>
-              <select id="char1ActionSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white">
-                <option value="walk" selected>🚶 Walking (Full Cycle)</option>
-                <option value="talk">🗣️ Talking & Gesturing</option>
-                <option value="wave">👋 Friendly Wave</option>
-                <option value="romance">💐 Holding Gift / Flowers</option>
-                <option value="detective">🔍 Inspecting / Clue Pose</option>
-                <option value="shocked">🙌 Hands Up / Shocked</option>
-                <option value="dance">🕺 Happy Groove / Dance</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="char1EmotionSelect" class="block text-[10px] text-zinc-400 mb-1">Facial Expression</label>
-              <select id="char1EmotionSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white">
-                <option value="happy" selected>😄 Happy / Smiling</option>
-                <option value="romantic">😍 Romantic / Blushing</option>
-                <option value="suspicious">🧐 Suspicious / Detective</option>
-                <option value="shocked">😱 Shocked / Panicked</option>
-                <option value="angry">😡 Angry / Frustrated</option>
-                <option value="sad">😢 Sad / Worried</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="char1PropSelect" class="block text-[10px] text-zinc-400 mb-1">Hand Prop</label>
-              <select id="char1PropSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white">
-                <option value="none" selected>None</option>
-                <option value="bag">🛍️ Shopping Bag</option>
-                <option value="flowers">💐 Bouquet of Flowers</option>
-                <option value="magnifier">🔍 Magnifying Glass</option>
-                <option value="phone">📱 Smartphone</option>
-                <option value="coffee">☕ Coffee Cup</option>
-                <option value="briefcase">💼 Briefcase</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="char1SkinSelect" class="block text-[10px] text-zinc-400 mb-1">Skin Tone</label>
-              <select id="char1SkinSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white">
-                <option value="#6f442a" selected>Deep Warm Brown</option>
-                <option value="#a66e4e">Medium Caramel</option>
-                <option value="#d99b72">Golden Tan</option>
-                <option value="#f5c6a5">Light Peach</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="char1OutfitSelect" class="block text-[10px] text-zinc-400 mb-1">Outfit Color</label>
-              <select id="char1OutfitSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white">
-                <option value="#7c3aed" selected>Royal Violet Jacket</option>
-                <option value="#0284c7">Ocean Blue Shirt</option>
-                <option value="#e11d48">Crimson Red</option>
-                <option value="#059669">Emerald Green</option>
-                <option value="#d97706">Amber Gold</option>
-                <option value="#27272a">Detective Trench Dark</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Second Character (Partner / Shopkeeper / Suspect) -->
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Second Character (Partner / Shopkeeper / Suspect)</span>
-            <label class="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer">
-              <input id="char2VisibleToggle" type="checkbox" class="accent-amber-500" />
-              <span>Enable Actor 2</span>
-            </label>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            <div>
-              <label for="char2NameInput" class="block text-[10px] text-zinc-400 mb-1">Actor 2 Name</label>
-              <input id="char2NameInput" type="text" value="Shopkeeper" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white" />
-            </div>
-
-            <div>
-              <label for="char2ActionSelect" class="block text-[10px] text-zinc-400 mb-1">Action</label>
-              <select id="char2ActionSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white">
-                <option value="wave" selected>👋 Waving / Greeting</option>
-                <option value="talk">🗣️ Talking</option>
-                <option value="romance">❤️ Romantic Pose</option>
-                <option value="shocked">🙌 Hands Up / Shocked</option>
-                <option value="walk">🚶 Walking</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="char2EmotionSelect" class="block text-[10px] text-zinc-400 mb-1">Expression</label>
-              <select id="char2EmotionSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white">
-                <option value="happy" selected>😄 Happy</option>
-                <option value="romantic">😍 Romantic</option>
-                <option value="suspicious">🧐 Suspicious</option>
-                <option value="shocked">😱 Shocked</option>
-                <option value="angry">😡 Angry</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="char2OutfitSelect" class="block text-[10px] text-zinc-400 mb-1">Outfit</label>
-              <select id="char2OutfitSelect" class="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white">
-                <option value="#10b981" selected>Shop Apron Green</option>
-                <option value="#f43f5e">Rose Dress / Suit</option>
-                <option value="#f59e0b">Warm Amber</option>
-                <option value="#3b82f6">Cobalt Blue</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
+<!-- ... existing code ... -->
       <!-- TAB 3: BYOK AI CINEMA, IMAGE GENERATOR & CUSTOM UPLOAD -->
       <div id="tab-ai-cinema" class="tab-panel hidden space-y-4">
         <div class="bg-zinc-900/80 border border-emerald-500/30 rounded-2xl p-4 space-y-3.5">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Engine B: AI Scene Illustrator & Cinema</span>
-            <span class="text-[10px] text-zinc-400">Free Pollinations + BYOK</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Engine B: AI Cinema & Image Studio</span>
+            <span class="text-[10px] text-zinc-400">gen.pollinations.ai • BYOK</span>
           </div>
 
           <p class="text-[11px] text-zinc-400 leading-relaxed">
-            Generate custom AI artwork for this scene (automatically switches this scene to <strong>AI Cinema / Photo</strong> mode). Add optional fal.ai or OpenAI-compatible keys in <strong>🔑 AI Keys</strong> for higher-tier models.
+            Generate custom AI artwork or motion video clips (<strong>Veo</strong> / <strong>Seedance</strong>) for this scene. Add your Pollinations key (<code class="text-emerald-300">sk_...</code>) in <strong>🔑 AI Keys</strong> for authenticated video & image rendering.
           </p>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <div class="sm:col-span-2">
-              <label for="aiPromptInput" class="block text-[10px] text-zinc-400 mb-1">AI Visual Prompt for Current Scene</label>
+              <label for="aiPromptInput" class="block text-[10px] text-zinc-400 mb-1">AI Visual / Video Prompt for Current Scene</label>
               <input id="aiPromptInput" type="text" value="Cinematic 3D animated illustration of a charming neighborhood flower shop at golden hour, warm glowing windows"
                 class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white focus:outline-none focus:border-emerald-500" />
             </div>
@@ -527,783 +41,48 @@
             </div>
           </div>
 
-          <div class="flex flex-wrap gap-2">
-            <button id="generateAiVisualBtn" type="button" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition">
-              <span>✨</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button id="generateAiVisualBtn" type="button" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition">
+              <span>🖼️</span>
               <span id="generateAiVisualText">Generate AI Scene Image</span>
             </button>
-            <button id="switchBackToPuppetBtn" type="button" class="py-2.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs border border-zinc-700 transition">
+
+            <button id="generateAiVideoBtn" type="button" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-violet-600/20 transition">
+              <span>🎬</span>
+              <span id="generateAiVideoText">Generate AI Video (Veo / Seedance)</span>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between gap-2 pt-1">
+            <select id="aiVideoModelSelect" class="px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-[11px] text-zinc-300 focus:outline-none">
+              <option value="seedance" selected>Model: Seedance (Fast Motion)</option>
+              <option value="veo">Model: Veo (Cinematic)</option>
+            </select>
+
+            <button id="switchBackToPuppetBtn" type="button" class="py-1.5 px-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-[11px] border border-zinc-700 transition">
               Use 2D Puppet Instead
             </button>
           </div>
         </div>
-
-        <!-- Upload Own Image / Video Clip -->
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-2.5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-zinc-300">Or Upload Image / Video Clip from Phone</span>
-            <button id="clearCustomMediaBtn" type="button" class="hidden text-[11px] text-rose-400 hover:underline">Clear Media</button>
-          </div>
-          <input id="customMediaUpload" type="file" accept="image/*,video/*" class="w-full text-xs text-zinc-400 bg-zinc-950 border border-zinc-800 rounded-xl p-1.5" />
-        </div>
-      </div>
-
-      <!-- TAB 4: AUDIO, AD OVERLAYS & IMAGE REFINER -->
-      <div id="tab-audio-ad" class="tab-panel hidden space-y-4">
-        <!-- Voiceover & Background Music -->
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-violet-400">Narration, Music & Story SFX</span>
-            <button id="voiceToggleBtn" type="button" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-              Voice: ON
-            </button>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label for="voiceSelect" class="block text-[10px] text-zinc-400 mb-1">Narrator Voice</label>
-              <select id="voiceSelect" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white">
-                <option value="">Auto Best English Voice</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="musicThemeSelect" class="block text-[10px] text-zinc-400 mb-1">Background Music Mood</label>
-              <select id="musicThemeSelect" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white">
-                <option value="story" selected>Warm Storytelling Melody</option>
-                <option value="romance">Romantic Piano Chords</option>
-                <option value="crime">Suspense / Crime Bassline</option>
-                <option value="comedy">Quirky Comedy Pluck</option>
-                <option value="promo">Upbeat Ad Beat</option>
-                <option value="none">None (Voice Only)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Instant Story & Comedy SFX -->
-          <div class="flex flex-wrap gap-1.5 pt-1">
-            <button type="button" data-sfx="rimshot" class="sfx-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-zinc-950 hover:bg-zinc-800 text-amber-300 border border-zinc-800">🥁 Rimshot</button>
-            <button type="button" data-sfx="boing" class="sfx-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-zinc-950 hover:bg-zinc-800 text-emerald-300 border border-zinc-800">🦘 Boing</button>
-            <button type="button" data-sfx="heartbeat" class="sfx-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-zinc-950 hover:bg-zinc-800 text-rose-300 border border-zinc-800">💓 Romance Pulse</button>
-            <button type="button" data-sfx="sting" class="sfx-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-zinc-950 hover:bg-zinc-800 text-cyan-300 border border-zinc-800">🚨 Crime Sting</button>
-          </div>
-        </div>
-
-        <!-- Promo / Ad Overlays & Logo -->
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Ad Badges & Brand Logo</span>
-            <label class="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer">
-              <input id="showPromoToggle" type="checkbox" class="accent-amber-500" />
-              <span>Show Ad Overlays</span>
-            </label>
-          </div>
-
-          <div class="grid grid-cols-3 gap-2">
-            <input id="adOfferInput" type="text" value="50% OFF" placeholder="Offer Badge" class="px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-bold text-rose-400" />
-            <input id="adPriceInput" type="text" value="$19.99" placeholder="Price" class="px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-bold text-emerald-400" />
-            <input id="adCtaInput" type="text" value="Order Now →" placeholder="CTA Button" class="px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-semibold text-white" />
-          </div>
-
-          <div>
-            <label for="brandLogoInput" class="block text-[10px] text-zinc-400 mb-1">Brand Watermark Logo</label>
-            <input id="brandLogoInput" type="file" accept="image/*" class="w-full text-xs text-zinc-400 bg-zinc-950 border border-zinc-800 rounded-xl p-1" />
-          </div>
-        </div>
-
-        <!-- Image Refiner & Color Grading -->
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">Image Refiner & Color Grade</span>
-            <button id="resetGradeBtn" type="button" class="text-[11px] text-zinc-400 hover:text-white underline">Reset</button>
-          </div>
-
-          <div class="grid grid-cols-3 gap-2.5">
-            <div>
-              <span class="block text-[10px] text-zinc-400 mb-1">Brightness</span>
-              <input id="gradeBright" type="range" min="60" max="150" value="100" class="w-full accent-cyan-500" />
-            </div>
-            <div>
-              <span class="block text-[10px] text-zinc-400 mb-1">Contrast</span>
-              <input id="gradeContrast" type="range" min="70" max="160" value="105" class="w-full accent-cyan-500" />
-            </div>
-            <div>
-              <label for="gradePresetSelect" class="block text-[10px] text-zinc-400 mb-1">Mood Tint</label>
-              <select id="gradePresetSelect" class="w-full px-2 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-white">
-                <option value="none" selected>Natural</option>
-                <option value="warm">Romantic Gold</option>
-                <option value="noir">Crime Noir B&W</option>
-                <option value="teal">Midnight Teal</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </section>
-  </main>
-
-  <!-- BYOK API Keys Modal -->
-  <div id="keysModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-sm font-bold text-white">Optional BYOK AI Keys (Stored Locally)</h2>
-        <button id="closeKeysModalBtn" type="button" class="text-zinc-400 hover:text-white text-lg px-2">✕</button>
-      </div>
-
-      <p class="text-xs text-zinc-400 leading-relaxed">
-        The <strong>2D Puppet Engine</strong> and <strong>Pollinations Free AI Illustrator</strong> work with zero keys. Paste optional keys below if you want custom Gemini scripts or fal.ai cinema rendering:
-      </p>
-
+<!-- ... existing code ... -->
       <div class="space-y-3">
+        <div>
+          <label for="pollinationsKeyInput" class="block text-xs font-medium text-zinc-300 mb-1">Pollinations API Key (<code class="text-emerald-400">sk_...</code> — AI Images & Veo/Seedance Video)</label>
+          <input id="pollinationsKeyInput" type="password" placeholder="sk_..." class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white" />
+        </div>
+
         <div>
           <label for="geminiKeyInput" class="block text-xs font-medium text-zinc-300 mb-1">Google Gemini API Key (Optional Script Writer)</label>
           <input id="geminiKeyInput" type="password" placeholder="AIzaSy..." class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white" />
         </div>
-
-        <div>
-          <label for="falKeyInput" class="block text-xs font-medium text-zinc-300 mb-1">fal.ai / Custom AI Key (Optional Cinema Render)</label>
-          <input id="falKeyInput" type="password" placeholder="fal_key_..." class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white" />
-        </div>
       </div>
-
-      <div class="flex justify-end gap-2 pt-1">
-        <button id="saveKeysBtn" type="button" class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold">
-          Save Keys on Device
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Core Hybrid Engine Script -->
-  <script>
-    (function () {
-      // Lightweight preview resolution (540x960 or 960x540) for silky smooth mobile FPS,
-      // automatically upscaled to crisp 1080p HD (1080x1920 or 1920x1080) during Export!
-      const RATIOS = {
-        '9:16': {
-          previewW: 540, previewH: 960,
-          exportW: 1080, exportH: 1920,
-          exportLabel: 'Export: 1080×1920',
-          cssAspect: 'aspect-[9/16]',
-        },
-        '16:9': {
-          previewW: 960, previewH: 540,
-          exportW: 1920, exportH: 1080,
-          exportLabel: 'Export: 1920×1080',
-          cssAspect: 'aspect-video',
-        },
-      };
-
-      const AI_STYLES = {
-        pixar: '3D Pixar animated movie still, expressive lighting, vibrant colors, crisp clean details, no text',
-        anime: '2D classic hand-drawn animated cartoon background art, warm painterly lighting, clean lines, no text',
-        noir: 'Dramatic dark crime noir graphic novel illustration, moody rain shadows, neon reflections, no text',
-        romance: 'Soft golden hour romantic animated cinema scene, warm sunset glow, dreamy bokeh, no text',
-        commercial: 'Clean commercial product studio photography, soft rim light, minimalist modern aesthetic, no text',
-      };
-
-      function createScene(overrides = {}) {
-        return {
-          duration: 4,
-          transition: 'fade',
-          engine: 'puppet', // 'puppet' | 'ai-media'
-          banner: 'CHAPTER 1',
-          narration: 'David walked down the neighborhood street on a bright morning.',
-          location: 'street', // 'street' | 'shop' | 'home' | 'cafe' | 'alley' | 'office'
-          motion: 'steady',
-          // Actor 1
-          c1Show: true,
-          c1Name: 'David',
-          c1Action: 'walk', // 'walk' | 'talk' | 'wave' | 'romance' | 'detective' | 'shocked' | 'dance'
-          c1Emotion: 'happy', // 'happy' | 'romantic' | 'suspicious' | 'shocked' | 'angry' | 'sad'
-          c1Prop: 'none', // 'none' | 'bag' | 'flowers' | 'magnifier' | 'phone' | 'coffee' | 'briefcase'
-          c1Skin: '#6f442a',
-          c1Outfit: '#7c3aed',
-          // Actor 2
-          c2Show: false,
-          c2Name: 'Shopkeeper',
-          c2Action: 'wave',
-          c2Emotion: 'happy',
-          c2Outfit: '#10b981',
-          // AI / Custom Media
-          aiPrompt: '3D animated neighborhood street with cozy shops at golden hour',
-          aiStyle: 'pixar',
-          aiImg: null,
-          customType: null,
-          customImg: null,
-          ...overrides,
-        };
-      }
-
-      const state = {
-        ratio: '9:16',
-        genre: 'general',
-        activeScene: 0,
-        scenes: [
-          createScene({
-            duration: 4,
-            banner: 'PART 1: ON THE WAY',
-            narration: 'David stepped outside and walked cheerfully down the street toward the corner shop.',
-            location: 'street',
-            c1Name: 'David',
-            c1Action: 'walk',
-            c1Emotion: 'happy',
-            c1Prop: 'none',
-            c2Show: false,
-          }),
-          createScene({
-            duration: 4,
-            banner: 'PART 2: AT THE SHOP',
-            narration: 'Inside the shop, the friendly shopkeeper greeted him with fresh flowers and groceries.',
-            location: 'shop',
-            c1Name: 'David',
-            c1Action: 'romance',
-            c1Emotion: 'romantic',
-            c1Prop: 'flowers',
-            c2Show: true,
-            c2Name: 'Shopkeeper',
-            c2Action: 'wave',
-            c2Emotion: 'happy',
-          }),
-          createScene({
-            duration: 4,
-            banner: 'PART 3: THE SURPRISE',
-            narration: 'With his shopping bag and bouquet ready, David headed off to make someone smile.',
-            location: 'cafe',
-            c1Name: 'David',
-            c1Action: 'talk',
-            c1Emotion: 'romantic',
-            c1Prop: 'flowers',
-            c2Show: true,
-            c2Name: 'Sarah',
-            c2Action: 'romance',
-            c2Emotion: 'romantic',
-            c2Outfit: '#f43f5e',
-          }),
-        ],
-        isPlaying: false,
-        isRecording: false,
-        elapsedSec: 0,
-        lastTs: 0,
-        lastSpokenScene: -1,
-        voiceEnabled: true,
-        logoImg: null,
+<!-- ... existing code ... -->
         grade: { brightness: 100, contrast: 105, tint: 'none' },
+        pollinationsKey: localStorage.getItem('rf_pollinations_key') || '',
         geminiKey: localStorage.getItem('rf_gemini_key') || '',
-        falKey: localStorage.getItem('rf_fal_key') || '',
       };
-
-      // --- Lightweight Web Audio Synthesizer (Music + SFX) ---
-      const AudioEngine = {
-        ctx: null,
-        master: null,
-        dest: null,
-        timer: null,
-        step: 0,
-
-        init() {
-          if (!this.ctx) {
-            const Ctx = window.AudioContext || window.webkitAudioContext;
-            this.ctx = new Ctx();
-            this.master = this.ctx.createGain();
-            this.master.gain.value = 0.22;
-            this.dest = this.ctx.createMediaStreamDestination();
-            this.master.connect(this.ctx.destination);
-            this.master.connect(this.dest);
-          }
-          if (this.ctx.state === 'suspended') this.ctx.resume();
-        },
-
-        tone(freq, type, dur, vol, offset = 0, slide = null) {
-          this.init();
-          const t = this.ctx.currentTime + offset;
-          const osc = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          osc.type = type;
-          osc.frequency.setValueAtTime(freq, t);
-          if (slide) osc.frequency.exponentialRampToValueAtTime(slide, t + dur);
-          g.gain.setValueAtTime(0.001, t);
-          g.gain.exponentialRampToValueAtTime(vol, t + 0.015);
-          g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-          osc.connect(g);
-          g.connect(this.master);
-          osc.start(t);
-          osc.stop(t + dur + 0.02);
-        },
-
-        sfx(name) {
-          if (name === 'rimshot') {
-            this.tone(130, 'sine', 0.14, 0.5, 0, 40);
-            this.tone(240, 'triangle', 0.09, 0.4, 0.15, 110);
-            this.tone(5200, 'square', 0.3, 0.25, 0.3, 3000);
-          } else if (name === 'boing') {
-            this.tone(150, 'sine', 0.45, 0.5, 0, 620);
-          } else if (name === 'heartbeat') {
-            this.tone(95, 'sine', 0.14, 0.55, 0, 55);
-            this.tone(90, 'sine', 0.18, 0.45, 0.22, 50);
-          } else if (name === 'sting') {
-            this.tone(110, 'sawtooth', 0.25, 0.45, 0);
-            this.tone(77.78, 'sawtooth', 0.65, 0.5, 0.26);
-          }
-        },
-
-        startMusic(mood) {
-          this.stopMusic();
-          if (mood === 'none') return;
-          this.init();
-          this.step = 0;
-
-          const speed = mood === 'comedy' ? 230 : mood === 'crime' ? 320 : 290;
-          const tick = () => {
-            if (!state.isPlaying) return;
-            const s = this.step % 16;
-            if (mood === 'romance') {
-              const chords = [[261.63, 329.63, 392], [220, 261.63, 329.63], [174.61, 220, 261.63], [196, 246.94, 293.66]];
-              if (s % 4 === 0) chords[(s / 4) % 4].forEach((f) => this.tone(f, 'sine', 0.85, 0.14));
-            } else if (mood === 'crime') {
-              const bass = [73.42, 73.42, 69.3, 65.41];
-              if (s % 4 === 0) this.tone(bass[(s / 4) % 4], 'sawtooth', 0.7, 0.16);
-              if (s % 4 === 2) this.tone(440, 'sine', 0.12, 0.08);
-            } else if (mood === 'comedy') {
-              const notes = [392, 0, 440, 392, 523.25, 0, 493.88, 0];
-              if (notes[s % 8]) this.tone(notes[s % 8], 'triangle', 0.14, 0.24);
-            } else if (mood === 'promo') {
-              if (s % 4 === 0) this.tone(130, 'sine', 0.15, 0.45, 0, 40);
-              const arp = [261.63, 329.63, 392, 523.25];
-              if (s % 2 === 0) this.tone(arp[(s / 2) % 4], 'triangle', 0.2, 0.18);
-            } else {
-              const notes = [261.63, 329.63, 392, 493.88, 392, 329.63, 293.66, 392];
-              if (s % 2 === 0) this.tone(notes[(s / 2) % 8], 'sine', 0.35, 0.16);
-            }
-            this.step++;
-          };
-          tick();
-          this.timer = setInterval(tick, speed);
-        },
-
-        stopMusic() {
-          if (this.timer) {
-            clearInterval(this.timer);
-            this.timer = null;
-          }
-        },
-      };
-
-      // --- DOM References ---
-      const canvas = document.getElementById('studioCanvas');
-      const ctx = canvas.getContext('2d');
-      const canvasWrapper = document.getElementById('canvasWrapper');
-      const customVideoEl = document.getElementById('customVideoEl');
-      const sceneTabsGrid = document.getElementById('sceneTabsGrid');
-
-      // Toast
-      let toastTimer = null;
-      function toast(msg, type = 'ok') {
-        const b = document.getElementById('toastBanner');
-        document.getElementById('toastMsg').textContent = msg;
-        document.getElementById('toastDot').className = `w-2.5 h-2.5 rounded-full shrink-0 ${
-          type === 'err' ? 'bg-rose-400' : type === 'info' ? 'bg-amber-400' : 'bg-emerald-400'
-        }`;
-        b.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => b.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none'), 3200);
-      }
-
-      // --- Helpers ---
-      function getTotalDuration() {
-        return state.scenes.reduce((a, s) => a + (Number(s.duration) || 4), 0);
-      }
-
-      function fmtTime(sec) {
-        const s = Math.max(0, Math.floor(sec));
-        return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
-      }
-
-      function getSceneAt(sec) {
-        let acc = 0;
-        for (let i = 0; i < state.scenes.length; i++) {
-          const d = Number(state.scenes[i].duration) || 4;
-          if (sec < acc + d || i === state.scenes.length - 1) {
-            const local = Math.max(0, sec - acc);
-            return { index: i, scene: state.scenes[i], localSec: local, progress: Math.min(1, local / d) };
-          }
-          acc += d;
-        }
-        return { index: 0, scene: state.scenes[0], localSec: 0, progress: 0 };
-      }
-
-      // --- Sync Scene UI ---
-      function renderSceneTabs() {
-        const total = getTotalDuration();
-        document.getElementById('timeTotalLabel').textContent = fmtTime(total);
-        sceneTabsGrid.innerHTML = '';
-
-        state.scenes.forEach((sc, idx) => {
-          const active = idx === state.activeScene;
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = active
-            ? 'p-2 rounded-xl bg-violet-600 text-white text-left shadow border border-violet-400/50'
-            : 'p-2 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-zinc-300 text-left border border-zinc-800';
-          btn.innerHTML = `
-            <div class="flex justify-between text-[10px] font-bold">
-              <span>S${idx + 1}</span>
-              <span class="opacity-80">${sc.duration}s</span>
-            </div>
-            <div class="text-[9px] truncate opacity-75 mt-0.5">${sc.location.toUpperCase()}</div>
-          `;
-          btn.onclick = () => selectScene(idx);
-          sceneTabsGrid.appendChild(btn);
-        });
-      }
-
-      function selectScene(idx) {
-        state.activeScene = Math.max(0, Math.min(state.scenes.length - 1, idx));
-        const sc = state.scenes[state.activeScene];
-
-        document.getElementById('sceneCounterBadge').textContent = `${state.activeScene + 1}/${state.scenes.length}`;
-        document.getElementById('editingSceneTitle').textContent = `Scene ${state.activeScene + 1} Script & Captions`;
-        document.getElementById('stageModeLabel').textContent =
-          sc.engine === 'ai-media' ? 'AI Cinema / Photo' : '2D Puppet Studio';
-
-        document.getElementById('sceneDurationSelect').value = String(sc.duration);
-        document.getElementById('sceneTransitionSelect').value = sc.transition;
-        document.getElementById('sceneBannerInput').value = sc.banner;
-        document.getElementById('sceneNarrationInput').value = sc.narration;
-
-        document.getElementById('sceneEngineSelect').value = sc.engine;
-        document.getElementById('locationSelect').value = sc.location;
-        document.getElementById('cameraMotionSelect').value = sc.motion;
-
-        document.getElementById('char1VisibleToggle').checked = sc.c1Show;
-        document.getElementById('char1NameInput').value = sc.c1Name;
-        document.getElementById('char1ActionSelect').value = sc.c1Action;
-        document.getElementById('char1EmotionSelect').value = sc.c1Emotion;
-        document.getElementById('char1PropSelect').value = sc.c1Prop;
-        document.getElementById('char1SkinSelect').value = sc.c1Skin;
-        document.getElementById('char1OutfitSelect').value = sc.c1Outfit;
-
-        document.getElementById('char2VisibleToggle').checked = sc.c2Show;
-        document.getElementById('char2NameInput').value = sc.c2Name;
-        document.getElementById('char2ActionSelect').value = sc.c2Action;
-        document.getElementById('char2EmotionSelect').value = sc.c2Emotion;
-        document.getElementById('char2OutfitSelect').value = sc.c2Outfit;
-
-        document.getElementById('aiPromptInput').value = sc.aiPrompt;
-        document.getElementById('aiStyleSelect').value = sc.aiStyle;
-        document.getElementById('clearCustomMediaBtn').classList.toggle('hidden', !sc.aiImg && !sc.customType);
-
-        if (!state.isPlaying) {
-          let start = 0;
-          for (let i = 0; i < state.activeScene; i++) start += Number(state.scenes[i].duration) || 4;
-          state.elapsedSec = start;
-        }
-
-        const words = sc.narration.trim() ? sc.narration.trim().split(/\s+/).length : 0;
-        document.getElementById('scriptWordCount').textContent = `${words} words`;
-        renderSceneTabs();
-      }
-
-      function saveSceneFromInputs() {
-        const sc = state.scenes[state.activeScene];
-        if (!sc) return;
-
-        sc.duration = parseInt(document.getElementById('sceneDurationSelect').value, 10) || 4;
-        sc.transition = document.getElementById('sceneTransitionSelect').value;
-        sc.banner = document.getElementById('sceneBannerInput').value;
-        sc.narration = document.getElementById('sceneNarrationInput').value;
-
-        sc.engine = document.getElementById('sceneEngineSelect').value;
-        sc.location = document.getElementById('locationSelect').value;
-        sc.motion = document.getElementById('cameraMotionSelect').value;
-
-        sc.c1Show = document.getElementById('char1VisibleToggle').checked;
-        sc.c1Name = document.getElementById('char1NameInput').value;
-        sc.c1Action = document.getElementById('char1ActionSelect').value;
-        sc.c1Emotion = document.getElementById('char1EmotionSelect').value;
-        sc.c1Prop = document.getElementById('char1PropSelect').value;
-        sc.c1Skin = document.getElementById('char1SkinSelect').value;
-        sc.c1Outfit = document.getElementById('char1OutfitSelect').value;
-
-        sc.c2Show = document.getElementById('char2VisibleToggle').checked;
-        sc.c2Name = document.getElementById('char2NameInput').value;
-        sc.c2Action = document.getElementById('char2ActionSelect').value;
-        sc.c2Emotion = document.getElementById('char2EmotionSelect').value;
-        sc.c2Outfit = document.getElementById('char2OutfitSelect').value;
-
-        sc.aiPrompt = document.getElementById('aiPromptInput').value;
-        sc.aiStyle = document.getElementById('aiStyleSelect').value;
-
-        document.getElementById('stageModeLabel').textContent =
-          sc.engine === 'ai-media' ? 'AI Cinema / Photo' : '2D Puppet Studio';
-
-        const words = sc.narration.trim() ? sc.narration.trim().split(/\s+/).length : 0;
-        document.getElementById('scriptWordCount').textContent = `${words} words`;
-        renderSceneTabs();
-      }
-
-      // --- Multi-Genre Auto Story Builder (Love, Crime, Comedy, General, Explainer, Ad) ---
-      async function buildMultiGenreStory() {
-        stopPlayback();
-        const topic = document.getElementById('storyTopicInput').value.trim() || 'A walk to the neighborhood shop';
-        const genre = state.genre;
-        const btnText = document.getElementById('autoStoryBtnText');
-        btnText.textContent = 'Building...';
-
-        try {
-          let generated = false;
-
-          // If optional Gemini API key is present, craft a tailored 3-scene screenplay
-          if (state.geminiKey) {
-            try {
-              const prompt = `Write a 3-scene 2D animated story script about: "${topic}" in genre: "${genre}".
-Return ONLY a JSON array of 3 objects with keys:
-"banner" (max 4 uppercase words),
-"narration" (1 vivid sentence, 12-16 words),
-"location" (one of: "street", "shop", "home", "cafe", "alley", "office"),
-"c1Action" (one of: "walk", "talk", "wave", "romance", "detective", "shocked", "dance"),
-"c1Emotion" (one of: "happy", "romantic", "suspicious", "shocked", "angry", "sad"),
-"c1Prop" (one of: "none", "bag", "flowers", "magnifier", "phone", "coffee", "briefcase"),
-"c2Show" (boolean),
-"c2Name" (string),
-"c2Action" (one of: "wave", "talk", "romance", "shocked", "walk"),
-"c2Emotion" (one of: "happy", "romantic", "suspicious", "shocked", "angry").`;
-
-              const res = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${state.geminiKey}`,
-                {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { responseMimeType: 'application/json' },
-                  }),
-                }
-              );
-
-              if (res.ok) {
-                const json = await res.json();
-                const arr = JSON.parse(json.candidates?.[0]?.content?.parts?.[0]?.text);
-                if (Array.isArray(arr) && arr.length >= 2) {
-                  state.scenes = arr.slice(0, 6).map((s, i) =>
-                    createScene({
-                      duration: 4,
-                      transition: i === 0 ? 'fade' : 'slide',
-                      banner: (s.banner || `SCENE ${i + 1}`).toUpperCase(),
-                      narration: s.narration || topic,
-                      location: s.location || 'street',
-                      c1Action: s.c1Action || 'talk',
-                      c1Emotion: s.c1Emotion || 'happy',
-                      c1Prop: s.c1Prop || 'none',
-                      c2Show: Boolean(s.c2Show),
-                      c2Name: s.c2Name || 'Friend',
-                      c2Action: s.c2Action || 'wave',
-                      c2Emotion: s.c2Emotion || 'happy',
-                    })
-                  );
-                  generated = true;
-                }
-              }
-            } catch (e) {
-              console.warn('Using built-in genre engine:', e);
-            }
-          }
-
-          // Built-in Zero-Error Genre Story Engine
-          if (!generated) {
-            if (genre === 'love') {
-              document.getElementById('musicThemeSelect').value = 'romance';
-              state.scenes = [
-                createScene({
-                  banner: 'CHAPTER 1: THE WALK',
-                  narration: `Thinking about ${topic}, David walked down the avenue hoping everything would go perfectly.`,
-                  location: 'street',
-                  c1Action: 'walk',
-                  c1Emotion: 'romantic',
-                  c1Prop: 'phone',
-                  c2Show: false,
-                }),
-                createScene({
-                  banner: 'CHAPTER 2: THE FLOWER SHOP',
-                  narration: 'He stopped at the corner shop and picked out the freshest bouquet of red roses.',
-                  location: 'shop',
-                  c1Action: 'romance',
-                  c1Emotion: 'romantic',
-                  c1Prop: 'flowers',
-                  c2Show: true,
-                  c2Name: 'Florist',
-                  c2Action: 'wave',
-                  c2Emotion: 'happy',
-                }),
-                createScene({
-                  banner: 'CHAPTER 3: SUNSET REUNION',
-                  narration: 'At the sunset cafe, Sarah smiled with joy the moment she saw him arrive with flowers.',
-                  location: 'cafe',
-                  c1Action: 'romance',
-                  c1Emotion: 'romantic',
-                  c1Prop: 'flowers',
-                  c2Show: true,
-                  c2Name: 'Sarah',
-                  c2Action: 'romance',
-                  c2Emotion: 'romantic',
-                  c2Outfit: '#f43f5e',
-                }),
-              ];
-            } else if (genre === 'crime') {
-              document.getElementById('musicThemeSelect').value = 'crime';
-              state.scenes = [
-                createScene({
-                  banner: 'CASE FILE 01: THE CLUE',
-                  narration: `Investigating ${topic}, Detective David searched the dark alley with his magnifying glass.`,
-                  location: 'alley',
-                  c1Action: 'detective',
-                  c1Emotion: 'suspicious',
-                  c1Prop: 'magnifier',
-                  c1Outfit: '#27272a',
-                  c2Show: false,
-                }),
-                createScene({
-                  banner: 'CASE FILE 02: THE WITNESS',
-                  narration: 'The trail led straight to the late-night shop where a nervous witness waited inside.',
-                  location: 'shop',
-                  c1Action: 'talk',
-                  c1Emotion: 'suspicious',
-                  c1Prop: 'magnifier',
-                  c1Outfit: '#27272a',
-                  c2Show: true,
-                  c2Name: 'Suspect',
-                  c2Action: 'shocked',
-                  c2Emotion: 'shocked',
-                }),
-                createScene({
-                  banner: 'CASE FILE 03: CASE CLOSED',
-                  narration: 'Confronted with the evidence, the truth finally came out and the mystery was solved!',
-                  location: 'office',
-                  c1Action: 'talk',
-                  c1Emotion: 'happy',
-                  c1Prop: 'briefcase',
-                  c1Outfit: '#27272a',
-                  c2Show: true,
-                  c2Name: 'Suspect',
-                  c2Action: 'shocked',
-                  c2Emotion: 'sad',
-                }),
-              ];
-            } else if (genre === 'comedy') {
-              document.getElementById('musicThemeSelect').value = 'comedy';
-              state.scenes = [
-                createScene({
-                  banner: 'STEP 1: BIG CONFIDENCE',
-                  narration: `David strutted proudly down the street thinking ${topic} would take two minutes.`,
-                  location: 'street',
-                  c1Action: 'dance',
-                  c1Emotion: 'happy',
-                  c1Prop: 'phone',
-                  c2Show: false,
-                }),
-                createScene({
-                  banner: 'STEP 2: THE REALIZATION',
-                  narration: 'At the shop counter, he reached into his pocket and realized he left his wallet at home!',
-                  location: 'shop',
-                  c1Action: 'shocked',
-                  c1Emotion: 'shocked',
-                  c1Prop: 'bag',
-                  c2Show: true,
-                  c2Name: 'Shopkeeper',
-                  c2Action: 'talk',
-                  c2Emotion: 'angry',
-                }),
-                createScene({
-                  banner: 'STEP 3: WALK OF SHAME',
-                  narration: 'Lesson learned: always check your pockets before walking all the way to the store!',
-                  location: 'home',
-                  c1Action: 'talk',
-                  c1Emotion: 'sad',
-                  c1Prop: 'none',
-                  c2Show: false,
-                }),
-              ];
-            } else if (genre === 'ad') {
-              document.getElementById('musicThemeSelect').value = 'promo';
-              document.getElementById('showPromoToggle').checked = true;
-              state.scenes = [
-                createScene({
-                  banner: 'TIRED OF THE HASSLE?',
-                  narration: `Looking for the best deal on ${topic}? Stop searching everywhere in town.`,
-                  location: 'street',
-                  c1Action: 'walk',
-                  c1Emotion: 'sad',
-                  c2Show: false,
-                }),
-                createScene({
-                  banner: 'VISIT OUR STORE TODAY',
-                  narration: `Step inside and experience ${topic} with unbeatable quality and friendly service.`,
-                  location: 'shop',
-                  c1Action: 'wave',
-                  c1Emotion: 'happy',
-                  c1Prop: 'bag',
-                  c2Show: true,
-                  c2Name: 'Manager',
-                  c2Action: 'wave',
-                  c2Emotion: 'happy',
-                }),
-                createScene({
-                  banner: 'CLAIM 50% OFF NOW',
-                  narration: 'Tap the link below today and grab your exclusive launch discount before stock runs out!',
-                  location: 'office',
-                  c1Action: 'dance',
-                  c1Emotion: 'happy',
-                  c1Prop: 'phone',
-                  c2Show: false,
-                }),
-              ];
-            } else {
-              // General & Explainer Story
-              document.getElementById('musicThemeSelect').value = 'story';
-              state.scenes = [
-                createScene({
-                  banner: 'PART 1: THE BEGINNING',
-                  narration: `Every great story starts with a single step—here is how ${topic} unfolds.`,
-                  location: 'street',
-                  c1Action: 'walk',
-                  c1Emotion: 'happy',
-                  c2Show: false,
-                }),
-                createScene({
-                  banner: 'PART 2: THE DISCOVERY',
-                  narration: `Along the way, key choices and teamwork turn an ordinary day into something memorable.`,
-                  location: 'shop',
-                  c1Action: 'talk',
-                  c1Emotion: 'happy',
-                  c1Prop: 'bag',
-                  c2Show: true,
-                  c2Name: 'Partner',
-                  c2Action: 'talk',
-                  c2Emotion: 'happy',
-                }),
-                createScene({
-                  banner: 'PART 3: THE TAKEAWAY',
-                  narration: `And that is the story of ${topic}. Follow along for more animated tales!`,
-                  location: 'home',
-                  c1Action: 'wave',
-                  c1Emotion: 'happy',
-                  c2Show: false,
-                }),
-              ];
-            }
-          }
-
-          selectScene(0);
-          state.elapsedSec = 0;
-          toast(`Built 3-scene ${genre.toUpperCase()} animated story!`);
-          startPlayback();
-        } finally {
-          btnText.textContent = 'Build Full Story';
-        }
-      }
-
-      // --- Engine B: Free Pollinations / BYOK AI Scene Illustrator ---
+<!-- ... existing code ... -->
+      // --- Engine B: Pollinations AI Scene Illustrator & Video Generator ---
       async function generateAiImageForActiveScene() {
         const sc = state.scenes[state.activeScene];
         const prompt = document.getElementById('aiPromptInput').value.trim() || 'Charming animated neighborhood street';
@@ -1311,905 +90,142 @@ Return ONLY a JSON array of 3 objects with keys:
         const fullPrompt = `${prompt}, ${styleMod}`;
         const cfg = RATIOS[state.ratio];
         const seed = Math.floor(Math.random() * 999999);
-        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?width=${cfg.previewW}&height=${cfg.previewH}&nologo=true&seed=${seed}`;
 
         const btnText = document.getElementById('generateAiVisualText');
         btnText.textContent = 'Generating AI Art...';
 
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          sc.aiImg = img;
-          sc.customType = null;
-          sc.engine = 'ai-media';
-          selectScene(state.activeScene);
-          btnText.textContent = 'Generate AI Scene Image';
-          toast('AI Scene Illustration applied!');
-        };
-        img.onerror = () => {
-          btnText.textContent = 'Generate AI Scene Image';
-          toast('AI server busy — keeping 2D Puppet Stage active.', 'info');
-        };
-        img.src = url;
-      }
+        try {
+          const endpoint = state.pollinationsKey
+            ? `https://gen.pollinations.ai/image/${encodeURIComponent(fullPrompt)}?model=flux&width=${cfg.previewW}&height=${cfg.previewH}&nologo=true&seed=${seed}`
+            : `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?width=${cfg.previewW}&height=${cfg.previewH}&nologo=true&seed=${seed}`;
 
-      // --- Speech Narration ---
-      function speakScene(idx) {
-        if (!('speechSynthesis' in window)) return;
-        window.speechSynthesis.cancel();
-        if (!state.voiceEnabled) return;
-        const sc = state.scenes[idx];
-        if (!sc || !sc.narration.trim()) return;
-
-        const u = new SpeechSynthesisUtterance(sc.narration);
-        u.rate = 1.02;
-        u.pitch = state.genre === 'comedy' ? 1.1 : state.genre === 'crime' ? 0.92 : 1.0;
-        const voices = window.speechSynthesis.getVoices();
-        const chosen = document.getElementById('voiceSelect').value;
-        const v = (chosen && voices.find((x) => x.name === chosen)) || voices.find((x) => x.lang.startsWith('en'));
-        if (v) u.voice = v;
-        window.speechSynthesis.speak(u);
-      }
-
-      function startPlayback() {
-        if (state.elapsedSec >= getTotalDuration()) state.elapsedSec = 0;
-        state.isPlaying = true;
-        state.lastSpokenScene = -1;
-        state.lastTs = performance.now();
-        document.getElementById('playPauseIcon').textContent = '⏸️';
-        document.getElementById('playPauseText').textContent = 'Pause';
-        AudioEngine.startMusic(document.getElementById('musicThemeSelect').value);
-      }
-
-      function stopPlayback() {
-        state.isPlaying = false;
-        state.lastSpokenScene = -1;
-        document.getElementById('playPauseIcon').textContent = '▶️';
-        document.getElementById('playPauseText').textContent = 'Play Story';
-        AudioEngine.stopMusic();
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-        if (!customVideoEl.paused) customVideoEl.pause();
-      }
-
-      // --- 2D Vector Background Sets (Street, Shop, Home, Cafe, Alley, Office) ---
-      function draw2DLocationSet(ctx, W, H, location, t, isWalking) {
-        const groundY = H * 0.78;
-        const scrollX = isWalking ? (t * 95) % W : 0;
-
-        if (location === 'street') {
-          // Bright Sky & Clouds
-          const sky = ctx.createLinearGradient(0, 0, 0, groundY);
-          sky.addColorStop(0, '#1e3a8a');
-          sky.addColorStop(1, '#38bdf8');
-          ctx.fillStyle = sky;
-          ctx.fillRect(0, 0, W, groundY);
-
-          // Sun
-          ctx.fillStyle = '#fde047';
-          ctx.beginPath();
-          ctx.arc(W * 0.8, H * 0.18, 34, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Parallax City Buildings & Corner Shop Silhouette
-          const bColors = ['#334155', '#475569', '#1e293b', '#3b82f6'];
-          for (let i = -1; i < 6; i++) {
-            const bw = W * 0.28;
-            const bx = i * (bw + 12) - (scrollX * 0.5) % (bw + 12);
-            const bh = 130 + ((i + 3) % 3) * 45;
-            ctx.fillStyle = bColors[(i + 4) % bColors.length];
-            ctx.fillRect(bx, groundY - bh, bw, bh);
-
-            // Glowing Windows
-            ctx.fillStyle = '#fef08a';
-            for (let wy = groundY - bh + 18; wy < groundY - 25; wy += 28) {
-              ctx.fillRect(bx + 14, wy, 14, 16);
-              ctx.fillRect(bx + bw - 28, wy, 14, 16);
-            }
-          }
-
-          // Sidewalk & Road
-          ctx.fillStyle = '#94a3b8';
-          ctx.fillRect(0, groundY, W, H * 0.07);
-          ctx.fillStyle = '#1e293b';
-          ctx.fillRect(0, groundY + H * 0.07, W, H);
-
-          // Moving Road Dashes
-          ctx.fillStyle = '#facc15';
-          for (let dx = -60; dx < W + 60; dx += 70) {
-            ctx.fillRect(dx - (scrollX % 70), groundY + H * 0.13, 36, 5);
-          }
-        } else if (location === 'shop') {
-          // Warm Shop Interior
-          ctx.fillStyle = '#fef3c7';
-          ctx.fillRect(0, 0, W, groundY);
-
-          // Striped Shop Awning Banner at Top
-          const stripeW = 36;
-          for (let x = 0; x < W; x += stripeW) {
-            ctx.fillStyle = (x / stripeW) % 2 === 0 ? '#e11d48' : '#ffffff';
-            ctx.fillRect(x, 0, stripeW, 56);
-          }
-
-          // Store Shelves with Colorful Goods
-          ctx.fillStyle = '#92400e';
-          ctx.fillRect(W * 0.08, H * 0.26, W * 0.84, 10);
-          ctx.fillRect(W * 0.08, H * 0.42, W * 0.84, 10);
-          const itemColors = ['#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'];
-          for (let ix = W * 0.12; ix < W * 0.85; ix += 38) {
-            ctx.fillStyle = itemColors[Math.floor(ix) % itemColors.length];
-            ctx.fillRect(ix, H * 0.26 - 24, 22, 24);
-            ctx.fillStyle = itemColors[Math.floor(ix + 2) % itemColors.length];
-            ctx.fillRect(ix + 4, H * 0.42 - 22, 20, 22);
-          }
-
-          // Wooden Floor & Shop Counter
-          ctx.fillStyle = '#b45309';
-          ctx.fillRect(0, groundY, W, H);
-          ctx.fillStyle = '#78350f';
-          ctx.fillRect(W * 0.52, groundY - 72, W * 0.42, 72);
-        } else if (location === 'cafe') {
-          // Romantic Sunset Park & Cafe
-          const grad = ctx.createLinearGradient(0, 0, 0, groundY);
-          grad.addColorStop(0, '#4c1d95');
-          grad.addColorStop(0.5, '#db2777');
-          grad.addColorStop(1, '#fb923c');
-          ctx.fillStyle = grad;
-          ctx.fillRect(0, 0, W, groundY);
-
-          // Glowing Sunset Orb
-          ctx.fillStyle = '#fef08a';
-          ctx.beginPath();
-          ctx.arc(W * 0.5, groundY - 35, 58, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Park Path
-          ctx.fillStyle = '#3f3f46';
-          ctx.fillRect(0, groundY, W, H);
-        } else if (location === 'alley') {
-          // Dark Crime & Mystery Alley
-          const grad = ctx.createLinearGradient(0, 0, 0, groundY);
-          grad.addColorStop(0, '#020617');
-          grad.addColorStop(1, '#0f172a');
-          ctx.fillStyle = grad;
-          ctx.fillRect(0, 0, W, groundY);
-
-          // Brick Walls & Streetlamp Glow
-          ctx.fillStyle = '#1e293b';
-          ctx.fillRect(0, H * 0.12, W * 0.3, groundY);
-          ctx.fillRect(W * 0.7, H * 0.12, W * 0.3, groundY);
-
-          const lamp = ctx.createRadialGradient(W * 0.5, H * 0.22, 5, W * 0.5, H * 0.45, W * 0.45);
-          lamp.addColorStop(0, 'rgba(56, 189, 248, 0.28)');
-          lamp.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = lamp;
-          ctx.fillRect(0, 0, W, groundY);
-
-          // Wet Asphalt
-          ctx.fillStyle = '#09090b';
-          ctx.fillRect(0, groundY, W, H);
-        } else if (location === 'office') {
-          // Modern Office / Studio
-          ctx.fillStyle = '#1e293b';
-          ctx.fillRect(0, 0, W, groundY);
-          ctx.fillStyle = '#38bdf8';
-          ctx.fillRect(W * 0.15, H * 0.18, W * 0.7, H * 0.28);
-          ctx.fillStyle = '#0f172a';
-          ctx.fillRect(0, groundY, W, H);
-        } else {
-          // Cozy Home Living Room
-          ctx.fillStyle = '#312e81';
-          ctx.fillRect(0, 0, W, groundY);
-          // Window
-          ctx.fillStyle = '#7dd3fc';
-          ctx.fillRect(W * 0.14, H * 0.2, 90, 90);
-          ctx.strokeStyle = '#ffffff';
-          ctx.lineWidth = 4;
-          ctx.strokeRect(W * 0.14, H * 0.2, 90, 90);
-          // Sofa Silhouette
-          ctx.fillStyle = '#be123c';
-          ctx.fillRect(W * 0.55, groundY - 58, 130, 58);
-          // Floor
-          ctx.fillStyle = '#78350f';
-          ctx.fillRect(0, groundY, W, H);
-        }
-      }
-
-      // --- Articulated Full-Body 2D Character Puppet Renderer ---
-      function drawArticulatedCharacter(ctx, x, groundY, scale, t, isSpeaking, cfg) {
-        const action = cfg.action || 'talk';
-        const emotion = cfg.emotion || 'happy';
-        const isWalking = action === 'walk';
-        const isDancing = action === 'dance';
-
-        const walkSwing = isWalking ? Math.sin(t * 9) * 0.48 : isDancing ? Math.sin(t * 10) * 0.3 : 0;
-        const bobY = isWalking
-          ? Math.abs(Math.sin(t * 9)) * 7
-          : isDancing
-          ? Math.abs(Math.sin(t * 10)) * 12
-          : Math.sin(t * 2.5) * 2.5;
-
-        ctx.save();
-        ctx.translate(x, groundY - bobY);
-        ctx.scale(scale * (cfg.flipX ? -1 : 1), scale);
-
-        // Ground Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.32)';
-        ctx.beginPath();
-        ctx.ellipse(0, bobY, 34, 9, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 1. Articulated Legs (Hip at y = -68)
-        const drawLeg = (angle) => {
-          ctx.save();
-          ctx.translate(0, -68);
-          ctx.rotate(angle);
-          ctx.fillStyle = '#1e293b'; // Trousers
-          ctx.beginPath();
-          ctx.roundRect(-9, 0, 18, 56, 8);
-          ctx.fill();
-          // Shoe
-          ctx.fillStyle = '#f8fafc';
-          ctx.beginPath();
-          ctx.roundRect(-9, 50, 26, 13, 6);
-          ctx.fill();
-          ctx.restore();
-        };
-        drawLeg(-walkSwing);
-        drawLeg(walkSwing);
-
-        // 2. Torso / Outfit (y = -132 to -64)
-        ctx.fillStyle = cfg.outfit || '#7c3aed';
-        ctx.beginPath();
-        ctx.roundRect(-24, -132, 48, 68, 16);
-        ctx.fill();
-        ctx.strokeStyle = '#09090b';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-
-        // 3. Articulated Arms & Hand Props (Shoulder at y = -122)
-        let leftArmAngle = -walkSwing * 0.9;
-        let rightArmAngle = walkSwing * 0.9;
-
-        if (action === 'wave') {
-          rightArmAngle = -2.4 + Math.sin(t * 11) * 0.35;
-        } else if (action === 'shocked') {
-          leftArmAngle = -2.6 + Math.sin(t * 14) * 0.12;
-          rightArmAngle = -2.6 - Math.sin(t * 14) * 0.12;
-        } else if (action === 'talk') {
-          rightArmAngle = -0.6 + Math.sin(t * 7) * 0.28;
-        } else if (action === 'romance' || action === 'detective') {
-          rightArmAngle = -0.85;
-        } else if (action === 'dance') {
-          leftArmAngle = -1.8 + Math.sin(t * 10) * 0.5;
-          rightArmAngle = -1.8 - Math.sin(t * 10) * 0.5;
-        }
-
-        const drawArm = (angle, withProp) => {
-          ctx.save();
-          ctx.translate(0, -122);
-          ctx.rotate(angle);
-          ctx.fillStyle = cfg.outfit || '#7c3aed';
-          ctx.beginPath();
-          ctx.roundRect(-7, 0, 14, 44, 7);
-          ctx.fill();
-          // Hand
-          ctx.fillStyle = cfg.skin || '#6f442a';
-          ctx.beginPath();
-          ctx.arc(0, 48, 8, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Draw Prop in Hand
-          if (withProp && cfg.prop && cfg.prop !== 'none') {
-            ctx.save();
-            ctx.translate(6, 52);
-            if (cfg.prop === 'bag') {
-              ctx.fillStyle = '#f59e0b';
-              ctx.fillRect(-14, 0, 28, 30);
-              ctx.strokeStyle = '#78350f';
-              ctx.lineWidth = 2.5;
-              ctx.strokeRect(-14, 0, 28, 30);
-            } else if (cfg.prop === 'flowers') {
-              ctx.fillStyle = '#16a34a';
-              ctx.fillRect(-3, -18, 6, 26);
-              ['#f43f5e', '#fb7185', '#fde047'].forEach((fc, idx) => {
-                ctx.fillStyle = fc;
-                ctx.beginPath();
-                ctx.arc((idx - 1) * 9, -22 - (idx % 2) * 5, 8, 0, Math.PI * 2);
-                ctx.fill();
-              });
-            } else if (cfg.prop === 'magnifier') {
-              ctx.strokeStyle = '#38bdf8';
-              ctx.lineWidth = 4;
-              ctx.beginPath();
-              ctx.arc(10, -12, 13, 0, Math.PI * 2);
-              ctx.stroke();
-            } else if (cfg.prop === 'phone') {
-              ctx.fillStyle = '#0f172a';
-              ctx.fillRect(-6, -16, 12, 22);
-            } else if (cfg.prop === 'coffee') {
-              ctx.fillStyle = '#ffffff';
-              ctx.fillRect(-7, -14, 14, 18);
-            } else if (cfg.prop === 'briefcase') {
-              ctx.fillStyle = '#451a03';
-              ctx.fillRect(-16, 0, 32, 22);
-            }
-            ctx.restore();
-          }
-          ctx.restore();
-        };
-
-        drawArm(leftArmAngle, false);
-        drawArm(rightArmAngle, true);
-
-        // 4. Head (y = -164)
-        ctx.save();
-        ctx.translate(0, -164);
-        ctx.fillStyle = cfg.skin || '#6f442a';
-        ctx.beginPath();
-        ctx.arc(0, 0, 30, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#09090b';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-
-        // Hair
-        ctx.fillStyle = '#09090b';
-        ctx.beginPath();
-        ctx.arc(0, -8, 30, Math.PI, Math.PI * 2);
-        ctx.fill();
-
-        // Eyes (with periodic blink)
-        const isBlinking = Math.sin(t * 1.7) > 0.97;
-        ctx.fillStyle = '#ffffff';
-        if (!isBlinking) {
-          ctx.beginPath();
-          ctx.arc(-10, -3, 6, 0, Math.PI * 2);
-          ctx.arc(10, -3, 6, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = '#09090b';
-          ctx.beginPath();
-          ctx.arc(-9, -3, 3, 0, Math.PI * 2);
-          ctx.arc(11, -3, 3, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          ctx.strokeStyle = '#09090b';
-          ctx.lineWidth = 2.5;
-          ctx.beginPath();
-          ctx.moveTo(-15, -3);
-          ctx.lineTo(-5, -3);
-          ctx.moveTo(5, -3);
-          ctx.lineTo(15, -3);
-          ctx.stroke();
-        }
-
-        // Romantic Blush
-        if (emotion === 'romantic') {
-          ctx.fillStyle = 'rgba(244, 63, 94, 0.55)';
-          ctx.beginPath();
-          ctx.arc(-15, 7, 5, 0, Math.PI * 2);
-          ctx.arc(15, 7, 5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // Lip-Syncing Mouth
-        const mouthH = isSpeaking ? 3 + Math.abs(Math.sin(t * 20)) * 8 : 2.5;
-        ctx.fillStyle = '#7f1d1d';
-        ctx.beginPath();
-        if (emotion === 'shocked') {
-          ctx.arc(0, 13, 7, 0, Math.PI * 2);
-        } else {
-          ctx.ellipse(0, 12, 9, mouthH, 0, 0, Math.PI * 2);
-        }
-        ctx.fill();
-
-        // Floating Floating Hearts if Romance
-        if (emotion === 'romantic' || action === 'romance') {
-          const hy = -42 - ((t * 25) % 24);
-          ctx.fillStyle = '#f43f5e';
-          ctx.font = 'bold 16px sans-serif';
-          ctx.fillText('❤️', 18, hy);
-        }
-
-        ctx.restore();
-
-        // Name Tag Pill under character
-        if (cfg.name) {
-          ctx.save();
-          ctx.scale(cfg.flipX ? -1 : 1, 1);
-          ctx.font = '700 11px Inter, sans-serif';
-          const tw = ctx.measureText(cfg.name).width + 16;
-          ctx.fillStyle = 'rgba(9,9,11,0.85)';
-          ctx.beginPath();
-          ctx.roundRect(-tw / 2, 14, tw, 20, 10);
-          ctx.fill();
-          ctx.fillStyle = '#fde047';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(cfg.name, 0, 24);
-          ctx.restore();
-        }
-
-        ctx.restore();
-      }
-
-      // --- Main Render Loop ---
-      function renderFrame(now) {
-        const totalDur = getTotalDuration();
-        if (state.isPlaying) {
-          const dt = (now - state.lastTs) / 1000;
-          state.elapsedSec += dt;
-          if (state.elapsedSec >= totalDur) {
-            state.elapsedSec = totalDur;
-            stopPlayback();
-          }
-        }
-        state.lastTs = now;
-
-        const { index: sceneIdx, scene: sc, progress } = getSceneAt(state.elapsedSec);
-        if (state.isPlaying && sceneIdx !== state.lastSpokenScene) {
-          state.lastSpokenScene = sceneIdx;
-          document.getElementById('sceneCounterBadge').textContent = `${sceneIdx + 1}/${state.scenes.length}`;
-          speakScene(sceneIdx);
-        }
-
-        const globalProg = Math.min(1, state.elapsedSec / Math.max(0.1, totalDur));
-        document.getElementById('timelineFill').style.width = `${globalProg * 100}%`;
-        document.getElementById('timeCurrentLabel').textContent = fmtTime(state.elapsedSec);
-
-        const W = canvas.width;
-        const H = canvas.height;
-        const t = now * 0.001;
-        const isLandscape = W > H;
-
-        ctx.clearRect(0, 0, W, H);
-        ctx.save();
-
-        // Camera Motion
-        let zoom = 1.0;
-        let shakeX = 0;
-        if (sc.motion === 'zoom-in') zoom = 1.0 + progress * 0.12;
-        else if (sc.motion === 'zoom-out') zoom = 1.12 - progress * 0.12;
-        else if (sc.motion === 'shake') shakeX = Math.sin(t * 36) * 6;
-
-        ctx.translate(W / 2 + shakeX, H / 2);
-        ctx.scale(zoom, zoom);
-        ctx.translate(-W / 2, -H / 2);
-
-        // Color Grade Filter
-        const g = state.grade;
-        const bw = g.tint === 'noir' ? 'grayscale(100%)' : '';
-        ctx.filter = `brightness(${g.brightness}%) contrast(${g.contrast}%) ${bw}`.trim();
-
-        // 1. Render Selected Engine (2D Puppet Stage vs AI Cinema / Uploaded Media)
-        if (sc.engine === 'ai-media' && (sc.aiImg || sc.customImg || (sc.customType === 'video' && customVideoEl.readyState >= 2))) {
-          const media = sc.customType === 'video' ? customVideoEl : sc.customImg || sc.aiImg;
-          const mw = media.videoWidth || media.width;
-          const mh = media.videoHeight || media.height;
-          const scale = Math.max(W / mw, H / mh);
-          ctx.drawImage(media, (W - mw * scale) / 2, (H - mh * scale) / 2, mw * scale, mh * scale);
-        } else {
-          // 2D Puppet Location + Articulated Actors
-          const isWalking = sc.c1Show && sc.c1Action === 'walk';
-          draw2DLocationSet(ctx, W, H, sc.location, t, isWalking);
-
-          const groundY = H * 0.78;
-          const charScale = isLandscape ? 1.15 : 1.08;
-          const isSpeaking = state.isPlaying && sc.narration.trim().length > 0;
-
-          if (sc.c1Show) {
-            const c1X = sc.c2Show ? W * 0.34 : W * 0.5;
-            drawArticulatedCharacter(ctx, c1X, groundY, charScale, t, isSpeaking, {
-              name: sc.c1Name,
-              action: sc.c1Action,
-              emotion: sc.c1Emotion,
-              prop: sc.c1Prop,
-              skin: sc.c1Skin,
-              outfit: sc.c1Outfit,
-              flipX: false,
+          let imgSrc = endpoint;
+          if (state.pollinationsKey) {
+            const res = await fetch(endpoint, {
+              headers: { Authorization: `Bearer ${state.pollinationsKey}` },
             });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const blob = await res.blob();
+            imgSrc = URL.createObjectURL(blob);
           }
 
-          if (sc.c2Show) {
-            const c2X = sc.c1Show ? W * 0.68 : W * 0.5;
-            drawArticulatedCharacter(ctx, c2X, groundY, charScale, t + 0.6, false, {
-              name: sc.c2Name,
-              action: sc.c2Action,
-              emotion: sc.c2Emotion,
-              prop: 'none',
-              skin: '#a66e4e',
-              outfit: sc.c2Outfit,
-              flipX: true,
-            });
-          }
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            sc.aiImg = img;
+            sc.customType = null;
+            sc.engine = 'ai-media';
+            selectScene(state.activeScene);
+            btnText.textContent = 'Generate AI Scene Image';
+            toast('AI Scene Illustration applied!');
+          };
+          img.onerror = () => {
+            btnText.textContent = 'Generate AI Scene Image';
+            toast('AI image limit reached — keeping 2D Puppet Stage active.', 'info');
+          };
+          img.src = imgSrc;
+        } catch (err) {
+          btnText.textContent = 'Generate AI Scene Image';
+          toast('Could not reach AI image service — 2D Puppet Stage remains ready.', 'info');
         }
-
-        ctx.filter = 'none';
-
-        // Optional Mood Tint Overlay
-        if (g.tint === 'warm') {
-          ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-          ctx.fillRect(0, 0, W, H);
-        } else if (g.tint === 'teal') {
-          ctx.fillStyle = 'rgba(6, 182, 212, 0.16)';
-          ctx.fillRect(0, 0, W, H);
-        }
-
-        // 2. Top Story Banner
-        if (sc.banner && sc.banner.trim()) {
-          const text = sc.banner.toUpperCase();
-          ctx.font = `900 ${isLandscape ? 22 : 20}px Montserrat, sans-serif`;
-          const bw = Math.min(W - 40, ctx.measureText(text).width + 36);
-          ctx.fillStyle = 'rgba(9, 9, 11, 0.85)';
-          ctx.beginPath();
-          ctx.roundRect((W - bw) / 2, isLandscape ? 24 : 36, bw, 40, 12);
-          ctx.fill();
-          ctx.fillStyle = '#fde047';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(text, W / 2, (isLandscape ? 24 : 36) + 21, bw - 20);
-        }
-
-        // 3. Brand Watermark Logo
-        if (state.logoImg) {
-          const lh = 44;
-          const lw = state.logoImg.width * (lh / state.logoImg.height);
-          ctx.drawImage(state.logoImg, 20, 20, lw, lh);
-        }
-
-        // 4. Optional Ad Promo Stickers
-        if (document.getElementById('showPromoToggle').checked) {
-          const offer = document.getElementById('adOfferInput').value;
-          const price = document.getElementById('adPriceInput').value;
-          const cta = document.getElementById('adCtaInput').value;
-
-          if (offer) {
-            ctx.fillStyle = '#e11d48';
-            ctx.beginPath();
-            ctx.roundRect(24, 96, 115, 34, 10);
-            ctx.fill();
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '900 15px Montserrat, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText(offer, 81, 114);
-          }
-          if (price) {
-            ctx.fillStyle = '#059669';
-            ctx.beginPath();
-            ctx.roundRect(W - 139, 96, 115, 34, 10);
-            ctx.fill();
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '900 16px Montserrat, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText(price, W - 81, 114);
-          }
-          if (cta) {
-            ctx.fillStyle = '#7c3aed';
-            ctx.beginPath();
-            ctx.roundRect(W / 2 - 110, H - 62, 220, 42, 21);
-            ctx.fill();
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '800 17px Inter, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText(cta, W / 2, H - 40);
-          }
-        }
-
-        // 5. Subtitles / Cartoon Speech Bubble
-        const capStyle = document.getElementById('captionStyleSelect').value;
-        const words = sc.narration.trim() ? sc.narration.trim().split(/\s+/) : [];
-        if (capStyle !== 'none' && words.length > 0) {
-          const activeIdx = Math.min(words.length - 1, Math.floor(progress * words.length));
-          const chunk = isLandscape ? 8 : 5;
-          const start = Math.floor(activeIdx / chunk) * chunk;
-          const line = words.slice(start, start + chunk).join(' ');
-
-          ctx.font = `700 ${isLandscape ? 22 : 21}px Inter, sans-serif`;
-          const mw = Math.min(W - 36, ctx.measureText(line).width + 38);
-          const boxY = isLandscape ? H - 108 : H - 148;
-
-          if (capStyle === 'speech-bubble') {
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.roundRect((W - mw) / 2, boxY, mw, 48, 20);
-            ctx.fill();
-            ctx.strokeStyle = '#09090b';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-            ctx.fillStyle = '#09090b';
-          } else {
-            ctx.fillStyle = 'rgba(9, 9, 11, 0.85)';
-            ctx.beginPath();
-            ctx.roundRect((W - mw) / 2, boxY, mw, 48, 12);
-            ctx.fill();
-            ctx.fillStyle = capStyle === 'tiktok-pop' ? '#fde047' : '#ffffff';
-          }
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(line, W / 2, boxY + 25, mw - 20);
-        }
-
-        // Scene Transition Flash / Fade
-        if (sc.transition === 'fade' && progress < 0.12) {
-          ctx.fillStyle = `rgba(9, 9, 11, ${1 - progress / 0.12})`;
-          ctx.fillRect(0, 0, W, H);
-        } else if (sc.transition === 'flash' && progress < 0.12) {
-          ctx.fillStyle = `rgba(255, 255, 255, ${1 - progress / 0.12})`;
-          ctx.fillRect(0, 0, W, H);
-        }
-
-        ctx.restore();
-        requestAnimationFrame(renderFrame);
       }
 
-      // --- Full 1080p HD Video Export ---
-      function export1080pVideo() {
-        if (state.isRecording) return;
-        if (typeof MediaRecorder === 'undefined') {
-          toast('Video export requires Chrome, Edge, or Firefox.', 'err');
+      async function generateAiVideoForActiveScene() {
+        const sc = state.scenes[state.activeScene];
+        const prompt = document.getElementById('aiPromptInput').value.trim() || 'Cinematic animated scene';
+        const styleMod = AI_STYLES[document.getElementById('aiStyleSelect').value] || AI_STYLES.pixar;
+        const model = document.getElementById('aiVideoModelSelect').value || 'seedance';
+        const fullPrompt = `${prompt}, ${styleMod}`;
+
+        if (!state.pollinationsKey) {
+          document.getElementById('keysModal').classList.remove('hidden');
+          toast('Paste your Pollinations sk_... key to render Veo/Seedance video clips.', 'info');
           return;
         }
 
-        stopPlayback();
-        const cfg = RATIOS[state.ratio];
+        const btn = document.getElementById('generateAiVideoBtn');
+        const btnText = document.getElementById('generateAiVideoText');
+        btn.disabled = true;
+        btnText.textContent = 'Rendering AI Clip (~30s)...';
 
-        // Upscale canvas to crisp 1080p HD for recording!
-        canvas.width = cfg.exportW;
-        canvas.height = cfg.exportH;
+        try {
+          const url = `https://gen.pollinations.ai/video/${encodeURIComponent(fullPrompt)}?model=${encodeURIComponent(model)}&aspectRatio=${encodeURIComponent(state.ratio)}`;
+          const res = await fetch(url, {
+            headers: { Authorization: `Bearer ${state.pollinationsKey}` },
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-        state.elapsedSec = 0;
-        state.isRecording = true;
-        document.getElementById('recordingBadge').classList.remove('hidden');
-        document.getElementById('exportBtnText').textContent = 'Rendering 1080p...';
-        document.getElementById('exportHdBtn').disabled = true;
+          const blob = await res.blob();
+          const videoUrl = URL.createObjectURL(blob);
+          sc.customType = 'video';
+          sc.customVideoUrl = videoUrl;
+          sc.aiImg = null;
+          sc.engine = 'ai-media';
 
-        const stream = canvas.captureStream(30);
-        AudioEngine.init();
-        if (AudioEngine.dest) {
-          AudioEngine.dest.stream.getAudioTracks().forEach((tr) => stream.addTrack(tr));
+          customVideoEl.src = videoUrl;
+          customVideoEl.loop = true;
+          customVideoEl.muted = true;
+          await customVideoEl.play().catch(() => {});
+
+          selectScene(state.activeScene);
+          toast(`AI ${model.toUpperCase()} video clip loaded onto Scene ${state.activeScene + 1}!`);
+        } catch (err) {
+          toast('AI video render failed or timed out. Check your sk_ key balance.', 'err');
+        } finally {
+          btn.disabled = false;
+          btnText.textContent = 'Generate AI Video (Veo / Seedance)';
         }
-
-        const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
-        const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 6000000 });
-        const chunks = [];
-
-        rec.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
-        rec.onstop = () => {
-          // Restore lightweight preview resolution so mobile stays fast
-          canvas.width = cfg.previewW;
-          canvas.height = cfg.previewH;
-
-          const blob = new Blob(chunks, { type: 'video/webm' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `reelforge-1080p-${state.ratio.replace(':', 'x')}.webm`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-
-          state.isRecording = false;
-          document.getElementById('recordingBadge').classList.add('hidden');
-          document.getElementById('exportBtnText').textContent = 'Export 1080p HD';
-          document.getElementById('exportHdBtn').disabled = false;
-          toast('1080p HD Video saved to your device!');
-        };
-
-        rec.start();
-        startPlayback();
-
-        const check = setInterval(() => {
-          if (!state.isPlaying || state.elapsedSec >= getTotalDuration()) {
-            clearInterval(check);
-            if (rec.state === 'recording') rec.stop();
+      }
+<!-- ... existing code ... -->
+        // 1. Render Selected Engine (2D Puppet Stage vs AI Cinema / Uploaded Media)
+        if (sc.engine === 'ai-media' && (sc.aiImg || sc.customImg || sc.customType === 'video')) {
+          if (sc.customType === 'video' && sc.customVideoUrl && customVideoEl.src !== sc.customVideoUrl) {
+            customVideoEl.src = sc.customVideoUrl;
+            customVideoEl.play().catch(() => {});
           }
-        }, 200);
-      }
-
-      // --- Populate Voices ---
-      function loadVoices() {
-        if (!('speechSynthesis' in window)) return;
-        const list = window.speechSynthesis.getVoices().filter((v) => v.lang.startsWith('en'));
-        const sel = document.getElementById('voiceSelect');
-        sel.innerHTML = '<option value="">Auto Best English Voice</option>';
-        list.forEach((v) => {
-          const opt = document.createElement('option');
-          opt.value = v.name;
-          opt.textContent = v.name.replace(/Microsoft |Google /g, '');
-          sel.appendChild(opt);
-        });
-      }
-      if ('speechSynthesis' in window) {
-        loadVoices();
-        window.speechSynthesis.onvoiceschanged = loadVoices;
-      }
-
-      // --- Event Bindings ---
-      document.querySelectorAll('.workspace-tab').forEach((tab) => {
-        tab.addEventListener('click', () => {
-          const target = tab.getAttribute('data-tab');
-          document.querySelectorAll('.workspace-tab').forEach((t) => {
-            const active = t === tab;
-            t.className = active
-              ? 'workspace-tab shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-bold bg-violet-600 text-white shadow transition'
-              : 'workspace-tab shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-bold text-zinc-400 hover:text-white transition';
-          });
-          document.querySelectorAll('.tab-panel').forEach((p) => p.classList.add('hidden'));
-          document.getElementById(`tab-${target}`).classList.remove('hidden');
-        });
-      });
-
-      document.querySelectorAll('.ratio-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const r = btn.getAttribute('data-ratio');
-          const cfg = RATIOS[r];
-          state.ratio = r;
-          canvas.width = cfg.previewW;
-          canvas.height = cfg.previewH;
-          document.getElementById('exportResLabel').textContent = cfg.exportLabel;
-          canvasWrapper.className = `relative w-full max-h-[34vh] sm:max-h-[440px] ${cfg.cssAspect} rounded-xl sm:rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800 mx-auto flex items-center justify-center`;
-
-          document.querySelectorAll('.ratio-btn').forEach((b) => {
-            b.className =
-              b === btn
-                ? 'ratio-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-violet-600 text-white transition'
-                : 'ratio-btn px-2.5 py-1 rounded-lg text-[11px] font-bold text-zinc-400 hover:text-white transition';
-          });
-        });
-      });
-
-      document.querySelectorAll('.genre-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          state.genre = btn.getAttribute('data-genre');
-          document.querySelectorAll('.genre-btn').forEach((b) => {
-            b.className =
-              b === btn
-                ? 'genre-btn py-2 px-1.5 rounded-xl text-[11px] font-semibold bg-violet-600 text-white text-center transition'
-                : 'genre-btn py-2 px-1.5 rounded-xl text-[11px] font-semibold bg-zinc-950 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 text-center transition';
-          });
-        });
-      });
-
-      document.querySelectorAll('.idea-pill').forEach((pill) => {
-        pill.addEventListener('click', () => {
-          const g = pill.getAttribute('data-idea-genre');
-          document.querySelector(`.genre-btn[data-genre="${g}"]`)?.click();
-          document.getElementById('storyTopicInput').value = pill.getAttribute('data-idea');
-          buildMultiGenreStory();
-        });
-      });
-
-      document.getElementById('autoGenerateStoryBtn').addEventListener('click', buildMultiGenreStory);
-
-      document.getElementById('addSceneBtn').addEventListener('click', () => {
-        if (state.scenes.length >= 6) return toast('Max 6 scenes per story.', 'info');
-        state.scenes.push(createScene({ banner: `PART ${state.scenes.length + 1}` }));
-        selectScene(state.scenes.length - 1);
-      });
-
-      document.getElementById('duplicateSceneBtn').addEventListener('click', () => {
-        if (state.scenes.length >= 6) return toast('Max 6 scenes per story.', 'info');
-        const copy = { ...state.scenes[state.activeScene] };
-        state.scenes.splice(state.activeScene + 1, 0, copy);
-        selectScene(state.activeScene + 1);
-        toast('Scene duplicated!');
-      });
-
-      document.getElementById('deleteSceneBtn').addEventListener('click', () => {
-        if (state.scenes.length <= 1) return toast('At least 1 scene required.', 'info');
-        state.scenes.splice(state.activeScene, 1);
-        selectScene(Math.max(0, state.activeScene - 1));
-      });
-
-      // Live Input Sync
-      [
-        'sceneDurationSelect', 'sceneTransitionSelect', 'sceneBannerInput', 'sceneNarrationInput',
-        'sceneEngineSelect', 'locationSelect', 'cameraMotionSelect',
-        'char1VisibleToggle', 'char1NameInput', 'char1ActionSelect', 'char1EmotionSelect',
-        'char1PropSelect', 'char1SkinSelect', 'char1OutfitSelect',
-        'char2VisibleToggle', 'char2NameInput', 'char2ActionSelect', 'char2EmotionSelect', 'char2OutfitSelect',
-        'aiPromptInput', 'aiStyleSelect',
-      ].forEach((id) => {
-        const el = document.getElementById(id);
-        el.addEventListener('input', saveSceneFromInputs);
-        el.addEventListener('change', saveSceneFromInputs);
-      });
-
+          const media = sc.customType === 'video' ? customVideoEl : sc.customImg || sc.aiImg;
+          const mw = media && (media.videoWidth || media.width);
+          const mh = media && (media.videoHeight || media.height);
+          if (mw && mh) {
+            const scale = Math.max(W / mw, H / mh);
+            ctx.drawImage(media, (W - mw * scale) / 2, (H - mh * scale) / 2, mw * scale, mh * scale);
+          } else {
+            const isWalking = sc.c1Show && sc.c1Action === 'walk';
+            draw2DLocationSet(ctx, W, H, sc.location, t, isWalking);
+          }
+        } else {
+<!-- ... existing code ... -->
+          canvasWrapper.className = `relative w-full h-[30vh] sm:h-[380px] ${cfg.cssAspect} rounded-xl sm:rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800 mx-auto flex items-center justify-center`;
+<!-- ... existing code ... -->
       document.getElementById('generateAiVisualBtn').addEventListener('click', generateAiImageForActiveScene);
+      document.getElementById('generateAiVideoBtn').addEventListener('click', generateAiVideoForActiveScene);
       document.getElementById('switchBackToPuppetBtn').addEventListener('click', () => {
-        document.getElementById('sceneEngineSelect').value = 'puppet';
-        saveSceneFromInputs();
-        toast('Switched scene back to 2D Puppet Stage.');
-      });
-
-      document.getElementById('customMediaUpload').addEventListener('change', (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        const url = URL.createObjectURL(file);
-        const sc = state.scenes[state.activeScene];
+<!-- ... existing code ... -->
         if (file.type.startsWith('video/')) {
           sc.customType = 'video';
+          sc.customVideoUrl = url;
           sc.engine = 'ai-media';
           customVideoEl.src = url;
           customVideoEl.play().catch(() => {});
           selectScene(state.activeScene);
         } else {
-          const img = new Image();
-          img.onload = () => {
-            sc.customType = 'image';
-            sc.customImg = img;
-            sc.engine = 'ai-media';
-            selectScene(state.activeScene);
-          };
-          img.src = url;
-        }
-      });
-
+<!-- ... existing code ... -->
       document.getElementById('clearCustomMediaBtn').addEventListener('click', () => {
         const sc = state.scenes[state.activeScene];
         sc.aiImg = null;
         sc.customImg = null;
         sc.customType = null;
+        sc.customVideoUrl = null;
         sc.engine = 'puppet';
         selectScene(state.activeScene);
       });
-
-      document.getElementById('brandLogoInput').addEventListener('change', (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        const img = new Image();
-        img.onload = () => { state.logoImg = img; toast('Brand logo added!'); };
-        img.src = URL.createObjectURL(file);
-      });
-
-      document.querySelectorAll('.sfx-btn').forEach((b) =>
-        b.addEventListener('click', () => AudioEngine.sfx(b.getAttribute('data-sfx')))
-      );
-
-      document.getElementById('musicThemeSelect').addEventListener('change', () => {
-        if (state.isPlaying) AudioEngine.startMusic(document.getElementById('musicThemeSelect').value);
-      });
-
-      document.getElementById('voiceToggleBtn').addEventListener('click', () => {
-        state.voiceEnabled = !state.voiceEnabled;
-        document.getElementById('voiceToggleBtn').textContent = state.voiceEnabled ? 'Voice: ON' : 'Voice: OFF';
-        if (!state.voiceEnabled && 'speechSynthesis' in window) window.speechSynthesis.cancel();
-      });
-
-      ['gradeBright', 'gradeContrast', 'gradePresetSelect'].forEach((id) => {
-        document.getElementById(id).addEventListener('input', () => {
-          state.grade.brightness = parseInt(document.getElementById('gradeBright').value, 10);
-          state.grade.contrast = parseInt(document.getElementById('gradeContrast').value, 10);
-          state.grade.tint = document.getElementById('gradePresetSelect').value;
-        });
-      });
-
-      document.getElementById('resetGradeBtn').addEventListener('click', () => {
-        document.getElementById('gradeBright').value = 100;
-        document.getElementById('gradeContrast').value = 105;
-        document.getElementById('gradePresetSelect').value = 'none';
-        state.grade = { brightness: 100, contrast: 105, tint: 'none' };
-      });
-
-      document.getElementById('playPauseBtn').addEventListener('click', () => {
-        if (state.isPlaying) stopPlayback();
-        else startPlayback();
-      });
-
-      document.getElementById('timelineTrack').addEventListener('click', (e) => {
-        const r = e.currentTarget.getBoundingClientRect();
-        state.elapsedSec = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * getTotalDuration();
-        state.lastSpokenScene = -1;
-      });
-
-      document.getElementById('exportHdBtn').addEventListener('click', export1080pVideo);
-
+<!-- ... existing code ... -->
       // BYOK Keys Modal
       function updateKeyDot() {
+        document.getElementById('pollinationsKeyInput').value = state.pollinationsKey;
         document.getElementById('geminiKeyInput').value = state.geminiKey;
-        document.getElementById('falKeyInput').value = state.falKey;
         document.getElementById('keyStatusDot').className =
-          state.geminiKey || state.falKey ? 'w-2 h-2 rounded-full bg-emerald-400' : 'w-2 h-2 rounded-full bg-zinc-600';
+          state.pollinationsKey || state.geminiKey ? 'w-2 h-2 rounded-full bg-emerald-400' : 'w-2 h-2 rounded-full bg-zinc-600';
       }
       document.getElementById('openKeysModalBtn').addEventListener('click', () => {
         updateKeyDot();
@@ -2219,19 +235,34 @@ Return ONLY a JSON array of 3 objects with keys:
         document.getElementById('keysModal').classList.add('hidden')
       );
       document.getElementById('saveKeysBtn').addEventListener('click', () => {
+        state.pollinationsKey = document.getElementById('pollinationsKeyInput').value.trim();
         state.geminiKey = document.getElementById('geminiKeyInput').value.trim();
-        state.falKey = document.getElementById('falKeyInput').value.trim();
+        localStorage.setItem('rf_pollinations_key', state.pollinationsKey);
         localStorage.setItem('rf_gemini_key', state.geminiKey);
-        localStorage.setItem('rf_fal_key', state.falKey);
         updateKeyDot();
         document.getElementById('keysModal').classList.add('hidden');
         toast('BYOK API keys saved locally!');
       });
 
-      // Init
-      updateKeyDot();
-      selectScene(0);
-      requestAnimationFrame((now) => {
+      // Force immediate canvas sizing and initial frame paint on mobile & desktop
+      function bootStudio() {
+        const cfg = RATIOS[state.ratio];
+        canvas.width = cfg.previewW;
+        canvas.height = cfg.previewH;
+        updateKeyDot();
+        selectScene(0);
+        const now = performance.now();
+        state.lastTs = now;
+        renderFrame(now);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootStudio);
+      } else {
+        bootStudio();
+      }
+      window.addEventListener('load', () => {
+        const now = performance.now();
         state.lastTs = now;
         renderFrame(now);
       });
